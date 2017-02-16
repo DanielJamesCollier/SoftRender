@@ -26,7 +26,7 @@ public:
     void eventLoop(bool & running);
 
     template<int width, int height>
-    void draw(MultiArray<Maths::Vec3, width, height> & pixels, int numSamples);
+    void draw(MultiArray<Maths::Vec3, width, height> & pixels);
 
 //TODO: reorder
 private:
