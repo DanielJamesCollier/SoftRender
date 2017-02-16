@@ -10,7 +10,7 @@
 #if defined(_WIN32)
 #   include "SDL.h"
 #elif defined(__APPLE__)
-#   include "../build/Mac/dependencies/SDL2.framework/Versions/A/Headers/SDL.h" // todo fix this mess
+#   include "../build/MacOS/dependencies/SDL2.framework/Versions/A/Headers/SDL.h" // todo fix this mess
 #else
 #   error "system not supported"
 #endif

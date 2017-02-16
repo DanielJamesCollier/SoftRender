@@ -10,6 +10,9 @@
     SET incPaths=dependencies/SDL2/include
     SET libPaths=dependencies/SDL2/libs
     SET libs=SDL2.lib SDL2main.lib 
+
+    :: output .exe name
+    SET exeName=main
     
     :: the subsystem - console means a console will be opened with the program even if it's windowed
     SET system=CONSOLE
