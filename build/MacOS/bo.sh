@@ -9,9 +9,10 @@ echo "compiler flags: $bo_compilerFlags"
 echo "files:          $files"
 echo "framework path: $frameworkPath"
 echo "frameworks:     $frameworks"
+echo "include path:   $includePath"
 echo "exe name:       $exeName"
 echo 
-echo clang++ $bo_compilerFlags $frameworksFlags $files $exeName
-clang++ $bo_compilerFlags $frameworksFlags $files -o $exeName
+echo clang++ $bo_compilerFlags $dependencyFlags $files $exeName
+clang++ $bo_compilerFlags $dependencyFlags $files -o $exeName
 echo "------------------------"
 echo -e "\n\n"
