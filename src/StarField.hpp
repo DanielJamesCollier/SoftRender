@@ -8,7 +8,7 @@
 #include "Bitmap.hpp"
 
 struct Star {
-    static const int numStars = 1000;
+    static const int numStars = 10000;
     float x[numStars];
     float y[numStars];
     float z[numStars];

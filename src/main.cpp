@@ -12,10 +12,10 @@
 
 int main(int argc, char* argv[]) {
     // window spec
-    const int x = 0;
-    const int y = 0;
+    const int x = 10;
+    const int y = 10;
     const int w = 700;
-    const int h = 500;
+    const int h = w / 16 * 9;
 
     // alias
     using Clock = std::chrono::system_clock;
