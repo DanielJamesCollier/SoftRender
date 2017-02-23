@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 
     // triangle verts
     Maths::Vec3 v1(100, 100, 0);
-    Maths::Vec3 v2(150, 200, 0);
+    Maths::Vec3 v2(150, 0, 0);
     Maths::Vec3 v3(80, 300, 0);
 
     auto frames = 0;
@@ -57,8 +57,7 @@ int main(int argc, char* argv[]) {
             second = current; 
         }
 
-        rContext.scanConvertTriangle(v1, v2, v3, 0);
-        rContext.fillShape(100,300);
+        rContext.fillTriangle(v3, v2, v1);
 
        
         starField.render();

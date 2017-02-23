@@ -3,6 +3,7 @@
 #include "Colour.hpp"
 // std
 #include <iostream>
+#include <utility>
 
 //---------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
@@ -29,6 +30,43 @@ RenderContext::fillShape(int yMin, int yMax) {
             setPixel(i, j, Colour(255, 0, 0));
         }
     }
+}
+
+//---------------------------------------------------------
+void
+RenderContext::fillTriangle(Maths::Vec3 v1, Maths::Vec3 v2, Maths::Vec3 v3) {
+
+    // v1 = minY
+    // v2 = midY
+    // v3 = maxY
+
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
+    }
+
+    if(v2.getY() < v1.getY()) {
+        std::swap(v2, v1);
+    }
+
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
+    }
+
+    auto triangleArea = [&]() -> float {
+        float x1 = v3.getX() - v1.getX();
+        float y1 = v3.getY() - v1.getY();
+        float x2 = v2.getX() - v1.getX();
+        float y2 = v2.getY() - v1.getY();
+
+        return (x1 * y2 - x2 * y1);
+    };
+
+    float area = triangleArea();
+
+    int handedness = area >= 0 ? 1 : 0;
+
+    scanConvertTriangle(v1, v2, v3, handedness);
+    fillShape(static_cast<int>(v1.getY()), static_cast<int>(v3.getY()));
 }
 
 //---------------------------------------------------------

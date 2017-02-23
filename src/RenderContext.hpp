@@ -15,7 +15,7 @@ public:
 
     void drawScanBuffer(int y, int xMin, int xMax);
     void fillShape(int yMin, int yMax);
-
+    void fillTriangle(Maths::Vec3 v1, Maths::Vec3 v2, Maths::Vec3 v3);
     void scanConvertTriangle(Maths::Vec3 const & minY, Maths::Vec3 const & midY, Maths::Vec3 const & maxY, int handedness);
 
 private:
