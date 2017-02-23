@@ -8,6 +8,7 @@ namespace Maths {
     class Vec3 final {
     public:
         explicit Vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f);
+        ~Vec3() = default;
         
         // getters
         float getX() const;

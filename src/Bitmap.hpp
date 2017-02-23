@@ -4,14 +4,13 @@
 // std
 #include <vector>
 
-//my 
-#include "Colour.hpp"
+class Colour;
 
-class Bitmap final {
+class Bitmap {
     using Buffer = std::vector<unsigned char>;
 public:
     Bitmap(int width, int height);
-    ~Bitmap() = default;
+    virtual ~Bitmap() = default;
 
     unsigned char & operator [] (int index);
 

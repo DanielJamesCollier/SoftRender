@@ -1,6 +1,7 @@
 ::--------------COMPILE VARIABLES::--------------::
     :: file(s) to compile 
-SET files=../../src/main.cpp ../../src/Window.cpp ../../src/Vec3.cpp ../../src/Colour.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp
+    :: default directory is ../../src/
+SET files=../../src/main.cpp ../../src/Window.cpp ../../src/Vec3.cpp ../../src/Colour.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp ../../src/RenderContext.cpp
 
     :: include lookup directory('s)
 SET incPaths=dependencies/SDL2/include
@@ -32,21 +33,21 @@ SET includeFlags=""
 IF [%incPaths]==[] (
     SET incPaths=no includes
 ) ELSE (
-    echo working
     SET includeFlags=/I %incPaths%
 )
 
 IF [%libs]==[] (
    SET libs=no libs
 ) ELSE (
-    echo working
     SET libraryFlags=/LIBPATH:%libPaths% %libs%
 )
 
-
-::todo - append ../../ if files do not have it at the front
-
+:: TODO
+:: allow the files var to no have to have ../../src/ on every file
 
 ::----------------------------------------------::
 
-
+:: origional file var
+:: new file var
+::get filename + exetension
+::new files var += filename + extension

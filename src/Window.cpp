@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "SDL.h"
 
 //------------------------------------------------------------
 Window::Window(std::string const & title, int x, int y, int width, int height, bool vSync) :
@@ -7,8 +8,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
 ,   m_y(y)
 ,   m_width(width)
 ,   m_height(height) 
-,   m_pixels(width, height)
-,   m_vSync(vSync)
+,   m_rContext(width, height)
 {
     // init SDL and create window
     //---------------------------------------------------------
@@ -52,20 +52,20 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(m_renderer);
     SDL_RenderPresent(m_renderer);
-    SDL_GL_SetSwapInterval((int)vSync);
+    SDL_GL_SetSwapInterval(static_cast<int>(vSync));
 }
 
 //------------------------------------------------------------
 Window::~Window() {
-    //@todo delete texture
+    SDL_DestroyTexture(m_renderTexture);
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
 }
 
 //------------------------------------------------------------
-Bitmap &
-Window::getBitmap() {
-    return m_pixels;
+RenderContext &
+Window::getRenderContext() {
+    return m_rContext;
 }
 
 //------------------------------------------------------------
@@ -87,8 +87,8 @@ Window::eventLoop(bool & running) {
 //------------------------------------------------------------
 void 
 Window::swapBackBuffer() { 
-    SDL_UpdateTexture(m_renderTexture, NULL, &m_pixels[0], m_width * 4);
+    SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * 4);
     SDL_RenderCopy(m_renderer, m_renderTexture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
-    m_pixels.clear();
+    m_rContext.clear();
 }

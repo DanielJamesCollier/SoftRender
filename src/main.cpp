@@ -4,6 +4,7 @@
 
 // my
 #include "Window.hpp"
+#include "RenderContext.hpp"
 #include "MultiArray.hpp"
 #include "Vec3.hpp"
 #include "Colour.hpp"
@@ -11,58 +12,57 @@
 #include "StarField.hpp"
 
 int main(int argc, char* argv[]) {
+    // using
+    using std::chrono::system_clock;
+    using std::chrono::milliseconds;
+    using std::chrono::duration_cast;
+    
     // window spec
     const int x = 10;
     const int y = 10;
-    const int w = 700;
+    const int w = 900;
     const int h = w / 16 * 9;
 
-    // alias
-    using Clock = std::chrono::system_clock;
+    Window window("SoftRender", x, y, w, h , false);
+    RenderContext & rContext = window.getRenderContext();
+    StarField starField(rContext, 0.00001f,.1);
 
-    Window window("SoftRender", x, y, w, h , true);
-    Bitmap & bitmap = window.getBitmap();
-    StarField starField(0.001f, 2);
+    // triangle verts
+    Maths::Vec3 v1(100, 100, 0);
+    Maths::Vec3 v2(150, 200, 0);
+    Maths::Vec3 v3(80, 300, 0);
 
-    auto clock_secStart = Clock::now();
-    auto clock_deltaStart = Clock::now();
     auto frames = 0;
-    auto fps = 0;
     bool running = true;
-
+    constexpr milliseconds timestep(16);
+    auto begin = system_clock::now();
+    auto second = system_clock::now();
     while(running) {
-        // timing a diagonostics
-        auto now = Clock::now();
-        float delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - clock_deltaStart).count();
-        clock_deltaStart = Clock::now();
+        window.eventLoop(running); // check to see if the window was closed  
+        
         frames++;
 
-        // poll the event list
-        window.eventLoop(running);
+        auto current = system_clock::now();
+        auto frameTime = current - begin;
+        begin = current;
 
-        // updateAndRender star field
-        starField.updateAndRender(bitmap, delta);
-        
-        // display the last rendered frame
-        auto clock_drawS = Clock::now();
-        window.swapBackBuffer();
-        auto clock_drawE = Clock::now();
-
-        
-        // this happens every second - put all output in here
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(now - clock_secStart).count() > 1000) {
-            fps = frames;
-            frames = 0;
-
-            std::cout << "frame info" << std::endl;
-            std::cout << "----------" << std::endl;
-            std::cout << "FPS:            " << fps << std::endl;
-            std::cout << "last draw time: " << std::chrono::duration_cast<std::chrono::milliseconds>(clock_drawE - clock_drawS).count() << "ms" << std::endl;
-            std::cout << "\n";
-
-            // reset second counter
-            clock_secStart = Clock::now();
+        while(duration_cast<milliseconds>(frameTime) > milliseconds(0)) {
+            starField.update(16); // needs fixing
+            frameTime -= timestep;
         }
+
+        if(duration_cast<milliseconds>(current - second) > milliseconds(1000)) {
+            std::cout << "FPS: " << frames << std::endl;
+            frames = 0;
+            second = current; 
+        }
+
+        rContext.scanConvertTriangle(v1, v2, v3, 0);
+        rContext.fillShape(100,300);
+
+       
+        starField.render();
+        window.swapBackBuffer();
     }
     return 0;
 }

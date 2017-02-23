@@ -2,34 +2,31 @@
 #define StarField_hpp
 
 // std
-#include <vector>
+#include <array>
 
-// my
-#include "Bitmap.hpp"
+// my includes
+#include "Vec3.hpp"
 
-struct Star {
-    static const int numStars = 10000;
-    float x[numStars];
-    float y[numStars];
-    float z[numStars];
-};
+// my defines
+#define NUM_STARS 20000
+
+class RenderContext;
 
 class StarField final {
 public:
-  
-public:
-    StarField(float speed, float spread);
+    StarField(RenderContext & renderContext, float speed, float spread);
     ~StarField() = default;
 
-    void updateAndRender(Bitmap & bitmap, float delta);
-
+    void update(float delta);
+    void render();
 
 private:
     void initStar(int index);
 
 private:
-    Star m_starsSOA;
     float m_speed;
     float m_spread;
+    std::array<Maths::Vec3, NUM_STARS> m_stars;
+    RenderContext & m_rContext;
 };
 #endif /* StarField_hpp */

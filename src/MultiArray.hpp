@@ -2,8 +2,7 @@
 #define MultiArray_hpp
 
 template<typename T, int width, int height>
-class MultiArray
-{
+class MultiArray final {
 public:
     MultiArray();
     ~MultiArray();

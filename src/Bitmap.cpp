@@ -1,4 +1,5 @@
 #include "Bitmap.hpp"
+#include "Colour.hpp"
 
 //------------------------------------------------------------
 Bitmap::Bitmap(int width, int height) :
