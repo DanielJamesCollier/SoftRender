@@ -1,8 +1,7 @@
 ::--------------COMPILE VARIABLES::--------------::
     :: file(s) to compile 
     :: default directory is ../../src/
-SET files=../../src/main.cpp ../../src/Window.cpp ../../src/Vec3.cpp ../../src/Colour.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp ../../src/RenderContext.cpp
-
+SET files=../../src/main.cpp ../../src/Window.cpp ../../src/Maths/Vec3.cpp ../../src/Colour.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp ../../src/RenderContext.cpp ../../src/RandTriangleField.cpp ../../src/Maths/Mat4f.cpp
     :: include lookup directory('s)
 SET incPaths=dependencies/SDL2/include
 

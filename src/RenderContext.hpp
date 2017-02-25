@@ -5,7 +5,7 @@
 #include <vector>
 
 // my
-#include "Vec3.hpp"
+#include "Maths/Vec3.hpp"
 #include "Bitmap.hpp" 
 
 class RenderContext : public Bitmap {

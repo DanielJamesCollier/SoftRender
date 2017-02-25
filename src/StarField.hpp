@@ -5,7 +5,7 @@
 #include <array>
 
 // my includes
-#include "Vec3.hpp"
+#include "Maths/Vec3.hpp"
 
 // my defines
 #define NUM_STARS 20000

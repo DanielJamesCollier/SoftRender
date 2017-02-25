@@ -35,7 +35,7 @@ RenderContext::fillShape(int yMin, int yMax) {
 //---------------------------------------------------------
 void
 RenderContext::fillTriangle(Maths::Vec3 v1, Maths::Vec3 v2, Maths::Vec3 v3) {
-
+    // sort the input vertices into the following
     // v1 = minY
     // v2 = midY
     // v3 = maxY
@@ -52,16 +52,15 @@ RenderContext::fillTriangle(Maths::Vec3 v1, Maths::Vec3 v2, Maths::Vec3 v3) {
         std::swap(v3, v2);
     }
 
-    auto triangleArea = [&]() -> float {
+    auto triangleAreaTimesTwo = [&]() -> float {
         float x1 = v3.getX() - v1.getX();
         float y1 = v3.getY() - v1.getY();
         float x2 = v2.getX() - v1.getX();
         float y2 = v2.getY() - v1.getY();
-
         return (x1 * y2 - x2 * y1);
     };
 
-    float area = triangleArea();
+    float area = triangleAreaTimesTwo();
 
     int handedness = area >= 0 ? 1 : 0;
 

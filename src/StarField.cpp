@@ -22,18 +22,6 @@ StarField::StarField(RenderContext & renderContext, float speed, float spread) :
 
 //------------------------------------------------------------
 void 
-StarField::initStar(int index) {
-    auto randF = []() -> float {
-        return (double)rand() / ((double)RAND_MAX + 1); // double to prevent overflow
-    };
-
-    m_stars[index].setX(2 * (randF() - 0.5f) * m_spread);
-    m_stars[index].setY(2 * (randF() - 0.5f) * m_spread);
-    m_stars[index].setZ(randF() + 0.0001f);
-}
-
-//------------------------------------------------------------
-void 
 StarField::update(float delta) {
     for(int i = 0; i < m_stars.size(); i++) {
         // move the star in z
@@ -71,4 +59,16 @@ StarField::render() {
             m_rContext.setPixel(x, y, Colour(255, 255, 255));
         }
     }
+}
+
+//------------------------------------------------------------
+void 
+StarField::initStar(int index) {
+    auto randF = []() -> float {
+        return (double)rand() / ((double)RAND_MAX + 1); // double to prevent overflow
+    };
+
+    m_stars[index].setX(2 * (randF() - 0.5f) * m_spread);
+    m_stars[index].setY(2 * (randF() - 0.5f) * m_spread);
+    m_stars[index].setZ(randF() + 0.0001f);
 }

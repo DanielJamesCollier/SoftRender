@@ -9,7 +9,7 @@
 
 // my 
 #include "MultiArray.hpp"
-#include "Vec3.hpp"
+#include "Maths/Vec3.hpp"
 #include "Colour.hpp"
 #include "RenderContext.hpp"
 

@@ -6,10 +6,12 @@
 #include "Window.hpp"
 #include "RenderContext.hpp"
 #include "MultiArray.hpp"
-#include "Vec3.hpp"
 #include "Colour.hpp"
 #include "Bitmap.hpp"
 #include "StarField.hpp"
+#include "RandTriangleField.hpp"
+#include "Maths/Mat4f.hpp"
+#include "Maths/Vec3.hpp"
 
 int main(int argc, char* argv[]) {
     // using
@@ -26,6 +28,7 @@ int main(int argc, char* argv[]) {
     Window window("SoftRender", x, y, w, h , false);
     RenderContext & rContext = window.getRenderContext();
     StarField starField(rContext, 0.00001f,.1);
+    RandTriangleField triangleField(rContext);
 
     // triangle verts
     Maths::Vec3 v1(100, 100, 0);
@@ -48,6 +51,7 @@ int main(int argc, char* argv[]) {
 
         while(duration_cast<milliseconds>(frameTime) > milliseconds(0)) {
             starField.update(16); // needs fixing
+            triangleField.update(16);
             frameTime -= timestep;
         }
 
@@ -59,6 +63,7 @@ int main(int argc, char* argv[]) {
 
         rContext.fillTriangle(v3, v2, v1);
 
+        triangleField.render();
        
         starField.render();
         window.swapBackBuffer();
