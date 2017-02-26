@@ -2,6 +2,7 @@
 #define Mat4f_hpp
 
 #include <cmath>
+#include <iostream>
 
 /*
     TODO
@@ -52,21 +53,10 @@ namespace Maths {
 
         // operator overloads
         //--------------------------------------------------------------
-        friend Mat4f operator + (Mat4f const & lhs, Mat4f const & rhs);
-        friend Mat4f operator + (Mat4f const & lhs, Vec3 const & rhs);
-        //friend Mat4f operator + (Vec3 const & lhs, Mat4f const & rhs);
-
-        friend Mat4f operator - (Mat4f const & lhs, Mat4f const & rhs);
-        friend Mat4f operator - (Mat4f const & lhs, Vec3 const & rhs);
-        //friend Mat4f operator - (Vec3 const & lhs, Mat4f const & rhs);
-
         friend Mat4f operator * (Mat4f const & lhs, Mat4f const & rhs);
-        friend Mat4f operator * (Mat4f const & lhs, Vec3 const & rhs);
-        //friend Mat4f operator * (Vec3 const & lhs, Mat4f const & rhs);
+        friend Vec3 operator * (Mat4f const & lhs, Vec3 const & rhs);
+        friend std::ostream & operator << (std::ostream & lhs, Mat4f const & rhs);
 
-        friend Mat4f operator / (Mat4f const & lhs, Mat4f const & rhs);
-        friend Mat4f operator / (Mat4f const & lhs, Vec3 const & rhs);
-        //friend Mat4f operator / (Vec3 const & lhs, Mat4f const & rhs);
 
     private:
         float & operator [] (int index);

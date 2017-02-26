@@ -10,8 +10,7 @@
 #include "Bitmap.hpp"
 #include "StarField.hpp"
 #include "RandTriangleField.hpp"
-#include "Maths/Mat4f.hpp"
-#include "Maths/Vec3.hpp"
+#include "Maths/Maths.hpp"
 
 int main(int argc, char* argv[]) {
     // using
@@ -30,10 +29,23 @@ int main(int argc, char* argv[]) {
     StarField starField(rContext, 0.00001f,.1);
     RandTriangleField triangleField(rContext);
 
+    // test
+    Maths::Mat4f matrix(true);
+    //Maths::setTranslation(matrix, Maths::Vec3(500,0,0));
+    std::cout << matrix << std::endl;
+
     // triangle verts
     Maths::Vec3 v1(100, 100, 0);
     Maths::Vec3 v2(150, 0, 0);
     Maths::Vec3 v3(80, 300, 0);
+
+    v1 = matrix * v1;
+    v2 = matrix * v2;
+    v3 = matrix * v3;
+
+    std::cout << v1 << std::endl;
+    std::cout << v2 << std::endl;
+    std::cout << v3 << std::endl;
 
     auto frames = 0;
     bool running = true;

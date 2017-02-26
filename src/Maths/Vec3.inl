@@ -95,12 +95,7 @@ operator / (Vec3 const & lhs, Vec3 const & rhs) {
         return Vec3(lhs.m_data[0] / rhs.m_data[0], lhs.m_data[1] / rhs.m_data[1], lhs.m_data[2] / rhs.m_data[2]);
 }
 
-//------------------------------------------------------------
-inline std::ostream &
-operator << (std::ostream & lhs, Vec3 const & rhs) {
-    lhs << "Vec3([x:" << rhs.m_data[0] << "], [y: " << rhs.m_data[1] << "], [z: " << rhs.m_data[2] << "])\n";
-    return lhs;
-}
+
 
 /* free function versions of member functions */
 //------------------------------------------------------------

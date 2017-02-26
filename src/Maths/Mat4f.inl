@@ -27,7 +27,7 @@ namespace Maths {
         scaleMat[5]  = scale.getY();
         scaleMat[10] = scale.getZ();
 
-        return scaleMat * translationMat * rotationMat;
+        return translationMat * rotationMat * scaleMat;
     }
 
         // opperates on existing matrices by =
@@ -129,40 +129,5 @@ namespace Maths {
         matrix[0]  += scale.getX();
         matrix[5]  += scale.getY();
         matrix[10] += scale.getZ();
-    }
-
-    // operator overloads
-    //--------------------------------------------------------------
-    inline Mat4f
-    operator + (Mat4f const & lhs, Mat4f const & rhs) {
-        Mat4f matrix(false);
-
-        return matrix;
-    }
-
-    inline Mat4f
-    operator + (Mat4f const & lhs, Vec3 const & rhs) {
-        Mat4f matrix(false);
-
-        return matrix;
-    }
-
-    inline Mat4f
-    operator * (Mat4f const & lhs, Mat4f const & rhs) {
-        Mat4f matrix(false);
-
-        auto offset = [](int x, int y) {
-            return 4 * x + y;
-        };
-
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
-                matrix.m_data[offset(x,y)] = 0;
-                for (int z = 0; z < 4; z++) {
-                    matrix.m_data[offset(x,y)] += lhs.m_data[offset(x,y)] * rhs.m_data[offset(x,y)];
-                }
-            }
-        }
-        return matrix;
     }
 }
