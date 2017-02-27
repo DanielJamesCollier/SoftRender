@@ -30,10 +30,6 @@ public:
     // call within a while loop - running gets set to false when program closes
     void eventLoop(bool & running);
 
-    // draws an entire buffer - will overwrite whatever is there //todo - review
-    template<int width, int height>
-    void draw(MultiArray<Maths::Vec3, width, height> & pixels);
-
     // brings the buffer you are drawing into, into view
     void swapBackBuffer();
 
@@ -49,5 +45,4 @@ private:
     int m_x;
     int m_y;
 };
-#include "Window.inl"
 #endif /* Window_hpp */

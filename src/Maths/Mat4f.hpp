@@ -54,7 +54,7 @@ namespace Maths {
         // operator overloads
         //--------------------------------------------------------------
         friend Mat4f operator * (Mat4f const & lhs, Mat4f const & rhs);
-        friend Vec3 operator * (Mat4f const & lhs, Vec3 const & rhs);
+        friend Vec3 operator * (Mat4f & lhs, Vec3 const & rhs);
         friend std::ostream & operator << (std::ostream & lhs, Mat4f const & rhs);
 
 

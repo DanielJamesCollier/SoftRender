@@ -14,13 +14,17 @@ namespace Maths {
    
    //------------------------------------------------------------
     inline Vec3 // treats the mat4f like it is a mat3f
-    operator * (Mat4f const & lhs, Vec3 const & rhs) {
+    operator * (Mat4f & lhs, Vec3 const & rhs) {
+        float x = rhs.getX();
+        float y = rhs.getY();
+        float z = rhs.getZ();
+        float w = 1;
+
         Vec3 vec;
 
-        vec.setX((lhs.m_data[0] * rhs.getX()) + (lhs.m_data[1] * rhs.getY()) + (lhs.m_data[2] * rhs.getZ()));
-        vec.setY((lhs.m_data[3] * rhs.getX()) + (lhs.m_data[4] * rhs.getY()) + (lhs.m_data[5] * rhs.getZ()));
-        vec.setZ((lhs.m_data[6] * rhs.getX()) + (lhs.m_data[7] * rhs.getY()) + (lhs.m_data[8] * rhs.getZ()));
-
+        vec.setX(lhs[0] * x + lhs[4] * y + lhs[8] * z + lhs[12] * w);
+        vec.setY(lhs[1] * x + lhs[5] * y + lhs[9] * z + lhs[13] * w);
+        vec.setZ(lhs[2] * x + lhs[6] * y + lhs[10] * z + lhs[14] * w);
         return vec;
     }
 

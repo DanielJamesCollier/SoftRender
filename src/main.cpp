@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
     Window window("SoftRender", x, y, w, h , false);
     RenderContext & rContext = window.getRenderContext();
     StarField starField(rContext, 0.00001f,.1);
-    RandTriangleField triangleField(rContext);
 
     // test
     Maths::Mat4f matrix(true);
@@ -35,23 +34,18 @@ int main(int argc, char* argv[]) {
     std::cout << matrix << std::endl;
 
     // triangle verts
+   
     Maths::Vec3 v1(100, 100, 0);
     Maths::Vec3 v2(150, 0, 0);
     Maths::Vec3 v3(80, 300, 0);
-
-    v1 = matrix * v1;
-    v2 = matrix * v2;
-    v3 = matrix * v3;
-
-    std::cout << v1 << std::endl;
-    std::cout << v2 << std::endl;
-    std::cout << v3 << std::endl;
 
     auto frames = 0;
     bool running = true;
     constexpr milliseconds timestep(16);
     auto begin = system_clock::now();
     auto second = system_clock::now();
+
+    float temp = 0.0001f;
     while(running) {
         window.eventLoop(running); // check to see if the window was closed  
         
@@ -63,8 +57,11 @@ int main(int argc, char* argv[]) {
 
         while(duration_cast<milliseconds>(frameTime) > milliseconds(0)) {
             starField.update(16); // needs fixing
-            triangleField.update(16);
             frameTime -= timestep;
+            Maths::translate(matrix, Maths::Vec3(temp, 0, 0));
+            v1  = matrix * v1;
+            v2  = matrix * v2;
+            v3  = matrix * v3;
         }
 
         if(duration_cast<milliseconds>(current - second) > milliseconds(1000)) {
@@ -75,8 +72,6 @@ int main(int argc, char* argv[]) {
 
         rContext.fillTriangle(v3, v2, v1);
 
-        triangleField.render();
-       
         starField.render();
         window.swapBackBuffer();
     }
