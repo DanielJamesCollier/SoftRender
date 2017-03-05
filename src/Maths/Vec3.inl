@@ -4,110 +4,110 @@ namespace Maths {
 //------------------------------------------------------------
 inline Vec3
 operator += (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs + rhs.m_data[0], lhs + rhs.m_data[1], lhs + rhs.m_data[2]);
+    return Vec3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator -= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs - rhs.m_data[0], lhs - rhs.m_data[1], lhs - rhs.m_data[2]);
+    return Vec3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator *= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs * rhs.m_data[0], lhs * rhs.m_data[1], lhs * rhs.m_data[2]);
+    return Vec3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator /= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs / rhs.m_data[0], lhs / rhs.m_data[1], lhs / rhs.m_data[2]);
+    return Vec3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator + (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs + rhs.m_data[0], lhs + rhs.m_data[1], lhs + rhs.m_data[2]);
+    return Vec3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator - (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs - rhs.m_data[0], lhs - rhs.m_data[1], lhs - rhs.m_data[2]);
+    return Vec3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator * (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs * rhs.m_data[0], lhs * rhs.m_data[1], lhs * rhs.m_data[2]);
+    return Vec3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator / (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs / rhs.m_data[0], lhs / rhs.m_data[1], lhs / rhs.m_data[2]);
+    return Vec3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator + (Vec3 const & lhs, float rhs) {
-    return Vec3(lhs.m_data[0] + rhs, lhs.m_data[1] + rhs, lhs.m_data[2] + rhs);
+    return Vec3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator - (Vec3 const & lhs, float rhs) {
-    return Vec3(lhs.m_data[0] - rhs, lhs.m_data[1] - rhs, lhs.m_data[2] - rhs);
+    return Vec3(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator * (Vec3 const & lhs, float rhs){
-    return Vec3(lhs.m_data[0] * rhs, lhs.m_data[1] * rhs, lhs.m_data[2] * rhs);
+    return Vec3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator / (Vec3 const & lhs, float rhs) {
-    return Vec3(lhs.m_data[0] / rhs, lhs.m_data[1] / rhs, lhs.m_data[2] / rhs);
+    return Vec3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator + (Vec3 const & lhs, Vec3 const & rhs) {
-    return Vec3(lhs.m_data[0] + rhs.m_data[0], lhs.m_data[1] + rhs.m_data[1], lhs.m_data[2] + rhs.m_data[2]);
+    return Vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator - (Vec3 const & lhs, Vec3 const & rhs) {
-    return Vec3(lhs.m_data[0] - rhs.m_data[0], lhs.m_data[1] - rhs.m_data[1], lhs.m_data[2] - rhs.m_data[2]);
+    return Vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator * (Vec3 const & lhs, Vec3 const & rhs) {
-        return Vec3(lhs.m_data[0] * rhs.m_data[0], lhs.m_data[1] * rhs.m_data[1], lhs.m_data[2] * rhs.m_data[2]);
+        return Vec3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 operator / (Vec3 const & lhs, Vec3 const & rhs) {
-        return Vec3(lhs.m_data[0] / rhs.m_data[0], lhs.m_data[1] / rhs.m_data[1], lhs.m_data[2] / rhs.m_data[2]);
+        return Vec3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z);
 }
 
 /* free function versions of member functions */
 //------------------------------------------------------------
 inline float
 length(Vec3 const & vec) {
-    return std::sqrt(vec.m_data[0] * vec.m_data[0] + vec.m_data[1] * vec.m_data[1] + vec.m_data[2] * vec.m_data[2]);
+    return std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
 //------------------------------------------------------------
 inline float
 length2(Vec3 const & vec) {
-    return vec.m_data[0] * vec.m_data[0] + vec.m_data[1] * vec.m_data[1] + vec.m_data[2] * vec.m_data[2];
+    return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
 }
 
 //------------------------------------------------------------
@@ -131,28 +131,28 @@ distance(Vec3 const & lhs, Vec3 const & rhs) {
 inline Vec3
 normalise(Vec3 const & vec) {
     float len = length(vec);
-    return Vec3(vec.m_data[0] / len, vec.m_data[1] / len, vec.m_data[2] / len);
+    return Vec3(vec.x / len, vec.y / len, vec.z / len);
 }
 
 //------------------------------------------------------------
 inline float
 dot(Vec3 const & lhs, Vec3 const & rhs) {
-    return (lhs.m_data[0] * rhs.m_data[0] + lhs.m_data[1] * rhs.m_data[1] + lhs.m_data[2] * rhs.m_data[2]);
+    return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
 }
 
 //------------------------------------------------------------
 inline Vec3
 cross(Vec3 const & lhs, Vec3 const & rhs) {
-    auto x = (lhs.m_data[1] * rhs.m_data[2]) - (lhs.m_data[2] * rhs.m_data[1]);
-    auto y = (lhs.m_data[2] * rhs.m_data[0]) - (lhs.m_data[0] * rhs.m_data[2]);
-    auto z = (lhs.m_data[0] * rhs.m_data[1]) - (lhs.m_data[1] * rhs.m_data[0]);
+    auto x = (lhs.y * rhs.z) - (lhs.z * rhs.y);
+    auto y = (lhs.z * rhs.x) - (lhs.x * rhs.z);
+    auto z = (lhs.x * rhs.y) - (lhs.y * rhs.x);
     return Vec3(x,y,z);
 }
 
 //------------------------------------------------------------
 inline std::ostream &
 operator << (std::ostream & lhs, Vec3 const & rhs) {
-    lhs << "Vec3([x:" << rhs.m_data[0] << "], [y: " << rhs.m_data[1] << "], [z: " << rhs.m_data[2] << "])\n";
+    lhs << "Vec3([x:" << rhs.x << "], [y: " << rhs.y << "], [z: " << rhs.z << "])\n";
     return lhs; 
 }
 

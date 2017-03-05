@@ -8,19 +8,9 @@ namespace Maths {
 
 class Vec3 final {
 public:
-    explicit Vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f);
+    explicit Vec3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
     ~Vec3() = default;
     
-    // getters
-    float getX() const;
-    float getY() const;
-    float getZ() const;
-
-    // setters
-    void setX(float x);
-    void setY(float y);
-    void setZ(float z);
-
     // vector exlusive operations
     float length() const;
     float length2() const;
@@ -85,8 +75,8 @@ public:
 
     friend std::ostream & operator << (std::ostream & lhs, Vec3 const & rhs);
 
-private:
-    float m_data[3];
+//public
+    float x, y, z;
 };
 
 } /* namespace Maths */

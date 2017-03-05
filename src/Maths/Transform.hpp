@@ -44,23 +44,23 @@ createIdentityMatrix() {
 inline Mat4f 
 createModelMatrix(Vec3 const & position, Vec3 const & rotation, Vec3 const & scale) {
     Mat4f translationMat = createIdentityMatrix();
-    translationMat[12] = position.getX();
-    translationMat[13] = position.getY();
-    translationMat[14] = position.getZ();
+    translationMat[12] = position.x;
+    translationMat[13] = position.y;
+    translationMat[14] = position.z;
 
     Mat4f rotX = createIdentityMatrix();
-    setRotationX(rotX, rotation.getX());
+    setRotationX(rotX, rotation.x);
     Mat4f rotY = createIdentityMatrix();
-    setRotationY(rotY, rotation.getY());
+    setRotationY(rotY, rotation.y);
     Mat4f rotZ = createIdentityMatrix();
-    setRotationZ(rotZ, rotation.getZ());
+    setRotationZ(rotZ, rotation.z);
 
     Mat4f rotationMat(rotZ * rotY * rotX);
 
     Mat4f scaleMat;
-    scaleMat[0]  = scale.getX();
-    scaleMat[5]  = scale.getY();
-    scaleMat[10] = scale.getZ();
+    scaleMat[0]  = scale.x;
+    scaleMat[5]  = scale.y;
+    scaleMat[10] = scale.z;
     scaleMat[15] = 1;
 
     return translationMat * rotationMat * scaleMat;
@@ -70,9 +70,9 @@ createModelMatrix(Vec3 const & position, Vec3 const & rotation, Vec3 const & sca
 inline Mat4f
 createTranslationMatrix(Vec3 const & position) {
     Mat4f translation = createIdentityMatrix();
-    translation[12] = position.getX();
-    translation[13] = position.getY();
-    translation[14] = position.getZ();
+    translation[12] = position.x;
+    translation[13] = position.y;
+    translation[14] = position.z;
     return translation;
 }
 
@@ -80,25 +80,21 @@ createTranslationMatrix(Vec3 const & position) {
 inline Mat4f
 createRotationMatrix(Vec3 const & rotation) {
     Mat4f rotX = createIdentityMatrix(); // cleanup : make code inline
-    setRotationX(rotX, rotation.getX());
+    setRotationX(rotX, rotation.x);
     Mat4f rotY = createIdentityMatrix();
-    setRotationY(rotY, rotation.getY());
+    setRotationY(rotY, rotation.y);
     Mat4f rotZ = createIdentityMatrix();
-    setRotationZ(rotZ, rotation.getZ());
-
-    Mat4f rot = rotZ * rotY * rotX; 
-    //Mat4f rot = rotX * rotY * rotZ; 
-
-    return rot;
+    setRotationZ(rotZ, rotation.z);
+    return rotZ * rotY * rotX;
 }
 
 //------------------------------------------------------------
 inline Mat4f
 createScaleMatrix(Vec3 const & scale) {
     Mat4f scaleMat;
-    scaleMat[0]  = scale.getX();
-    scaleMat[5]  = scale.getY();
-    scaleMat[10] = scale.getZ();
+    scaleMat[0]  = scale.x;
+    scaleMat[5]  = scale.y;
+    scaleMat[10] = scale.z;
     scaleMat[15] = 1;
     return scaleMat;
 }
@@ -127,9 +123,9 @@ setIdentity(Mat4f & matrix) {
 //------------------------------------------------------------
 inline void
 setTranslation(Mat4f & matrix, Vec3 const & position) {
-    matrix[12] = position.getX();
-    matrix[13] = position.getY();
-    matrix[14] = position.getZ();
+    matrix[12] = position.x;
+    matrix[13] = position.y;
+    matrix[14] = position.z;
 }
 
 //------------------------------------------------------------
@@ -168,9 +164,9 @@ setRotationZ(Mat4f & matrix, float angle) {
 //------------------------------------------------------------
 inline void 
 setScale(Mat4f & matrix, Vec3 const & scale) {
-    matrix[0]  = scale.getX();
-    matrix[5]  = scale.getY();
-    matrix[10] = scale.getZ();
+    matrix[0]  = scale.x;
+    matrix[5]  = scale.y;
+    matrix[10] = scale.z;
 }
 
 } /* namespace Maths */
