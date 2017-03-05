@@ -3,7 +3,6 @@
 
 // std
 #include <vector>
-#include <iostream>
 
 class Colour;
 
@@ -11,9 +10,7 @@ class Bitmap {
     using Buffer = std::vector<unsigned char>;
 public:
     Bitmap(int width, int height);
-    virtual ~Bitmap() {
-          std::cout << "bitmap dtor" << std::endl;    
-    }
+    virtual ~Bitmap() = default;
 
     unsigned char & operator [] (int index);
 
@@ -30,5 +27,4 @@ protected:
     int m_height;
     Buffer m_buffer;
 };
-
 #endif /* Bitmap_hpp */

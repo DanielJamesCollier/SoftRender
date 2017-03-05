@@ -2,14 +2,10 @@
 #define Window_hpp
 
 // std
-#include <fstream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 // my
-#include "Maths/Vec3.hpp"
-#include "Colour.hpp"
 #include "RenderContext.hpp"
 
 class SDL_Window;

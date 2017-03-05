@@ -1,10 +1,11 @@
+// std
+#include <iostream>
+
+// my
 #include "Input.hpp"
 #include "SDL.h"
 
-#include <cassert>
-#include <iostream>
-
-//---------------------------------------------------------
+//------------------------------------------------------------
 Input::Input() :
     m_controller(nullptr)
 ,   m_joystick(nullptr)
@@ -36,7 +37,7 @@ Input::~Input() {
       std::cout << "input dtor" << std::endl;    
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 bool
 Input::update() {
     bool running = true;
@@ -74,7 +75,7 @@ Input::update() {
     return running;
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 Input::addController() {
     if(nullptr == m_controller) {
@@ -110,7 +111,7 @@ Input::addController() {
     }
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void 
 Input::removeController() { // todo
     SDL_GameControllerClose(m_controller);
@@ -118,7 +119,7 @@ Input::removeController() { // todo
     std::cout << "removed" << std::endl;
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 Input::handleButton(int button, bool updown) {
     switch(button) {

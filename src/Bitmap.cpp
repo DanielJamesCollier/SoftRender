@@ -1,3 +1,7 @@
+// std
+#include <iostream>
+
+// my
 #include "Bitmap.hpp"
 #include "Colour.hpp"
 

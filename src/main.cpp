@@ -2,23 +2,18 @@
 #include <string>
 #include <chrono>
 
+// dependancies
+#include "SDL.h"
+
 // my
 #include "Window.hpp"
 #include "RenderContext.hpp"
-#include "Colour.hpp"
-#include "Bitmap.hpp"
 #include "StarField.hpp"
 #include "Input.hpp"
-
 #include "Maths/Maths.hpp"
 #include "Vertex.hpp"
 
-#include "SDL.h"
-// seems to crash when triangle is outside of window when program closed
-// seems to crash when the triangle and or vertex is behind the camera
-
-// translation doesnt seem to work 
-
+//------------------------------------------------------------
 int main(int argc, char* argv[]) {
     // using
     using std::chrono::system_clock;
@@ -56,7 +51,7 @@ int main(int argc, char* argv[]) {
     float z = -3.0f;
 
     // matricies
-    Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(0, 0, z)); 
+    Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
     Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0,0,0));
     Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1, 1, 1));
     Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(80.0f), 0.01f, 1000.0f, (float)width / (float)height);
@@ -66,7 +61,6 @@ int main(int argc, char* argv[]) {
     float temp = 0.0001f;
     float rot = 0;
     //..
-
 
     while(true) {
         if(!input.update()) {
@@ -121,6 +115,5 @@ int main(int argc, char* argv[]) {
         }
         window.swapBackBuffer();
     }
-  
     return 0;
 }

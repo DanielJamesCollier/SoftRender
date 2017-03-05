@@ -7,7 +7,7 @@
 #include <iostream>
 #include <utility>
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
     Bitmap(width, height)
 {
@@ -16,14 +16,14 @@ RenderContext::RenderContext(int width, int height) :
     std::cout << "RenderContext ctor" << std::endl;  
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 RenderContext::drawScanBuffer(int y, int xMin, int xMax) {
     m_scanBuffer[y * 2 + 0] = xMin; // todo : array bounds check ?
     m_scanBuffer[y * 2 + 1] = xMax;
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 RenderContext::fillShape(int yMin, int yMax) {
     for(int j = yMin; j < yMax; j++) {
@@ -36,6 +36,7 @@ RenderContext::fillShape(int yMin, int yMax) {
     }
 }
 
+//------------------------------------------------------------
 void // fix : call this function when screen size changes
 RenderContext::updateContextSize(float width, float height) {
     m_width = width;
@@ -45,17 +46,13 @@ RenderContext::updateContextSize(float width, float height) {
     m_scanBuffer.resize(m_height * 2);
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
     // convert from (-1, 1) to (0, width) or (0, height)
     v1 = v1.transform(m_screenSpaceTransform).perspectiveDivide();
     v2 = v2.transform(m_screenSpaceTransform).perspectiveDivide();
-    v3 = v3.transform(m_screenSpaceTransform).perspectiveDivide();    // w should not be 1 when perspectiveDivide happens
-
-    // std::cout << "before " << v1.position << std::endl;
-    // std::cout << "after  " << v1.perspectiveDivide().position << std::endl;
-
+    v3 = v3.transform(m_screenSpaceTransform).perspectiveDivide();
 
     // sort the input vertices into the following
     // v1 = minY
@@ -90,7 +87,7 @@ RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
     fillShape(static_cast<int>(v1.position.y), static_cast<int>(v3.position.y)); // fix : this could be out of the window size
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 RenderContext::scanConvertTriangle(Maths::Vec4 const & minY,
                                    Maths::Vec4 const & midY,
@@ -101,7 +98,7 @@ RenderContext::scanConvertTriangle(Maths::Vec4 const & minY,
     scanConvertLine(midY, maxY, 1 - handedness);
 }
 
-//---------------------------------------------------------
+//------------------------------------------------------------
 void
 RenderContext::scanConvertLine(Maths::Vec4 const & minY, Maths::Vec4 const & maxY, int handedness) {
     int yBegin = static_cast<int>(minY.y);

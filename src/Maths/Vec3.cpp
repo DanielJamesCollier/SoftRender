@@ -1,4 +1,8 @@
+// my
 #include "Vec3.hpp"
+
+// std
+#include <cmath>
 
 namespace Maths {
 

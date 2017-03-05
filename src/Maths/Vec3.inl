@@ -1,3 +1,5 @@
+namespace Maths {
+
 /* free function operators - (scalar [operator] Vec3) */
 //------------------------------------------------------------
 inline Vec3
@@ -153,3 +155,5 @@ operator << (std::ostream & lhs, Vec3 const & rhs) {
     lhs << "Vec3([x:" << rhs.m_data[0] << "], [y: " << rhs.m_data[1] << "], [z: " << rhs.m_data[2] << "])\n";
     return lhs; 
 }
+
+} /* namespace Maths */

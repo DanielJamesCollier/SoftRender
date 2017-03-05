@@ -1,3 +1,7 @@
+// std
+#include <iostream>
+
+// my
 #include "Window.hpp"
 #include "SDL.h"
 
@@ -11,7 +15,6 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
 ,   m_rContext(width, height)
 {
     // init SDL and create window
-    //---------------------------------------------------------
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         exit(-1);
@@ -28,9 +31,9 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
         SDL_Quit();
         exit(-1);
     }
+    //..
 
     // create renderer
-    //---------------------------------------------------------
     int rendererFlags = SDL_RENDERER_ACCELERATED;
 
     if(vSync) {
@@ -45,9 +48,9 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
         SDL_Quit();
         exit(-1);
     }
+    //..
 
     // create render buffer
-    //---------------------------------------------------------
     m_renderTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
 
     if(m_renderTexture == nullptr) {
@@ -57,13 +60,14 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
         SDL_Quit();
         exit(-1);
     }
+    //..
 
     // clear the buffer to black
-    //---------------------------------------------------------
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(m_renderer);
     SDL_RenderPresent(m_renderer);
     SDL_GL_SetSwapInterval(static_cast<int>(vSync));
+    //..
 }
 
 //------------------------------------------------------------

@@ -1,12 +1,11 @@
-// c
-#include <cstdlib>
-#include <iostream>
+// std
 #include <cmath>
 
 // my
 #include "RenderContext.hpp"
 #include "StarField.hpp"
 #include "Colour.hpp"
+#include "Maths/Maths.hpp"
 
 //------------------------------------------------------------
 StarField::StarField(RenderContext & renderContext, float speed, float spread) :
@@ -43,11 +42,7 @@ StarField::render() {
     float halfWidth = m_rContext.getWidth() / 2.0f;
     float halfHeight = m_rContext.getHeight() / 2.0f;
 
-    auto toRadians = [&](float input) {
-        return 2 * 3.14159265359 * (input / 180); 
-    };
-
-    float tanHalfFOV = std::tan(toRadians(70.0f / 2.0f));
+    float tanHalfFOV = std::tan(Maths::toRadians(120.0f / 2.0f));
 
     for(int i = 0; i < m_stars.size(); i++) {
         int x = static_cast<int>(m_stars[i].getX() / (m_stars[i].getZ() * tanHalfFOV) * halfWidth + halfWidth);
@@ -64,11 +59,7 @@ StarField::render() {
 //------------------------------------------------------------
 void 
 StarField::initStar(int index) {
-    auto randF = []() -> float {
-        return (double)rand() / ((double)RAND_MAX + 1); // double to prevent overflow
-    };
-
-    m_stars[index].setX(2 * (randF() - 0.5f) * m_spread);
-    m_stars[index].setY(2 * (randF() - 0.5f) * m_spread);
-    m_stars[index].setZ(randF() + 0.0001f);
+    m_stars[index].setX(2 * (Maths::randFBetweenZeroOne() - 0.5f) * m_spread);
+    m_stars[index].setY(2 * (Maths::randFBetweenZeroOne() - 0.5f) * m_spread);
+    m_stars[index].setZ(Maths::randFBetweenZeroOne() + 0.0001f);
 }

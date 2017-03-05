@@ -3,11 +3,10 @@
 
 //std
 #include <vector>
-#include <iostream>
 
 // my
-#include "Vertex.hpp"
 #include "Bitmap.hpp" 
+#include "Vertex.hpp"
 #include "Maths/Mat4f.hpp"
 
 
