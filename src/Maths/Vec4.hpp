@@ -6,9 +6,13 @@
 
 namespace Maths {
 
-class Vec4 final {
+class Vec3;
+
+class Vec4 final {    
 public:
-    explicit Vec4(float _x = 0, float _y = 0, float _z = 0, float _w = 0);
+    Vec4(float xyz = 0.0f);
+    Vec4(float _x, float _y, float _z, float _w);
+    Vec4(Vec3 const & vec, float w);
     
     // todo
     // float length() const;

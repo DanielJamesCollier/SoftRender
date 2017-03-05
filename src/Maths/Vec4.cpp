@@ -1,7 +1,18 @@
 // my
 #include "Vec4.hpp"
+#include "Vec3.hpp"
 
 namespace Maths {
+
+//------------------------------------------------------------
+Vec4::Vec4(float xyz) :
+    x(xyz)
+,   y(xyz)
+,   z(xyz)
+,   w(xyz)
+{
+    // empty
+}
 
 //------------------------------------------------------------
 Vec4::Vec4(float _x, float _y, float _z, float _w) :
@@ -10,7 +21,17 @@ Vec4::Vec4(float _x, float _y, float _z, float _w) :
 ,   z(_z)
 ,   w(_w)
 {
-    // empty;
+    // empty
+}
+
+//------------------------------------------------------------
+Vec4::Vec4(Vec3 const & vec, float _w) :
+    x(vec.x)
+,   y(vec.y)
+,   z(vec.z)
+,   w(_w)
+{
+
 }
 
 //------------------------------------------------------------

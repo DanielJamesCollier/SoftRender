@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 
     // matricies
     Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-    Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0,0,0));
-    Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1, 1, 1));
+    Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0.0f));
+    Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1.0f));
     Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(80.0f), 0.01f, 1000.0f, (float)width / (float)height);
     //..
 

@@ -8,7 +8,8 @@ namespace Maths {
 
 class Vec3 final {
 public:
-    explicit Vec3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f);
+    explicit Vec3(float xyz = 0.0f);
+    Vec3(float _x , float _y, float _z);
     ~Vec3() = default;
     
     // vector exlusive operations
