@@ -1,6 +1,8 @@
 // my
 #include "RenderContext.hpp"
 #include "Colour.hpp"
+#include "Maths/Transform.hpp"
+
 // std
 #include <iostream>
 #include <utility>
@@ -10,12 +12,14 @@ RenderContext::RenderContext(int width, int height) :
     Bitmap(width, height)
 {
     m_scanBuffer.resize(height * 2);
+    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
+    std::cout << "RenderContext ctor" << std::endl;  
 }
 
 //---------------------------------------------------------
 void
 RenderContext::drawScanBuffer(int y, int xMin, int xMax) {
-    m_scanBuffer[y * 2 + 0] = xMin;
+    m_scanBuffer[y * 2 + 0] = xMin; // todo : array bounds check ?
     m_scanBuffer[y * 2 + 1] = xMax;
 }
 
@@ -23,56 +27,74 @@ RenderContext::drawScanBuffer(int y, int xMin, int xMax) {
 void
 RenderContext::fillShape(int yMin, int yMax) {
     for(int j = yMin; j < yMax; j++) {
-        int xMin = m_scanBuffer[j * 2 + 0];
+        int xMin = m_scanBuffer[j * 2 + 0]; // todo : array bounds check ??
         int xMax = m_scanBuffer[j * 2 + 1];
             
         for(int i = xMin; i < xMax; i++) {
-            setPixel(i, j, Colour(255, 0, 0));
+            setPixel(i, j, Colour(255, 0, 0)); // fix : this could be out of the window size - do -1 - 1 scaling before looking athis
         }
     }
 }
 
+void // fix : call this function when screen size changes
+RenderContext::updateContextSize(float width, float height) {
+    m_width = width;
+    m_height = height;
+    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
+    m_buffer.resize(m_width * m_height * 4);
+    m_scanBuffer.resize(m_height * 2);
+}
+
 //---------------------------------------------------------
 void
-RenderContext::fillTriangle(Maths::Vec3 v1, Maths::Vec3 v2, Maths::Vec3 v3) {
+RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
+    // convert from (-1, 1) to (0, width) or (0, height)
+    v1 = v1.transform(m_screenSpaceTransform).perspectiveDivide();
+    v2 = v2.transform(m_screenSpaceTransform).perspectiveDivide();
+    v3 = v3.transform(m_screenSpaceTransform).perspectiveDivide();    // w should not be 1 when perspectiveDivide happens
+
+    // std::cout << "before " << v1.position << std::endl;
+    // std::cout << "after  " << v1.perspectiveDivide().position << std::endl;
+
+
     // sort the input vertices into the following
     // v1 = minY
     // v2 = midY
     // v3 = maxY
 
-    if(v3.getY() < v2.getY()) {
+    if(v3.position.y < v2.position.y) {
         std::swap(v3, v2);
     }
 
-    if(v2.getY() < v1.getY()) {
+    if(v2.position.y < v1.position.y) {
         std::swap(v2, v1);
     }
 
-    if(v3.getY() < v2.getY()) {
+    if(v3.position.y < v2.position.y) {
         std::swap(v3, v2);
     }
 
     auto triangleAreaTimesTwo = [&]() -> float {
-        float x1 = v3.getX() - v1.getX();
-        float y1 = v3.getY() - v1.getY();
-        float x2 = v2.getX() - v1.getX();
-        float y2 = v2.getY() - v1.getY();
+        float x1 = v3.position.x - v1.position.x;
+        float y1 = v3.position.y - v1.position.y;
+        float x2 = v2.position.x - v1.position.x;
+        float y2 = v2.position.y - v1.position.y;
         return (x1 * y2 - x2 * y1);
     };
 
     float area = triangleAreaTimesTwo();
 
     int handedness = area >= 0 ? 1 : 0;
-
-    scanConvertTriangle(v1, v2, v3, handedness);
-    fillShape(static_cast<int>(v1.getY()), static_cast<int>(v3.getY()));
+    
+    scanConvertTriangle(v1.position, v2.position, v3.position, handedness);
+    fillShape(static_cast<int>(v1.position.y), static_cast<int>(v3.position.y)); // fix : this could be out of the window size
 }
 
 //---------------------------------------------------------
 void
-RenderContext::scanConvertTriangle(Maths::Vec3 const & minY,
-                                   Maths::Vec3 const & midY,
-                                   Maths::Vec3 const & maxY,
+RenderContext::scanConvertTriangle(Maths::Vec4 const & minY,
+                                   Maths::Vec4 const & midY,
+                                   Maths::Vec4 const & maxY,
                                    int handedness) {
     scanConvertLine(minY, maxY, 0 + handedness);
     scanConvertLine(minY, midY, 1 - handedness);
@@ -81,22 +103,22 @@ RenderContext::scanConvertTriangle(Maths::Vec3 const & minY,
 
 //---------------------------------------------------------
 void
-RenderContext::scanConvertLine(Maths::Vec3 const & minY, Maths::Vec3 const & maxY, int handedness) {
-    int yBegin = static_cast<int>(minY.getY());
-    int yEnd = static_cast<int>(maxY.getY());
+RenderContext::scanConvertLine(Maths::Vec4 const & minY, Maths::Vec4 const & maxY, int handedness) {
+    int yBegin = static_cast<int>(minY.y);
+    int yEnd = static_cast<int>(maxY.y);
     int yDistance = yEnd - yBegin;
 
     if(yDistance <= 0) return;
 
-    int xBegin = static_cast<int>(minY.getX());
-    int xEnd = static_cast<int>(maxY.getX());
+    int xBegin = static_cast<int>(minY.x);
+    int xEnd = static_cast<int>(maxY.x);
     int xDistance = xEnd - xBegin;
 
     float stepX = static_cast<float>(xDistance) / static_cast<float>(yDistance); 
     float currentX = xBegin;
 
     for (int y = yBegin; y < yEnd; y++) {
-        m_scanBuffer[y * 2 + handedness] = static_cast<int>(currentX);
+        m_scanBuffer[y * 2 + handedness] = static_cast<int>(currentX); // todo : array bounds check ?
         currentX += stepX;
     }
 }

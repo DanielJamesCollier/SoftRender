@@ -4,7 +4,7 @@
 call variables.bat
 
 :: initialise bo.bat specific build variables 
-SET bCompilerFlags=%compilerFlags%
+SET bCompilerFlags=/DEBUG %compilerFlags%
 
 echo:
 echo:

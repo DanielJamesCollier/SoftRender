@@ -2,7 +2,7 @@
 #include "SDL.h"
 
 //------------------------------------------------------------
-Window::Window(std::string const & title, int x, int y, int width, int height, bool vSync) :
+Window::Window(std::string const & title, int x, int y, int width, int height, bool vSync, bool fullscreen) :
     m_title(title)
 ,   m_x(x)
 ,   m_y(y)
@@ -13,24 +13,35 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     // init SDL and create window
     //---------------------------------------------------------
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         exit(-1);
     }
 
-    m_window = SDL_CreateWindow(title.c_str(), x, y, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
+    if(fullscreen) {
+        windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP; // if the bitmap is smaller than the window then it will be scaled
+    }
+
+    m_window = SDL_CreateWindow(title.c_str(), x, y, width, height, windowFlags);
     if (m_window == nullptr) {
-        std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         exit(-1);
     }
 
     // create renderer
     //---------------------------------------------------------
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    int rendererFlags = SDL_RENDERER_ACCELERATED;
+
+    if(vSync) {
+        rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
+    }
+
+    m_renderer = SDL_CreateRenderer(m_window, -1, rendererFlags);
 
     if (m_renderer == nullptr) {
         SDL_DestroyWindow(m_window);
-        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         exit(-1);
     }
@@ -42,7 +53,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     if(m_renderTexture == nullptr) {
         SDL_DestroyRenderer(m_renderer);
         SDL_DestroyWindow(m_window);
-        std::cout << "Render Buffer Could not be created" << std::endl;
+        std::cerr << "Render Buffer Could not be created" << std::endl;
         SDL_Quit();
         exit(-1);
     }
@@ -59,7 +70,8 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
 Window::~Window() {
     SDL_DestroyTexture(m_renderTexture);
     SDL_DestroyRenderer(m_renderer);
-    SDL_DestroyWindow(m_window);
+    SDL_DestroyWindow(m_window);    
+    std::cout << "Window dtor" << std::endl;    
 }
 
 //------------------------------------------------------------
@@ -70,18 +82,8 @@ Window::getRenderContext() {
 
 //------------------------------------------------------------
 void 
-Window::eventLoop(bool & running) {
-    /* Check for new events */
-    while(SDL_PollEvent(&m_event))
-    {
-        /* If a quit event has been sent */
-        if (m_event.type == SDL_QUIT)
-        {
-            /* Quit the application */
-            running = false;
-            SDL_Quit();
-        }
-    }
+Window::clear() { 
+    m_rContext.clear();
 }
 
 //------------------------------------------------------------
@@ -90,5 +92,4 @@ Window::swapBackBuffer() {
     SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * 4);
     SDL_RenderCopy(m_renderer, m_renderTexture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
-    m_rContext.clear();
 }

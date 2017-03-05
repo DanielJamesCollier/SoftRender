@@ -6,7 +6,8 @@ Bitmap::Bitmap(int width, int height) :
     m_width(width)
 ,   m_height(height)
 {
-    m_buffer.reserve(width * height * 4);
+    m_buffer.resize(width * height * 4);
+    std::cout << "Bitmap ctor" << std::endl;  
 }
 
 //------------------------------------------------------------
@@ -28,12 +29,6 @@ Bitmap::getHeight() const {
 }
 
 //------------------------------------------------------------
-int 
-Bitmap::getComponents() const {
-    return 4;
-}
-
-//------------------------------------------------------------
 Bitmap::Buffer & 
 Bitmap::getBuffer() {
     return m_buffer;
@@ -42,7 +37,10 @@ Bitmap::getBuffer() {
 //------------------------------------------------------------
 void 
 Bitmap::setPixel(int x, int y, Colour const & colour) {
-    int index = (m_width * y + x) * getComponents();
+    int index = (m_width * y + x) * 4;
+
+    if(x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1) return; // cleanup - probably should never be called - this could be an assert
+
     m_buffer[index + 0] = colour.getB();
     m_buffer[index + 1] = colour.getG();
     m_buffer[index + 2] = colour.getR();
@@ -52,7 +50,5 @@ Bitmap::setPixel(int x, int y, Colour const & colour) {
 //------------------------------------------------------------
 void 
 Bitmap::clear() {
-    for(int i = 0; i < m_width * m_height * 4; i++) {
-        m_buffer[i] = 0;
-    }
+   std::fill(std::begin(m_buffer), std::end(m_buffer), 0);
 }

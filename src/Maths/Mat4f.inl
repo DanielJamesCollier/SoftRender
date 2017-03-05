@@ -1,133 +1,99 @@
-// matrix create functions return a new matrix
-//--------------------------------------------------------------
+#include <cmath>
+#include <iostream>
+
 namespace Maths {
-    inline Mat4f 
-    createProjectionMatrix(float fov) {
-        return Mat4f(true); //todo
+    
+    //------------------------------------------------------------
+    inline Mat4f
+    operator * (Mat4f & lhs, Mat4f & rhs) {
+        Mat4f matrix;
+
+        // transforms use column major
+        //-------------------- 
+        // [0]  [4]  [8]  [12] 
+        // [1]  [5]  [9]  [13] 
+        // [2]  [6]  [10] [14]
+        // [3]  [7]  [11] [15]
+        //---------------------
+
+        // C = A * B
+
+        // C = matrix
+        // A = lhs
+        // B = rhs
+        
+
+        /* first row */
+        //C[0]
+        matrix[0]  = (lhs[0] * rhs[0])  + (lhs[4] * rhs[1])  + (lhs[8] * rhs[2])  + (lhs[12] * rhs[3]);
+        matrix[4]  = (lhs[0] * rhs[4])  + (lhs[4] * rhs[5])  + (lhs[8] * rhs[6])  + (lhs[12] * rhs[7]);
+        matrix[8]  = (lhs[0] * rhs[8])  + (lhs[4] * rhs[9])  + (lhs[8] * rhs[10]) + (lhs[12] * rhs[11]);
+        matrix[12] = (lhs[0] * rhs[12]) + (lhs[4] * rhs[13]) + (lhs[8] * rhs[14]) + (lhs[12] * rhs[15]);
+
+        /* second row */
+        matrix[1]  = (lhs[1] * rhs[0])  + (lhs[5] * rhs[1])  + (lhs[9] * rhs[2])  + (lhs[13] * rhs[3]);
+        matrix[5]  = (lhs[1] * rhs[4])  + (lhs[5] * rhs[5])  + (lhs[9] * rhs[6])  + (lhs[13] * rhs[7]);
+        matrix[6]  = (lhs[1] * rhs[8])  + (lhs[5] * rhs[9])  + (lhs[9] * rhs[10]) + (lhs[13] * rhs[11]);
+        matrix[13] = (lhs[1] * rhs[12]) + (lhs[5] * rhs[13]) + (lhs[9] * rhs[14]) + (lhs[13] * rhs[15]);
+
+        /* third row */
+        matrix[2]  = (lhs[2] * rhs[0])  + (lhs[6] * rhs[1])  + (lhs[10] * rhs[2])  + (lhs[14] * rhs[3]);
+        matrix[6]  = (lhs[2] * rhs[4])  + (lhs[6] * rhs[5])  + (lhs[10] * rhs[6])  + (lhs[14] * rhs[7]);
+        matrix[10] = (lhs[2] * rhs[8])  + (lhs[6] * rhs[9])  + (lhs[10] * rhs[10]) + (lhs[14] * rhs[11]);
+        matrix[14] = (lhs[2] * rhs[12]) + (lhs[6] * rhs[13]) + (lhs[10] * rhs[14]) + (lhs[14] * rhs[15]);
+
+        /* second row */
+        matrix[3]  = (lhs[3] * rhs[0])  + (lhs[7] * rhs[1])  + (lhs[11] * rhs[2])  + (lhs[15] * rhs[3]);
+        matrix[7]  = (lhs[3] * rhs[4])  + (lhs[7] * rhs[5])  + (lhs[11] * rhs[6])  + (lhs[15] * rhs[7]);
+        matrix[11] = (lhs[3] * rhs[8])  + (lhs[7] * rhs[9])  + (lhs[11] * rhs[10]) + (lhs[15] * rhs[11]);
+        matrix[15] = (lhs[3] * rhs[12]) + (lhs[7] * rhs[13]) + (lhs[11] * rhs[14]) + (lhs[15] * rhs[15]);
+        return matrix;
     }
 
-    inline Mat4f 
-    createModelMatrix(Vec3 const & position, Vec3 const & rotation, Vec3 const & scale) {
-        Mat4f translationMat(true);
-        translationMat[12] = position.getX();
-        translationMat[13] = position.getY();
-        translationMat[14] = position.getZ();
+     //------------------------------------------------------------
+     inline Vec3 operator * (Mat4f & lhs, Vec3 const & rhs) {
+        float x = rhs.getX();
+        float y = rhs.getY();
+        float z = rhs.getZ();
+        float w = 1;
+        Vec3 vec;
+        vec.setX(lhs[0] * x + lhs[4] * y + lhs[8] * z + lhs[12] * w);
+        vec.setY(lhs[1] * x + lhs[5] * y + lhs[9] * z + lhs[13] * w);
+        vec.setZ(lhs[2] * x + lhs[6] * y + lhs[10] * z + lhs[14] * w);
+        return vec;
+     }
 
-        Mat4f rotX(true);
-        setRotationX(rotX, rotation.getX());
-        Mat4f rotY(true);
-        setRotationY(rotY, rotation.getY());
-        Mat4f rotZ(true);
-        setRotationZ(rotZ, rotation.getZ());
+     // needs private acces to matrix
+    //------------------------------------------------------------
+    inline Vec4 operator * (Mat4f & lhs, Vec4 const & rhs) {
+        float x = rhs.x;
+        float y = rhs.y;
+        float z = rhs.z;
+        float w = rhs.w;
 
-        Mat4f rotationMat(rotZ * rotY * rotX);
+        Vec4 vec;
+        vec.x = lhs[0] * x + lhs[4] * y + lhs[8]  * z + lhs[12] * w;
+        vec.y = lhs[1] * x + lhs[5] * y + lhs[9]  * z + lhs[13] * w;
+        vec.z = lhs[2] * x + lhs[6] * y + lhs[10] * z + lhs[14] * w;
+        vec.w = lhs[3] * x + lhs[7] * y + lhs[11] * z + lhs[15] * w;
+        return vec;
+     }
 
-        Mat4f scaleMat(true);
-        scaleMat[0]  = scale.getX();
-        scaleMat[5]  = scale.getY();
-        scaleMat[10] = scale.getZ();
+    //------------------------------------------------------------
+    inline std::ostream &
+    operator << (std::ostream & lhs, Mat4f const & rhs) {
+        
+        auto offset = [](int x, int y) {
+            return 4 * x + y;
+        };
 
-        return translationMat * rotationMat * scaleMat;
-    }
-
-        // opperates on existing matrices by =
-    //--------------------------------------------------------------
-
-    inline void 
-    setIdentity(Mat4f & matrix) {
-        matrix[0]  = 1;  matrix[1]  = 0;  matrix[2]  = 0;  matrix[3]  = 0;
-        matrix[4]  = 0;  matrix[5]  = 1;  matrix[6]  = 0;  matrix[7]  = 0;
-        matrix[8]  = 0;  matrix[9]  = 0;  matrix[10] = 1;  matrix[11] = 0;
-        matrix[12] = 0;  matrix[13] = 0;  matrix[14] = 0;  matrix[15] = 1;
-    }
-
-    inline void
-    setTranslation(Mat4f & matrix, Vec3 const & position) {
-        matrix[12] = position.getX();
-        matrix[13] = position.getY();
-        matrix[14] = position.getZ();
-    }
-
-    inline void
-    setRotationX(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[5]  =  cos;
-        matrix[6]  =  sin;
-        matrix[9]  = -sin;
-        matrix[10] =  cos;
-    }
-
-    inline void
-    setRotationY(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[0] =  cos;
-        matrix[2] = -sin;
-        matrix[8] =  sin;
-        matrix[8] =  cos;
-    }
-
-    inline void
-    setRotationZ(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[0] =  cos;
-        matrix[1] =  sin;
-        matrix[5] = -sin;
-        matrix[6] =  cos;
-    }
-
-    inline void 
-    setScale(Mat4f & matrix, Vec3 const & scale) {
-        matrix[0]  = scale.getX();
-        matrix[5]  = scale.getY();
-        matrix[10] = scale.getZ();
-    }
-
-    // opperates on existing matrices by +=
-    //--------------------------------------------------------------
-    inline void
-    translate(Mat4f & matrix, Vec3 const & position) {
-        matrix[12] += position.getX();
-        matrix[13] += position.getY();
-        matrix[14] += position.getZ();
-    }
-
-    inline void
-    rotateX(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[5]  +=  cos;
-        matrix[6]  +=  sin;
-        matrix[9]  += -sin;
-        matrix[10] +=  cos;
-    }
-
-    inline void
-    rotateY(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[0] +=  cos;
-        matrix[2] += -sin;
-        matrix[8] +=  sin;
-        matrix[8] +=  cos;
-    }
-
-    inline void
-    rotateZ(Mat4f & matrix, float angle) {
-        float sin = std::sin(angle);
-        float cos = std::cos(angle);
-        matrix[0] +=  cos;
-        matrix[1] +=  sin;
-        matrix[5] += -sin;
-        matrix[6] +=  cos;
-    }
-
-    inline void 
-    scale(Mat4f & matrix, Vec3 const & scale) {
-        matrix[0]  += scale.getX();
-        matrix[5]  += scale.getY();
-        matrix[10] += scale.getZ();
+        lhs << "Mat4f\n-----------------\n";
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                   lhs << "[" << rhs.m_data[offset(x,y)] << "] "; 
+            }
+            lhs << std::endl;
+        }
+        return lhs;
     }
 }
