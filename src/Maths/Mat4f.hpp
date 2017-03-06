@@ -34,7 +34,7 @@ public:
 
     // operator overloads
     //--------------------------------------------------------------
-    friend Mat4f operator * (Mat4f & lhs, Mat4f & rhs);
+    friend Mat4f operator * (Mat4f const & lhs, Mat4f const & rhs);
     friend std::ostream & operator << (std::ostream & lhs, Mat4f const & rhs);
 
     //--
@@ -43,6 +43,7 @@ public:
 
 private:
     float & operator [] (int index);
+    float const & operator [] (int index) const;
 
 private:
     float m_data[16];

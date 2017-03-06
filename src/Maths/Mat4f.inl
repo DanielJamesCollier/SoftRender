@@ -5,7 +5,7 @@ namespace Maths {
     
 //------------------------------------------------------------
 inline Mat4f
-operator * (Mat4f & lhs, Mat4f & rhs) {
+operator * (Mat4f const & lhs, Mat4f const & rhs) {
     Mat4f matrix;
 
     // transforms use column major
@@ -21,10 +21,8 @@ operator * (Mat4f & lhs, Mat4f & rhs) {
     // C = matrix
     // A = lhs
     // B = rhs
-    
 
     /* first row */
-    //C[0]
     matrix[0]  = (lhs[0] * rhs[0])  + (lhs[4] * rhs[1])  + (lhs[8] * rhs[2])  + (lhs[12] * rhs[3]);
     matrix[4]  = (lhs[0] * rhs[4])  + (lhs[4] * rhs[5])  + (lhs[8] * rhs[6])  + (lhs[12] * rhs[7]);
     matrix[8]  = (lhs[0] * rhs[8])  + (lhs[4] * rhs[9])  + (lhs[8] * rhs[10]) + (lhs[12] * rhs[11]);

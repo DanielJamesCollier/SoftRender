@@ -19,4 +19,10 @@ Mat4f::operator [] (int index) {
     return m_data[index];
 }
 
+//------------------------------------------------------------
+float const & 
+Mat4f::operator [] (int index) const {
+    return m_data[index];
+}
+
 } /* namespace Maths */

@@ -1,3 +1,5 @@
+#include <cmath>
+
 namespace Maths {
 
 /* free function operators - (scalar [operator] Vec3) */

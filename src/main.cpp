@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) {
     //..
 
     // window spec
-    bool vSync = true;
+    bool vSync = false;
     bool fullScreen = false;
-    int width = 500;
+    int width = 900;
     int height = width / 16 * 9;
     Window window("SoftRender", 10, 10, width, height, vSync, fullScreen);
     //..
