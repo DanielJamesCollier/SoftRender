@@ -16,15 +16,19 @@
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
     // using
-    using std::chrono::system_clock;
+    using clock = std::chrono::high_resolution_clock;
+    using std::chrono::nanoseconds;
     using std::chrono::milliseconds;
     using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using intMilliseconds = duration<uint64_t, milliseconds::period>;
+    using FpMilliseconds  = duration<float, milliseconds::period>;
     //..
 
     // window spec
-    bool vSync = false;
+    bool vSync = true;
     bool fullScreen = false;
-    int width = 900;
+    int width = 500;
     int height = width / 16 * 9;
     Window window("SoftRender", 10, 10, width, height, vSync, fullScreen);
     //..
@@ -42,9 +46,8 @@ int main(int argc, char* argv[]) {
     // game loop vars
     auto frames = 0;
     bool running = true;
-    constexpr milliseconds timestep(16);
-    auto begin = system_clock::now();
-    auto second = system_clock::now();
+    auto begin = clock::now();
+    auto second = clock::now();
     //..
 
     float x = 0.0f;
@@ -63,54 +66,49 @@ int main(int argc, char* argv[]) {
     //..
 
     while(true) {
-        if(!input.update()) {
-            break;
-        }
-        
+        if(!input.update()) break;
         frames++;
 
-        auto current = system_clock::now();
-        auto frameTime = current - begin;
-        begin = current;
+        auto current = clock::now();
+        float delta = FpMilliseconds(current - begin).count();
+        begin = clock::now();
 
-        while(duration_cast<milliseconds>(frameTime) > milliseconds(0)) {
-            starField.update(16); // todo : needs fixing : fix my timestep
-            
-            rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
-            //scale = Maths::createScaleMatrix(Maths::Vec3(temp, temp, temp));
-                    
-            frameTime -= timestep;
+        // update
+        starField.update(delta);
+        rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
+        temp+= .00001f * delta;
+        rot += 0.001f * delta;
+
+        if(input.isLeftDown()) {
+            x-= 0.001f * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+        } else if(input.isRightDown()) {
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+            x+= 0.001f  * delta;
+        } else if(input.isUpDown()) {
+            z += -0.001f  * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+        } else if(input.isDownDown()) {
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+            z += 0.001f * delta;
         }
 
-        temp+= .0001f;
-        rot += 0.01f;
+        Maths::Mat4f model = proj * translation * rotation * scale;
+        //..
+        
 
+        // every second call this
         if(duration_cast<milliseconds>(current - second) > milliseconds(1000)) {
-            std::cout << "FPS: " << frames << std::endl;
+            std::cout << "FPS: " << frames << "\n";
+            std::cout << delta << std::endl;
             frames = 0;
             second = current; 
         }
 
+        // render
         window.clear();
         {
             starField.render();
-
-            if(input.isLeftDown()) {
-                x-= 0.01f;
-                translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-            } else if(input.isRightDown()) {
-                translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-                x+= 0.01f;
-            } else if(input.isUpDown()) {
-                z += -0.01f;
-                translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-            } else if(input.isDownDown()) {
-                translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-                z += 0.01f;
-            }
-
-            Maths::Mat4f model = proj * translation * rotation * scale;
-
             rContext.fillTriangle(v1.transform(model), v2.transform(model), v3.transform(model));
         }
         window.swapBackBuffer();
