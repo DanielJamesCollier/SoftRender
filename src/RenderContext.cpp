@@ -6,6 +6,7 @@
 // std
 #include <iostream>
 #include <utility>
+#include <cmath>
 
 //------------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
@@ -84,7 +85,7 @@ RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
     int handedness = area >= 0 ? 1 : 0;
     
     scanConvertTriangle(v1.position, v2.position, v3.position, handedness);
-    fillShape(static_cast<int>(v1.position.y), static_cast<int>(v3.position.y)); // fix : this could be out of the window size
+    fillShape(static_cast<int>(std::ceil(v1.position.y)), static_cast<int>(std::ceil(v3.position.y))); // fix : this could be out of the window size
 }
 
 //------------------------------------------------------------
@@ -101,21 +102,22 @@ RenderContext::scanConvertTriangle(Maths::Vec4 const & minY,
 //------------------------------------------------------------
 void
 RenderContext::scanConvertLine(Maths::Vec4 const & minY, Maths::Vec4 const & maxY, int handedness) {
-    int yBegin = static_cast<int>(minY.y);
-    int yEnd = static_cast<int>(maxY.y);
-    int yDistance = yEnd - yBegin;
+    int yBegin      = static_cast<int>(std::ceil(minY.y));
+    int yEnd        = static_cast<int>(std::ceil(maxY.y));
+    float yDistance = maxY.y - minY.y;
 
     if(yDistance <= 0) return;
 
-    int xBegin = static_cast<int>(minY.x);
-    int xEnd = static_cast<int>(maxY.x);
-    int xDistance = xEnd - xBegin;
+    int xBegin      = static_cast<int>(std::ceil(minY.x));
+    int xEnd        = static_cast<int>(std::ceil(maxY.x));
+    float xDistance = maxY.x - minY.x;
 
-    float stepX = static_cast<float>(xDistance) / static_cast<float>(yDistance); 
-    float currentX = xBegin;
+    float stepX = xDistance / yDistance; 
+    float yPreset = yBegin -  minY.y;
+    float currentX =  minY.x + yPreset * stepX;
 
     for (int y = yBegin; y < yEnd; y++) {
-        m_scanBuffer[y * 2 + handedness] = static_cast<int>(currentX); // todo : array bounds check ?
+        m_scanBuffer[y * 2 + handedness] = static_cast<int>(std::ceil(currentX)); // todo : array bounds check ?
         currentX += stepX;
     }
 }
