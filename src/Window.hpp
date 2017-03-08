@@ -14,6 +14,7 @@ class SDL_Texture;
 
 class Window final {
 public:
+    // set x && y to -1 if you want window centred
     Window(std::string const & title, int x, int y, int width, int height, bool vSync, bool fullscreen);
     ~Window();
 

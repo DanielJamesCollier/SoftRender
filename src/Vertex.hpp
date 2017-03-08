@@ -14,9 +14,18 @@ public:
 
     Vertex transform(Maths::Mat4f & matrix);
 
+    // helper funcs
+    float getX() {
+        return position.x;
+    }
+
+    float getY() {
+        return position.y;
+    }
+
 private:
     Vertex perspectiveDivide(); // called from render context : todo : no real need to create a whole new Vertex
-
+    float triangleAreaTimesTwo(Vertex const & b, Vertex const & c);
 public:
     Maths::Vec4 position;
 };

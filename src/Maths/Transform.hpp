@@ -85,7 +85,8 @@ createRotationMatrix(Vec3 const & rotation) {
     setRotationY(rotY, rotation.y);
     Mat4f rotZ = createIdentityMatrix();
     setRotationZ(rotZ, rotation.z);
-    return rotZ * rotY * rotX;
+    //return rotZ * rotY * rotX;
+    return rotX * rotY * rotZ;
 }
 
 //------------------------------------------------------------

@@ -31,4 +31,16 @@ Vertex::perspectiveDivide() {
                   position.w));
 }
 
+//------------------------------------------------------------
+float
+Vertex::triangleAreaTimesTwo(Vertex const & b, Vertex const & c) {
+    float x1 = b.position.x - position.x;
+    float y1 = b.position.y - position.y;
+
+    float x2 = c.position.x - position.x;
+    float y2 = c.position.y - position.y;
+
+    return x1 * y2 - x2 * y1;
+}
+
 

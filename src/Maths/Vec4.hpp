@@ -10,7 +10,7 @@ class Vec3;
 
 class Vec4 final {    
 public:
-    Vec4(float xyz = 0.0f);
+    explicit Vec4(float xyz = 0.0f);
     Vec4(float _x, float _y, float _z, float _w);
     Vec4(Vec3 const & vec, float w);
     

@@ -14,16 +14,29 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
 ,   m_height(height) 
 ,   m_rContext(width, height)
 {
+    // if x or y == -1 set the respected axis to centre
+    if(x == -1) {
+        x = SDL_WINDOWPOS_CENTERED;
+    } 
+
+    if(y == -1) {
+        y = SDL_WINDOWPOS_CENTERED;
+    }
+
     // init SDL and create window
     if (SDL_Init(SDL_INIT_VIDEO) != 0){
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         exit(-1);
     }
 
+    // default window flags
     int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
+    
+    // if fullscreen append the flag
     if(fullscreen) {
         windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP; // if the bitmap is smaller than the window then it will be scaled
     }
+
 
     m_window = SDL_CreateWindow(title.c_str(), x, y, width, height, windowFlags);
     if (m_window == nullptr) {
@@ -36,6 +49,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     // create renderer
     int rendererFlags = SDL_RENDERER_ACCELERATED;
 
+    // todo : somehow let v-sync be a runtime option 
     if(vSync) {
         rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
     }
@@ -75,6 +89,7 @@ Window::~Window() {
     SDL_DestroyTexture(m_renderTexture);
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);    
+    SDL_Quit();
     std::cout << "Window dtor" << std::endl;    
 }
 

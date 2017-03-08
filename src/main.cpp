@@ -26,11 +26,11 @@ int main(int argc, char* argv[]) {
     //..
 
     // window spec
-    bool vSync = false;
+    bool vSync = true;
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 9;
-    Window window("SoftRender", 10, 10, width, height, vSync, fullScreen);
+    Window window("SoftRender", -1, -1, width, height, vSync, fullScreen);
     //..
 
     Input input;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
         window.clear();
         {
             starField.render();
-            rContext.fillTriangle(v1.transform(model), v2.transform(model), v3.transform(model));
+            rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model));
         }
         window.swapBackBuffer();
     }
