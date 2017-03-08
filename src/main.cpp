@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     bool vSync = true;
     bool fullScreen = false;
     int width = 900;
-    int height = width / 16 * 9;
+    int height = width / 16 * 10;
     Window window("SoftRender", -1, -1, width, height, vSync, fullScreen);
     //..
 
@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
     StarField starField(rContext, 0.00001f,.1);
 
     // triangle
-    Vertex v1(-1, -1, 0);
-    Vertex v2(0, 1, 0);
-    Vertex v3(1, -1, 0);
+    Vertex v1(Maths::Vec3(-1, -1, 0));
+    Vertex v2(Maths::Vec3( 0,  1, 0));
+    Vertex v3(Maths::Vec3( 1, -1, 0));
     //..
     
     // game loop vars
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     auto second = clock::now();
     //..
 
-    float x = 0.0f;
+    float x = 2.0f;
     float z = -3.0f;
 
     // matricies
@@ -105,11 +105,17 @@ int main(int argc, char* argv[]) {
             second = current; 
         }
 
+
+        // translation for wire
+         Maths::Mat4f wireTrans = Maths::createTranslationMatrix(Maths::Vec3(x - 4, 0, z)); 
+         Maths::Mat4f wire_model = proj * wireTrans * rotation * scale;
+
         // render
         window.clear();
         {
             starField.render();
             rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model));
+            rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));
         }
         window.swapBackBuffer();
     }

@@ -2,8 +2,9 @@
 #include "Vertex.hpp"
 
 //------------------------------------------------------------
-Vertex::Vertex(float x, float y, float z) :   
-    position(x, y, z, 1.0f)
+Vertex::Vertex(Maths::Vec3 _position, Colour _colour) :   
+    position(_position, 1.0f)
+,   colour(_colour)
 {
     // empty
 }
