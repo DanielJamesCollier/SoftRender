@@ -20,6 +20,7 @@ public:
     // float dot(Vec4 const & rhs);
     // Vec4 cross(Vec4 const & rhs);
     // void normalise();
+    Vec3 toVec3();
 
 
     //--

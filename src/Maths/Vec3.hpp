@@ -42,39 +42,6 @@ public:
     Vec3 & operator -= (float scalar);
     Vec3 & operator *= (float scalar);
     Vec3 & operator /= (float scalar);
-    
-
-    friend Vec3 operator += (float lhs, Vec3 const & rhs);
-    friend Vec3 operator -= (float lhs, Vec3 const & rhs);
-    friend Vec3 operator *= (float lhs, Vec3 const & rhs);
-    friend Vec3 operator /= (float lhs, Vec3 const & rhs);
-    
-    friend Vec3 operator + (float lhs, Vec3 const & rhs);
-    friend Vec3 operator - (float lhs, Vec3 const & rhs);
-    friend Vec3 operator * (float lhs, Vec3 const & rhs);
-    friend Vec3 operator / (float lhs, Vec3 const & rhs);
-
-    //@TODO DODODODODOODODODOODOOD THISSSSSSSSS
-    friend Vec3 operator + (Vec3 const & lhs, float rhs);
-    friend Vec3 operator - (Vec3 const & lhs, float rhs);
-    friend Vec3 operator * (Vec3 const & lhs, float rhs);
-    friend Vec3 operator / (Vec3 const & lhs, float rhs);
-    //...
-
-    friend Vec3 operator + (Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 operator - (Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 operator * (Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 operator / (Vec3 const & lhs, Vec3 const & rhs);
-
-    friend float length2(Vec3 const & vec);
-    friend float length(Vec3 const & vec);
-    friend float distance(Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 getLongest(Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 normalise(Vec3 const & vec);
-    friend float dot(Vec3 const & lhs, Vec3 const & rhs);
-    friend Vec3 cross(Vec3 const & lhs, Vec3 const & rhs);
-
-    friend std::ostream & operator << (std::ostream & lhs, Vec3 const & rhs);
 
 //public
     float x, y, z;

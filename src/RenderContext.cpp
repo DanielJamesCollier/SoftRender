@@ -9,6 +9,8 @@
 #include <utility>
 #include <cmath>
 
+#include "Maths/Maths.hpp"
+
 //------------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
     Bitmap(width, height)
@@ -38,25 +40,16 @@ RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
     midYVert = midYVert.transform(m_screenSpaceTransform).perspectiveDivide();
     maxYVert = maxYVert.transform(m_screenSpaceTransform).perspectiveDivide();
 
-    if(maxYVert.getY() < midYVert.getY())
-    {
-        Vertex temp = maxYVert;
-        maxYVert = midYVert;
-        midYVert = temp;
+    if(maxYVert.getY() < midYVert.getY()) {
+        std::swap(maxYVert, midYVert);
     }
 
-    if(midYVert.getY() < minYVert.getY())
-    {
-        Vertex temp = midYVert;
-        midYVert = minYVert;
-        minYVert = temp;
+    if(midYVert.getY() < minYVert.getY()) {
+        std::swap(midYVert, minYVert);
     }
 
-    if(maxYVert.getY() < midYVert.getY())
-    {
-        Vertex temp = maxYVert;
-        maxYVert = midYVert;
-        midYVert = temp;
+    if(maxYVert.getY() < midYVert.getY()) {
+        std::swap(maxYVert, midYVert);
     }
 
     // area is neg if min is on left - positive if min is on right
@@ -79,7 +72,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
     Edge minToMid(minY, midY);
     Edge midToMax(midY, maxY);
 
-    Colour colour(0,0, 200);
+    Colour colour(1,0, 1);
 
     if(!handedness) {
         for(int y = minToMid.m_yStart; y < minToMid.m_yEnd; y++) {
@@ -122,72 +115,75 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
 //------------------------------------------------------------
 void
 RenderContext::wireTriangle(Vertex v1, Vertex v2, Vertex v3) {
-    
-    Vertex minYVert = v1;
-    Vertex midYVert = v2;
-    Vertex maxYVert = v3;
-
-    minYVert = minYVert.transform(m_screenSpaceTransform).perspectiveDivide();
-    midYVert = midYVert.transform(m_screenSpaceTransform).perspectiveDivide();
-    maxYVert = maxYVert.transform(m_screenSpaceTransform).perspectiveDivide();
-
-    if(maxYVert.getY() < midYVert.getY())
-    {
-        Vertex temp = maxYVert;
-        maxYVert = midYVert;
-        midYVert = temp;
-    }
-
-    if(midYVert.getY() < minYVert.getY())
-    {
-        Vertex temp = midYVert;
-        midYVert = minYVert;
-        minYVert = temp;
-    }
-
-    if(maxYVert.getY() < midYVert.getY())
-    {
-        Vertex temp = maxYVert;
-        maxYVert = midYVert;
-        midYVert = temp;
-    }
-
-    // area is neg if min is on left - positive if min is on right
-    float area = minYVert.triangleAreaTimesTwo(maxYVert, midYVert);
-    bool handedness = area >= 0.0f ? true : false;
-
-    //std::cout << "handedness: " << handedness << "\narea: " << area << std::endl;
-     
-    // scanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
-    // fillShape(static_cast<int>(minYVert.getY()), static_cast<int>(maxYVert.getY())); // fix : this could be out of the window size
-
-    scanWireTriangle(minYVert, midYVert, maxYVert);
+    drawLine(v1, v2);
+    drawLine(v2, v3);
+    drawLine(v3, v1);
 }
 
 //------------------------------------------------------------
 void
-RenderContext::scanWireTriangle(Vertex minY, Vertex midY, Vertex maxY) {
-    Edge minToMax(minY, maxY);
-    Edge minToMid(minY, midY);
-    Edge midToMax(midY, maxY);
+RenderContext::drawLine(Vertex v1, Vertex v2) {
+    std::cout <<"v1 colour: " << v1.colour << std::endl;
+    std::cout << "v2 colour: " << v2.colour << std::endl;
+    // transform input vector4 into screen space from -1 to 1
+    //  do perspective perspectiveDivide
+    v1 = v1.transform(m_screenSpaceTransform).perspectiveDivide();
+    v2 = v2.transform(m_screenSpaceTransform).perspectiveDivide();
 
-    Colour colour(0,0, 200);
+    // vec2 
+    float startY = v1.position.y;
+    float startX = v1.position.x;
 
-    // minToMax
-    for(int y = minToMax.m_yStart; y < minToMax.m_yEnd; y++) {
-        setPixel(minToMax.m_x, y, colour);
-        minToMax.step();
+    // vec 2 
+    float endX = v2.position.x;
+    float endY = v2.position.y;
+
+    // vec 2 
+    float xDist = endX - startX;
+    float yDist = endY - startY;
+
+    // length of above
+    float length = std::sqrt(xDist * xDist + yDist * yDist);
+
+    // how many pixels to move in x an y axis per for loop itter
+    float xStep = xDist / length;
+    float yStep = yDist / length;
+
+    // startiny x and y - will be incremented
+    float currX = startX;
+    float currY = startY;
+
+    
+
+    // draw all the pixels ever
+    for(int i = 0; i < static_cast<int>(length); i++) {
+
+        // current x and y normaised
+        float currXNormal = (currX - startX) / (endX - startX);
+        float currYNormal = (currY - startY) / (endY - startY);
+
+        Colour currentColour = Maths::lerp(v1.colour, v2.colour, currXNormal);
+       
+
+        //..
+        setPixel(static_cast<int>(std::ceil(currX)), static_cast<int>(std::ceil(currY)), currentColour);
+        currX += xStep;
+        currY += yStep;
     }
-
-    for(int y = minToMid.m_yStart; y < minToMid.m_yEnd; y++) {
-        setPixel(minToMid.m_x, y, colour);
-        minToMid.step();
-    }
-
-    for(int y = midToMax.m_yStart; y < midToMax.m_yEnd; y++) {
-        setPixel(midToMax.m_x, y, colour);
-        midToMax.step();
-    }
-
-   
 }
+
+// colour interpolation
+
+// lerp t = currX
+// curr x must be between 0 & 1
+// lep v1 a v2 are colours
+
+
+// how to get current x between 0 & 1
+
+// startX & endX
+
+// min = 245
+// max = -100
+
+// item to norm = 56

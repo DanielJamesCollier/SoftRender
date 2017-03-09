@@ -18,9 +18,9 @@ public:
 
     void fillTriangle(Vertex v1, Vertex v2, Vertex v3);
     void wireTriangle(Vertex v1, Vertex v2, Vertex v3);
+    void drawLine(Vertex v1, Vertex v2);
 private:
     void scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedness);
-    void scanWireTriangle(Vertex minY, Vertex midY, Vertex maxY);
     void updateContextSize(float width, float height); // todo : call from window when it gets resized
 
 private:

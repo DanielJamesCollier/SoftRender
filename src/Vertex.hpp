@@ -11,8 +11,8 @@ class Mat4f;
 class Vertex {
     friend class RenderContext;
 public:
-    Vertex(Maths::Vec3 _position, Colour _colour = Colour(0, 0, 0));
-    Vertex(Maths::Vec4 const & pos);
+    Vertex(Maths::Vec3 _position, Colour _colour = Colour(1, 1, 1));
+    Vertex(Maths::Vec4 const & pos, Colour _colour);
 
     Vertex transform(Maths::Mat4f & matrix);
 
@@ -28,7 +28,7 @@ public:
 private:
     Vertex perspectiveDivide(); // called from render context : todo : no real need to create a whole new Vertex
     float triangleAreaTimesTwo(Vertex const & b, Vertex const & c);
-    
+
 public:
     Maths::Vec4 position;
     Colour      colour;

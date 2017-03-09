@@ -45,9 +45,9 @@ Bitmap::setPixel(int x, int y, Colour const & colour) {
 
     if(x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1) return; // cleanup - probably should never be called - this could be an assert
 
-    m_buffer[index + 0] = colour.getB();
-    m_buffer[index + 1] = colour.getG();
-    m_buffer[index + 2] = colour.getR();
+    m_buffer[index + 0] = colour.getB_uc();
+    m_buffer[index + 1] = colour.getG_uc();
+    m_buffer[index + 2] = colour.getR_uc();
     m_buffer[index + 3] = 255;
 }
 

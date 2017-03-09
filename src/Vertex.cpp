@@ -10,8 +10,9 @@ Vertex::Vertex(Maths::Vec3 _position, Colour _colour) :
 }
 
 //------------------------------------------------------------
-Vertex::Vertex(Maths::Vec4 const & pos) :   
+Vertex::Vertex(Maths::Vec4 const & pos, Colour _colour) :   
     position(pos)
+,   colour(_colour)
 {
     // empty
 }
@@ -20,7 +21,7 @@ Vertex::Vertex(Maths::Vec4 const & pos) :
 Vertex 
 Vertex::transform(Maths::Mat4f & matrix) { 
     Maths::Vec4 pos = matrix * position;
-    return Vertex(Maths::Vec4(pos.x, pos.y, pos.z, pos.w)); 
+    return Vertex(Maths::Vec4(pos.x, pos.y, pos.z, pos.w), colour); 
 }
 
 //------------------------------------------------------------
@@ -29,7 +30,7 @@ Vertex::perspectiveDivide() {
     return Vertex(Maths::Vec4(position.x / position.w,
                   position.y / position.w,
                   position.z / position.w,
-                  position.w));
+                  position.w), colour);
 }
 
 //------------------------------------------------------------

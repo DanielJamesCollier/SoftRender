@@ -26,7 +26,21 @@ inline float
 randFBetweenZeroOne() {
     return (double)rand() / ((double)RAND_MAX + 1);
 }
+
+//------------------------------------------------------------
+inline float
+normalise(float valToNormalise, float min, float max) {
+    return (valToNormalise - min) / (max - min);
+}
+
+//------------------------------------------------------------
+template <typename T>
+inline T lerp(T v0, T v1, float t) {
+    return (1 - t) * v0 + t * v1;
+}
+
+
+
     
 } /* namespace Maths */
-
-#endif /*Maths_hpp*/ 
+#endif /*Maths_hpp */ 
