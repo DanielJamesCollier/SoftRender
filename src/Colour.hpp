@@ -3,6 +3,7 @@
 
 #include <ostream>
 
+
 /*
     - float colours are stored in the range from 0 - 1
     - if colour is needed the range of 0 - 255 then use the unsigned char getters

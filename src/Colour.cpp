@@ -1,10 +1,12 @@
+// my
 #include "Colour.hpp"
+#include "Maths/Maths.hpp"
 
 //------------------------------------------------------------
 Colour::Colour(float b, float g, float r) :
-    m_b(b)
-,   m_g(g)
-,   m_r(r) 
+    m_b(Maths::clamp(b, 0.0f, 1.0f))
+,   m_g(Maths::clamp(g, 0.0f, 1.0f))
+,   m_r(Maths::clamp(r, 0.0f, 1.0f)) 
 {
     // empty
 }

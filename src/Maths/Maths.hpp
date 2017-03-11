@@ -39,6 +39,16 @@ inline T lerp(T v0, T v1, float t) {
     return (1 - t) * v0 + t * v1;
 }
 
+//------------------------------------------------------------
+template<typename T>
+inline T clamp(T v, T low, T hi) {
+    if(v < low) {
+        return low;
+    } else if(v > hi){
+        return hi;
+    }
+    return v;
+}
 
 
     

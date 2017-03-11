@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
             second = current; 
         }
 
-
         // translation for wire
          Maths::Mat4f wireTrans = Maths::createTranslationMatrix(Maths::Vec3(x - 4, 0, z)); 
          Maths::Mat4f wire_model = proj * wireTrans * rotation * scale;

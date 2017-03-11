@@ -30,7 +30,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     }
 
     // default window flags
-    int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI; // | SDL_WINDOW_RESIZABLE;
+    int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE;
     
     // if fullscreen append the flag
     if(fullscreen) {
