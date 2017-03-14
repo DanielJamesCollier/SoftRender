@@ -1,9 +1,12 @@
+#!/bin/bash
+
 source variables.sh
 
-echo "------------------------"
-echo "-------Run Started------"
-echo "------------------------"
+echo -e "\n\n"
+echo "========================"
+echo "=======Run Started======"
+echo "========================"
 ./$exeName
 echo -e "\n"
-echo "------------------------"
+echo "========================"
 echo -e "\n\n"
