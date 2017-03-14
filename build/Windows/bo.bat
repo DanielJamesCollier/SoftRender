@@ -3,7 +3,7 @@
 ::initialise generic build variables
 call variables.bat
 
-:: initialise bo.bat specific build variables 
+:: build specific compiler flags + generic
 SET boCompilerFlags=/O2 %compilerFlags%
 
 echo:

@@ -88,6 +88,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
                 float length_I3    = std::sqrt(xDist_I3 * xDist_I3 + yDist_I3 * yDist_I3);
 
                 // vec2 - E1
+                //-- can be pulled out of innner loop
                 float xDist_E1     = maxY.getX() - midY.getX();
                 float yDist_E1     = maxY.getY() - midY.getY();
                 float length_E1    = std::sqrt(xDist_E1 * xDist_E1 + yDist_E1 * yDist_E1);
@@ -101,6 +102,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
                 float xDist_E3     = midY.getX() - minY.getX();
                 float yDist_E3     = midY.getY() - minY.getY();
                 float length_E3    = std::sqrt(xDist_E3 * xDist_E3 + yDist_E3 * yDist_E3);
+                //-- end can be puled out inner loop
 
                 //----------------------------------------------------------------------------
 

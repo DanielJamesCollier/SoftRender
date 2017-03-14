@@ -1,4 +1,4 @@
-::--------------COMPILE VARIABLES::--------------::
+::--------------COMPILE VARIABLES----------------::
     :: file(s) to compile 
     :: default directory is ../../src/
 SET files=../../src/main.cpp ../../src/Window.cpp ../../src/Maths/Vec3.cpp ../../src/Colour.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp ../../src/RenderContext.cpp ../../src/Maths/Mat4f.cpp ../../src/Input.cpp ../../src/Vertex.cpp ../../src/Maths/Vec4.cpp
@@ -11,7 +11,7 @@ SET compilerFlags=/std:c++14 /WX /EHsc /MD
 ::----------------------------------------------::
 
 
-::----------------LINK VARIABLES::--------------::
+::----------------LINK VARIABLES----------------::
     :: path(s) to your libraries
 SET libPaths=dependencies/SDL2/libs
 
