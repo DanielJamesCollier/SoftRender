@@ -7,15 +7,17 @@
 
 //------------------------------------------------------------
 Edge::Edge(Vertex minY, Vertex maxY) {
-    m_yStart   = (int)minY.getY();
-    m_yEnd     = (int)maxY.getY();
-    int xStart = (int)minY.getX();
-    int xEnd   = (int)maxY.getX();
-    int xDist  = xEnd - xStart;
-    int yDist  = m_yEnd - m_yStart;
+    m_yStart   = static_cast<int>(std::ceil(minY.getY()));
+    m_yEnd     = static_cast<int>(std::ceil(maxY.getY()));
+    int xStart = static_cast<int>(std::ceil(minY.getX()));
+    int xEnd   = static_cast<int>(std::ceil(maxY.getX()));
+    
+    float xDist  = maxY.getX() - minY.getX();
+    float yDist  = maxY.getY() - minY.getY();
 
-    m_xStep = float(xDist) / float(yDist);
-    m_x     = float(xStart);
+    m_xStep = xDist / yDist;
+    float yPrestep = m_yStart - minY.getY();
+    m_x = minY.getX() + yPrestep * m_xStep;
 }
 
 //------------------------------------------------------------

@@ -96,7 +96,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
             float yDist_I2 = maxY.getY() - y;
             float yDist_I3 = y - minY.getY();
 
-            for(int x = minToMax.m_x; x < minToMid.m_x; x++) {
+            for(int x = static_cast<int>(std::ceil(minToMax.m_x)); x < static_cast<int>(std::ceil(minToMid.m_x)); x++) {
                 // get the edge vectors and their lengths
                 //----------------------------------------------------------------------------
                 // vec2 - I1
@@ -154,7 +154,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
             float yDist_I2 = maxY.getY() - y;
             float yDist_I3 = y - minY.getY();
 
-            for(int x = minToMax.m_x; x < midToMax.m_x; x++) {
+            for(int x = static_cast<int>(std::ceil(minToMax.m_x)); x < static_cast<int>(std::ceil(midToMax.m_x)); x++) {
                 // get the edge vectors and their lengths
                 //----------------------------------------------------------------------------
                 // vec2 - I1
@@ -211,7 +211,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
             float yDist_I2 = maxY.getY() - y;
             float yDist_I3 = y - minY.getY();
 
-           for(int x = minToMid.m_x; x < minToMax.m_x; x++) {
+           for(int x = static_cast<int>(std::ceil(minToMid.m_x)); x < static_cast<int>(std::ceil(minToMax.m_x)); x++) {
             
                 // get the edge vectors and their lengths
                 //----------------------------------------------------------------------------
@@ -269,7 +269,7 @@ RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedne
             float yDist_I2 = maxY.getY() - y;
             float yDist_I3 = y - minY.getY();
 
-            for(int x = midToMax.m_x; x < minToMax.m_x; x++) {
+            for(int x = static_cast<int>(std::ceil(midToMax.m_x)); x < static_cast<int>(std::ceil(minToMax.m_x)); x++) {
                 // get the edge vectors and their lengths
                 //----------------------------------------------------------------------------
                 // vec2 - I1
