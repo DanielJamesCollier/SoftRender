@@ -1,31 +1,7 @@
+// std
 #include <cmath>
 
 namespace Maths {
-
-/* free function operators - (scalar [operator] Vec3) */
-//------------------------------------------------------------
-inline Vec3
-operator += (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
-}
-
-//------------------------------------------------------------
-inline Vec3
-operator -= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
-}
-
-//------------------------------------------------------------
-inline Vec3
-operator *= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
-}
-
-//------------------------------------------------------------
-inline Vec3
-operator /= (float lhs, Vec3 const & rhs) {
-    return Vec3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
-}
 
 //------------------------------------------------------------
 inline Vec3

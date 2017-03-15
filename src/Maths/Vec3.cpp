@@ -48,7 +48,7 @@ Vec3::normalise() {
 //------------------------------------------------------------
 float 
 Vec3::dot(Vec3 const & vec) const {
-    return x * vec.x + y * vec.y + z * z;
+    return x * vec.x + y * vec.y + z * vec.z;
 }
 
 //------------------------------------------------------------
@@ -61,7 +61,7 @@ Vec3::cross(Vec3 const & vec) {
 }
 
 //------------------------------------------------------------
-Vec3 
+Vec3
 Vec3::operator + () const {
     return *this;
 }
