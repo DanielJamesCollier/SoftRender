@@ -13,6 +13,15 @@
 #include "Maths/Maths.hpp"
 #include "Vertex.hpp"
 
+/*
+    TODO LIST
+
+    - check if i need handedness if branch in scan triangle
+    - add texture mapping
+    - do perspective correction for colour intepolation and texture mapping
+
+*/
+
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
     // using
@@ -30,25 +39,8 @@ int main(int argc, char* argv[]) {
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 0.3f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
-    //..
-
-    // lerp test
-    Maths::Vec3 vec1 (0,0,0);
-    Maths::Vec3 vec2(10,10,10);
-    float t = 0.5;
-
-    Maths::Vec3 out = Maths::lerp(vec1,vec2,t);
-    std::cout << out << std::endl;
-
-
-    Colour col_1(1,0,0);
-    Colour col_2(0,0,1);
-
-    Colour lerpCol = Maths::lerp(col_1, col_2, 0.14f);
-
-    std::cout << "lerp col " << lerpCol << std::endl;
     //..
 
     Input input;
@@ -56,9 +48,9 @@ int main(int argc, char* argv[]) {
     StarField starField(rContext, 0.00001f,.1);
 
     // triangle
-    Vertex v1(Maths::Vec3(-1, -1, 0), Colour(1,0,0));
-    Vertex v2(Maths::Vec3( 0,  1, 0), Colour(0,1,0));
-    Vertex v3(Maths::Vec3( 1, -1, 0), Colour(0,0,1));
+    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(1,1), Colour(1,0,0)); // bottom left
+    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(1,1), Colour(0,1,0)); // top
+    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1,1),Colour(0,0,1)); // bottom right
     //..
     
     // game loop vars
@@ -127,8 +119,8 @@ int main(int argc, char* argv[]) {
          Maths::Mat4f wireTrans = Maths::createTranslationMatrix(Maths::Vec3(x - 4, 0, z)); 
          Maths::Mat4f wire_model = proj * wireTrans * rotation * scale;
 
-         Vertex v1_line(Maths::Vec3(0, -10, 0), Colour(1, 0, 0));
-         Vertex v2_line(Maths::Vec3(0,  10, 0), Colour(0, 0, 1));
+         Vertex v1_line(Maths::Vec3(0, -10, 0), Maths::Vec2(1,1), Colour(1, 0, 0));
+         Vertex v2_line(Maths::Vec3(0,  10, 0), Maths::Vec2(1,1), Colour(0, 0, 1));
 
          Maths::Mat4f line_trans = Maths::createTranslationMatrix(Maths::Vec3(0,0,-3));
          Maths::Mat4f line_rot = Maths::createRotationMatrix(Maths::Vec3(0,0, rot));
