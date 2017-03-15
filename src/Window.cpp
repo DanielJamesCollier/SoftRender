@@ -6,13 +6,14 @@
 #include "SDL.h"
 
 //------------------------------------------------------------
-Window::Window(std::string const & title, int x, int y, int width, int height, bool vSync, bool fullscreen) :
+Window::Window(std::string const & title, int x, int y, int width, int height, float scale, bool vSync, bool fullscreen) :
     m_title(title)
 ,   m_x(x)
 ,   m_y(y)
 ,   m_width(width)
 ,   m_height(height) 
-,   m_rContext(width, height)
+,   m_scale(scale)
+,   m_rContext(width * scale, height * scale)
 {
     // if x or y == -1 set the respected axis to centre
     if(x == -1) {
@@ -30,7 +31,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     }
 
     // default window flags
-    int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE;
+    int windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
     
     // if fullscreen append the flag
     if(fullscreen) {
@@ -65,7 +66,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, b
     //..
 
     // create render buffer
-    m_renderTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
+    m_renderTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_width * scale, m_height * scale);
 
     if(m_renderTexture == nullptr) {
         SDL_DestroyRenderer(m_renderer);
@@ -108,7 +109,7 @@ Window::clear() {
 //------------------------------------------------------------
 void 
 Window::swapBackBuffer() { 
-    SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * 4);
+    SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * m_scale * 4);
     SDL_RenderCopy(m_renderer, m_renderTexture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
 }

@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    Window window("SoftRender", -1, -1, width, height, vSync, fullScreen);
+    float bufferScale = 0.3f; // size of the framebuffer compared to the screen width & height
+    Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     //..
 
     // lerp test
@@ -94,7 +95,7 @@ int main(int argc, char* argv[]) {
         //starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
         temp+= .00001f * delta;
-        rot += 0.001f * delta;
+        rot += 0.0005f * delta;
 
         if(input.isLeftDown()) {
             x-= 0.001f * delta;

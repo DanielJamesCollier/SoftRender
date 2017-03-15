@@ -15,7 +15,7 @@ class SDL_Texture;
 class Window final {
 public:
     // set x && y to -1 if you want window centred
-    Window(std::string const & title, int x, int y, int width, int height, bool vSync, bool fullscreen);
+    Window(std::string const & title, int x, int y, int width, int height, float scale, bool vSync, bool fullscreen);
     ~Window();
 
     RenderContext & getRenderContext();
@@ -31,6 +31,7 @@ private:
     SDL_Window * m_window;
     int m_width;
     int m_height;
+    float m_scale;
     int m_x;
     int m_y;
 };

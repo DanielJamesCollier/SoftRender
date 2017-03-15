@@ -11,4 +11,6 @@ rm ./$exeName
 echo "Deleting: *.o"
 rm ./*.o
 echo "========================"
+echo "=====CLEAN FINISHED====="
+echo "========================"
 echo -e "\n\n"
