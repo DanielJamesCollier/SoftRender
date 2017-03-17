@@ -1,6 +1,6 @@
 // my
 #include "Colour.hpp"
-#include "Maths/Maths.hpp"
+#include "Maths/MathsUtils.hpp"
 
 //------------------------------------------------------------
 Colour::Colour(float b, float g, float r) :

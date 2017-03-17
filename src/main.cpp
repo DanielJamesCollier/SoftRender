@@ -24,13 +24,13 @@
 
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
+    
     // using
     using clock = std::chrono::high_resolution_clock;
     using std::chrono::nanoseconds;
     using std::chrono::milliseconds;
     using std::chrono::duration_cast;
     using std::chrono::duration;
-    using intMilliseconds = duration<uint64_t, milliseconds::period>;
     using FpMilliseconds  = duration<float, milliseconds::period>;
     //..
 
@@ -48,19 +48,20 @@ int main(int argc, char* argv[]) {
     StarField starField(rContext, 0.00001f,.1);
 
     // triangle
-    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(1,1), Colour(1,0,0)); // bottom left
-    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(1,1), Colour(0,1,0)); // top
-    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1,1),Colour(0,0,1)); // bottom right
+    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(0.1,   0.1), Colour(1,0,0)); // bottom left
+    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(0.5, 1), Colour(0,1,0)); // top
+    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1,   0.1), Colour(0,0,1)); // bottom right
     //..
+
+    Bitmap randomBitmap = createRandomBitmap(100, 100);
     
     // game loop vars
     auto frames = 0;
-    bool running = true;
     auto begin = clock::now();
     auto second = clock::now();
     //..
 
-    float x = 2.0f;
+    float x = 0.0f;
     float z = -3.0f;
 
     // matricies
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
 
     // incrementers
     float temp = 0.0001f;
-    float rot = 0;
+    float rot = 0.0f;
     //..
 
     while(true) {
@@ -87,7 +88,7 @@ int main(int argc, char* argv[]) {
         //starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
         temp+= .00001f * delta;
-        rot += 0.0005f * delta;
+        rot += 0.0002f * delta;
 
         if(input.isLeftDown()) {
             x-= 0.001f * delta;
@@ -130,9 +131,9 @@ int main(int argc, char* argv[]) {
         window.clear();
         {
             //starField.render();
-            rContext.drawLine(v1_line.transform(line_model), v2_line.transform(line_model));
-            rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model));
-            rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));
+            //rContext.drawLine(v1_line.transform(line_model), v2_line.transform(line_model));
+            rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model), randomBitmap);
+            //rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));
         }
         window.swapBackBuffer();
     }

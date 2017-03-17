@@ -8,12 +8,13 @@
 //------------------------------------------------------------
 Window::Window(std::string const & title, int x, int y, int width, int height, float scale, bool vSync, bool fullscreen) :
     m_title(title)
-,   m_x(x)
-,   m_y(y)
 ,   m_width(width)
 ,   m_height(height) 
 ,   m_scale(scale)
 ,   m_rContext(width * scale, height * scale)
+,   m_window(nullptr)
+,   m_renderer(nullptr)
+,   m_renderTexture(nullptr)
 {
     // if x or y == -1 set the respected axis to centre
     if(x == -1) {
@@ -37,7 +38,6 @@ Window::Window(std::string const & title, int x, int y, int width, int height, f
     if(fullscreen) {
         windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP; // if the bitmap is smaller than the window then it will be scaled
     }
-
 
     m_window = SDL_CreateWindow(title.c_str(), x, y, width, height, windowFlags);
     if (m_window == nullptr) {

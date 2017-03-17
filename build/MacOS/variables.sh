@@ -10,7 +10,7 @@ files="../../src/main.cpp ../../src/Window.cpp ../../src/Maths/Vec3.cpp ../../sr
 includePath="dependencies/SDL2.framework/Versions/A/Headers/"
 
     # compiler flag(s)
-compilerFlags="-std=c++14"
+compilerFlags="-std=c++14 -Wall"
 #----------------------------------------------#
 
 

@@ -3,7 +3,6 @@
 
 #include <ostream>
 
-
 /*
     - float colours are stored in the range from 0 - 1
     - if colour is needed the range of 0 - 255 then use the unsigned char getters
@@ -11,7 +10,7 @@
 
 class Colour final {
 public:
-    Colour(float b = 0, float  g = 0, float  r = 0);
+    Colour(float b = 0.0f, float g = 0.0f, float r = 0.0f);
     ~Colour() = default;
 
     Colour operator + (Colour const & rhs);

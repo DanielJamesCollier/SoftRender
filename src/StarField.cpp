@@ -14,7 +14,7 @@ StarField::StarField(RenderContext & renderContext, float speed, float spread) :
 ,   m_rContext(renderContext)
 {
     // init the stars position
-    for(int i = 0; i < m_stars.size(); i++) {
+    for(size_t i = 0; i < m_stars.size(); i++) {
         initStar(i);
     }
 }
@@ -22,7 +22,7 @@ StarField::StarField(RenderContext & renderContext, float speed, float spread) :
 //------------------------------------------------------------
 void 
 StarField::update(float delta) {
-    for(int i = 0; i < m_stars.size(); i++) {
+    for(size_t i = 0; i < m_stars.size(); i++) {
         // move the star in z
         m_stars[i].z = m_stars[i].z - (m_speed * delta);
 
@@ -36,15 +36,12 @@ StarField::update(float delta) {
 //------------------------------------------------------------
 void
 StarField::render() {
-    static const auto bWidth = m_rContext.getWidth();
-    static const auto bHeight = m_rContext.getHeight();
-
     float halfWidth = m_rContext.getWidth() / 2.0f;
     float halfHeight = m_rContext.getHeight() / 2.0f;
 
     float tanHalfFOV = std::tan(Maths::toRadians(120.0f / 2.0f));
 
-    for(int i = 0; i < m_stars.size(); i++) {
+    for(size_t i = 0; i < m_stars.size(); i++) {
         int x = static_cast<int>(m_stars[i].x / (m_stars[i].z * tanHalfFOV) * halfWidth + halfWidth);
         int y = static_cast<int>(m_stars[i].y / (m_stars[i].z * tanHalfFOV) * halfHeight + halfHeight);
 
@@ -58,7 +55,7 @@ StarField::render() {
 
 //------------------------------------------------------------
 void 
-StarField::initStar(int index) {
+StarField::initStar(size_t index) {
     m_stars[index].x = 2 * (Maths::randFBetweenZeroOne() - 0.5f) * m_spread;
     m_stars[index].y = 2 * (Maths::randFBetweenZeroOne() - 0.5f) * m_spread;
     m_stars[index].z =      Maths::randFBetweenZeroOne() + 0.0001f;

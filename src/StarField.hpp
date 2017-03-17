@@ -21,7 +21,7 @@ public:
     void render();
 
 private:
-    void initStar(int index);
+    void initStar(size_t index);
 
 private:
     float m_speed;

@@ -14,12 +14,13 @@ public:
     RenderContext(int width, int height);
     virtual ~RenderContext() = default;
 
-    void fillTriangle(Vertex v1, Vertex v2, Vertex v3);
+    void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
     void wireTriangle(Vertex v1, Vertex v2, Vertex v3);
     void drawLine(Vertex v1, Vertex v2);
 
 private:
-    void scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedness);
+    void scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedness, Bitmap & bitmap);
+    void drawScanLine(Edge left, Edge right, int y);
     void updateContextSize(float width, float height); // todo : call from window when it gets resized
 
 private:

@@ -8,9 +8,9 @@
 // my
 #include "RenderContext.hpp"
 
-class SDL_Window;
-class SDL_Renderer;
-class SDL_Texture;
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Texture;
 
 class Window final {
 public:
@@ -25,14 +25,12 @@ public:
 
 private:
     std::string m_title;
-    RenderContext m_rContext;
-    SDL_Texture * m_renderTexture;
-    SDL_Renderer * m_renderer;
-    SDL_Window * m_window;
     int m_width;
     int m_height;
     float m_scale;
-    int m_x;
-    int m_y;
+    RenderContext m_rContext;
+    SDL_Window * m_window;
+    SDL_Renderer * m_renderer;
+    SDL_Texture * m_renderTexture;    
 };
 #endif /* Window_hpp */
