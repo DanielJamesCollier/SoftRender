@@ -35,25 +35,25 @@ int main(int argc, char* argv[]) {
     //..
 
     // window spec
-    bool vSync = true;
+    bool vSync = false;
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 1.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     //..
 
     Input input;
     RenderContext & rContext = window.getRenderContext();
-    StarField starField(rContext, 0.00001f,.1);
+    StarField starField(rContext, 0.00001f, 0.1);
 
     // triangle
-    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(0.1,   0.1), Colour(1,0,0)); // bottom left
-    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(0.5, 1), Colour(0,1,0)); // top
-    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1,   0.1), Colour(0,0,1)); // bottom right
+    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1,0,0)); // bottom left
+    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0,1,0)); // top
+    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0,0,1)); // bottom right
     //..
 
-    Bitmap randomBitmap = createRandomBitmap(100, 100);
+    Bitmap randomBitmap = createRandomBitmap(50, 50);
     
     // game loop vars
     auto frames = 0;
@@ -85,10 +85,10 @@ int main(int argc, char* argv[]) {
         begin = clock::now();
 
         // update
-        //starField.update(delta);
+        starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
         temp+= .00001f * delta;
-        rot += 0.0002f * delta;
+        rot += 0.001f * delta;
 
         if(input.isLeftDown()) {
             x-= 0.001f * delta;
@@ -120,8 +120,8 @@ int main(int argc, char* argv[]) {
          Maths::Mat4f wireTrans = Maths::createTranslationMatrix(Maths::Vec3(x - 4, 0, z)); 
          Maths::Mat4f wire_model = proj * wireTrans * rotation * scale;
 
-         Vertex v1_line(Maths::Vec3(0, -10, 0), Maths::Vec2(1,1), Colour(1, 0, 0));
-         Vertex v2_line(Maths::Vec3(0,  10, 0), Maths::Vec2(1,1), Colour(0, 0, 1));
+         Vertex v1_line(Maths::Vec3(0, -10, 0), Maths::Vec2(1,1), Maths::Vec3(1, 0, 0));
+         Vertex v2_line(Maths::Vec3(0,  10, 0), Maths::Vec2(1,1), Maths::Vec3(0, 0, 1));
 
          Maths::Mat4f line_trans = Maths::createTranslationMatrix(Maths::Vec3(0,0,-3));
          Maths::Mat4f line_rot = Maths::createRotationMatrix(Maths::Vec3(0,0, rot));
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         // render
         window.clear();
         {
-            //starField.render();
+            starField.render();
             //rContext.drawLine(v1_line.transform(line_model), v2_line.transform(line_model));
             rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model), randomBitmap);
             //rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));

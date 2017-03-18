@@ -9,6 +9,12 @@
 namespace Maths {
 
 //------------------------------------------------------------
+inline void
+transform(Vec4 & position, Mat4f & transformation) {
+    position = transformation * position;
+}
+
+//------------------------------------------------------------
 inline Mat4f 
 createProjectionMatrix(float fov, float near, float far, float aspect) {
     Mat4f matrix;
@@ -168,6 +174,15 @@ setScale(Mat4f & matrix, Vec3 const & scale) {
     matrix[0]  = scale.x;
     matrix[5]  = scale.y;
     matrix[10] = scale.z;
+}
+
+//------------------------------------------------------------
+inline void
+perspectiveDivide(Vec4 & vec) {
+    vec.x /= vec.w;
+    vec.y /= vec.w;
+    vec.z /= vec.w;
+    //vec.w /= vec.w; // don't include w because we need the info retained for perspective texture mapping
 }
 
 } /* namespace Maths */

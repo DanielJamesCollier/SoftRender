@@ -5,9 +5,9 @@
 
 namespace Maths {
 
-class Vec2 {
+class Vec2 final {
 public:
-    Vec2(float _x, float _y);
+    explicit Vec2(float _x = 0, float _y = 0);
     ~Vec2() = default;
 
     // vector exlusive operations

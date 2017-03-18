@@ -10,13 +10,14 @@
 
 class Colour final {
 public:
-    Colour(float b = 0.0f, float g = 0.0f, float r = 0.0f);
+    explicit Colour(float b = 0.0f, float g = 0.0f, float r = 0.0f);
     ~Colour() = default;
 
     Colour operator + (Colour const & rhs);
     Colour operator - (Colour const & rhs);
     Colour operator * (Colour const & rhs);
     Colour operator / (Colour const & rhs);
+    Colour operator += (Colour const & rhs);
 
     float getG() const;
     float getB() const;

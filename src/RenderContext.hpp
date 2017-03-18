@@ -7,6 +7,7 @@
 #include "Maths/Mat4f.hpp"
 
 class Edge;
+class Gradients;
 
 class RenderContext : public Bitmap {
     friend class Window;
@@ -19,8 +20,9 @@ public:
     void drawLine(Vertex v1, Vertex v2);
 
 private:
-    void scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedness, Bitmap & bitmap);
-    void drawScanLine(Edge left, Edge right, int y);
+    void scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap);
+    void drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap);
+
     void updateContextSize(float width, float height); // todo : call from window when it gets resized
 
 private:

@@ -30,82 +30,123 @@ RenderContext::updateContextSize(float width, float height) {
 //------------------------------------------------------------
 void
 RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
-    Vertex minYVert = v1;
-    Vertex midYVert = v2;
-    Vertex maxYVert = v3;
 
-    minYVert = minYVert.transform(m_screenSpaceTransform).perspectiveDivide();
-    midYVert = midYVert.transform(m_screenSpaceTransform).perspectiveDivide();
-    maxYVert = maxYVert.transform(m_screenSpaceTransform).perspectiveDivide();
+    // change vectors from -1 ~ 1 space to 0 ~ screenWidth
+    Maths::transform(v1.position, m_screenSpaceTransform);
+    Maths::transform(v2.position, m_screenSpaceTransform);
+    Maths::transform(v3.position, m_screenSpaceTransform);
 
-    if(maxYVert.getY() < midYVert.getY()) {
-        std::swap(maxYVert, midYVert);
+    Maths::perspectiveDivide(v1.position);
+    Maths::perspectiveDivide(v2.position);
+    Maths::perspectiveDivide(v3.position); // perf : could be inlined.
+
+    // sort by y order
+    // v1 will be minY
+    // v2 will be midY
+    // v3 will be maxY
+
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
     }
 
-    if(midYVert.getY() < minYVert.getY()) {
-        std::swap(midYVert, minYVert);
+    if(v2.getY() < v1.getY()) {
+        std::swap(v2, v1);
     }
 
-    if(maxYVert.getY() < midYVert.getY()) {
-        std::swap(maxYVert, midYVert);
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
     }
 
-    // area is neg if mid is on left - positive if mid is on right
-    float area = minYVert.triangleAreaTimesTwo(maxYVert, midYVert);
-    bool handedness = area >= 0.0f ? true : false; // true is mid on right
+    bool isleftHanded = v2.getX() >= v1.getX() ? true : false;
 
-    scanTriangle(minYVert, midYVert, maxYVert, handedness, bitmap);
+    scanTriangle(v1, v2, v3, isleftHanded, bitmap); // perf ? chamge to if 
 }
 
 //------------------------------------------------------------
 void
-RenderContext::scanTriangle(Vertex minY, Vertex midY, Vertex maxY, bool handedness, Bitmap & bitmap) {
+RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap) {
     Edge minToMax(minY, maxY);
     Edge minToMid(minY, midY);
     Edge midToMax(midY, maxY);
 
-    if(!handedness) { // midX < minX
-
-        // top portion
+    if(isleftHanded) {
+        // top 
         for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
-            drawScanLine(minToMax, minToMid, y);
-            minToMid.step();
+            drawScanLine(minToMax, minToMid, y, bitmap);
             minToMax.step();
+            minToMid.step();
         }
 
-        // bottom portion
         for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
-            drawScanLine(minToMax, midToMax, y);
+            drawScanLine(minToMax, midToMax, y, bitmap);
             minToMax.step();
             midToMax.step();
         }
-
     }
-    else // midX > minX
-    {
+    else 
+    {   
+        // top
         for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
-            drawScanLine(minToMid, minToMax, y);
-            minToMax.step();
+            drawScanLine(minToMid, minToMax,y, bitmap);
             minToMid.step();
+            minToMax.step();
         }
 
-        // bottom portion
         for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
-            drawScanLine(midToMax, minToMax, y);
+            drawScanLine(midToMax, minToMax, y, bitmap);
             minToMax.step();
             midToMax.step();
         }
     }
 }
 
+// RESOURCE
+//http://archive.gamedev.net/archive/reference/articles/article852.html
 //------------------------------------------------------------
 void 
-RenderContext::drawScanLine(Edge left, Edge right, int y) {
+RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap) {
     int xMin = static_cast<int>(std::ceil(left.getX()));
     int xMax = static_cast<int>(std::ceil(right.getX()));
 
+    // starting colour - ending colour - current interpolated colour
+    Maths::Vec3 minColour   = left.getColour();
+    Maths::Vec3 maxColour   = right.getColour();
+    Maths::Vec3 lerpColour; 
+
+    // start texCoord - ending texCoord - current interpolated texCoord
+    Maths::Vec2 minTexCoord  = left.getTexCoord();
+    Maths::Vec2 maxTexCoord  = right.getTexCoord();
+    // minTexCoord.x /= left.getW(); // perspective correc the texCoord
+    // maxTexCoord.x /= right.getW();
+
+    Maths::Vec2 lerpTexCoord;
+    Maths::Vec3 texColour;
+   
+
+    // final output colour
+    Maths::Vec3 finalColour;
+
+    float lerpAmount = 0.0f;
+    float lerpStep = 1.0f / (xMax - xMin);
+
     for(int x = xMin; x < xMax; x++) {
-        setPixel(x, y, Colour(0,0,1));
+
+        // colour lerp
+        lerpColour = Maths::lerp(minColour, maxColour, lerpAmount);
+
+        // texCoord lerp
+       
+        lerpTexCoord = Maths::lerp(minTexCoord, maxTexCoord, lerpAmount);
+        texColour = bitmap.getPixel(lerpTexCoord.x * bitmap.getWidth(), lerpTexCoord.y * bitmap.getHeight());
+
+        finalColour = lerpColour * texColour;
+
+        float r = static_cast<unsigned char>(finalColour.x * 255.99f);
+        float g = static_cast<unsigned char>(finalColour.y * 255.99f);
+        float b = static_cast<unsigned char>(finalColour.z * 255.99f);
+
+        setPixel(x, y, b, g, r);
+        lerpAmount += lerpStep;
     }
 }
 
@@ -122,8 +163,11 @@ void
 RenderContext::drawLine(Vertex v1, Vertex v2) {
     // transform input vector4 into screen space from -1 to 1
     //  do perspective perspectiveDivide
-    v1 = v1.transform(m_screenSpaceTransform).perspectiveDivide();
-    v2 = v2.transform(m_screenSpaceTransform).perspectiveDivide();
+    v1 = v1.transform(m_screenSpaceTransform);
+    v2 = v2.transform(m_screenSpaceTransform);
+
+    Maths::perspectiveDivide(v1.position);
+    Maths::perspectiveDivide(v2.position);
 
     // vec2 
     float startY = v1.position.y;
@@ -155,10 +199,10 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
         float currXNormal = (currX - startX) / (endX - startX);
         //float currYNormal = (currY - startY) / (endY - startY);
 
-        Colour currentColour = Maths::lerp(v1.colour, v2.colour, currXNormal);
+        Maths::Vec3 currentColour = Maths::lerp(v1.colour, v2.colour, currXNormal);
         //..
 
-        setPixel(static_cast<int>(std::ceil(currX)), static_cast<int>(std::ceil(currY)), currentColour);
+       // setPixel(static_cast<int>(std::ceil(currX)), static_cast<int>(std::ceil(currY)), currentColour);
         currX += xStep;
         currY += yStep;
     }

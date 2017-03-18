@@ -1,33 +1,52 @@
 #ifndef Edge_hpp
 #define Edge_hpp
 
+// my
+#include "Maths/Vec2.hpp"
+#include "Maths/Vec3.hpp"
+
 class Vertex;
 
 class Edge final {
    
 public:
-    Edge(Vertex minY, Vertex maxY);
+    Edge(Vertex const & minY, Vertex const & maxY);
     ~Edge() = default;
 
     void step();
 
-    float getYStart() {
-        return m_yStart;
-    }
+    // getters
+    float getYStart() const;
+    float getYEnd() const;
 
-    float getYEnd() {
-        return m_yEnd;
-    }
-
-    float getX() {
-        return m_x;
-    }
+    // interpolant getters
+    float getX() const;
+    float getW() const;
+    Maths::Vec3 const & getColour() const;
+    Maths::Vec2 const & getTexCoord() const;
 
 private:
+    // edge range
     int m_yStart;
     int m_yEnd;
 
-    float m_x;
-	float m_xStep;
+    /* interpolants */
+
+    // x is used for drawing from one edge to another [leftEdge.x loop to rightEdge.x]
+    float m_x; // interpolant
+	float m_xStep; 
+
+    // w is used for perspective correction of interpolants
+    float m_w; // interpolant
+    float m_wStep;
+
+    // colour
+    Maths::Vec3 m_colour; // interpolant
+    Maths::Vec3 m_colourStep;
+
+    // texture coordinate
+    Maths::Vec2 m_texCoord; // interpolant
+    Maths::Vec2 m_texCoordStep;
+  
 };
 #endif /* Edge_hpp */

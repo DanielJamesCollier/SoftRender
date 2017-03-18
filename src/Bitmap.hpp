@@ -3,7 +3,7 @@
 
 // my
 #include "Maths/MathsUtils.hpp"
-
+#include "Maths/Vec3.hpp"
 // std
 #include <vector>
 
@@ -21,8 +21,9 @@ public:
     int getHeight() const;
     Buffer & getBuffer();
     
+    void setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r);
     void setPixel(int x, int y, Colour const & colour);
-    Colour getPixel(int x, int y);
+    Maths::Vec3 getPixel(int x, int y);
 
     void clear();
 

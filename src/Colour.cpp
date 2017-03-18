@@ -35,6 +35,14 @@ Colour::operator / (Colour const & rhs) {
     return Colour(m_b / rhs.m_b, m_g / rhs.m_g, m_r / rhs.m_r);
 }
 
+Colour
+Colour::operator += (Colour const & rhs) {
+    m_b += rhs.m_b;
+    m_g += rhs.m_g;
+    m_r += rhs.m_r;
+    return *this;
+}
+
 //------------------------------------------------------------
 float
 Colour::getB() const {
