@@ -21,7 +21,7 @@ public:
 
     // interpolant getters
     float getX() const;
-    float getW() const;
+    float getOneOverW() const;
     Maths::Vec3 const & getColour() const;
     Maths::Vec2 const & getTexCoord() const;
 
@@ -37,8 +37,8 @@ private:
 	float m_xStep; 
 
     // w is used for perspective correction of interpolants
-    float m_w; // interpolant
-    float m_wStep;
+    float m_oneOverW;
+    float m_oneOverW_step;
 
     // colour
     Maths::Vec3 m_colour; // interpolant

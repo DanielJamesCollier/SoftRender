@@ -11,23 +11,23 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
     m_yStart(static_cast<int>(std::ceil(minY.getY())))
 ,   m_yEnd(static_cast<int>(std::ceil(maxY.getY())))
 ,   m_x(minY.getX())
-,   m_w(minY.position.w)
 ,   m_colour(minY.colour)
 ,   m_texCoord(minY.texCoord)
 {   
     float xDist = maxY.getX() - minY.getX();
     float yDist = maxY.getY() - minY.getY();
-   // float yPrestep = m_yStart - minY.getY();
+    // float yPrestep = m_yStart - minY.getY();
 
     m_xStep  = xDist / yDist;
-   // m_x            = minY.getX() + yPrestep * m_xStep;
+    // m_x            = minY.getX() + yPrestep * m_xStep;
+
+    m_oneOverW = (1.0f / minY.position.w);
+    m_oneOverW_step = ( (1.0f / maxY.position.w) -  (1.0f / minY.position.w) / yDist);
 
     // calc how much to increment tex per step
     m_texCoordStep = Maths::Vec2((maxY.texCoord.x - minY.texCoord.x) / yDist,
                                  (maxY.texCoord.y - minY.texCoord.y) / yDist);
 
-    // calc how much to increment w per step
-    m_wStep = (maxY.position.w - minY.position.w) / yDist;
 
     // calc how much to increment colour per step
     m_colourStep = Maths::Vec3((maxY.colour.x - minY.colour.x) / yDist,
@@ -39,7 +39,7 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
 void 
 Edge::step() {
     m_x           += m_xStep;
-    m_w           += m_wStep;
+    m_oneOverW    += m_oneOverW_step;
     m_colour      += m_colourStep;
     m_texCoord    += m_texCoordStep;
 }
@@ -64,8 +64,8 @@ Edge::getX() const {
 
 //------------------------------------------------------------
 float 
-Edge::getW() const {
-    return m_w;
+Edge::getOneOverW() const {
+    return m_oneOverW;
 }
 
 //------------------------------------------------------------

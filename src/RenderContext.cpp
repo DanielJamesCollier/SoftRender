@@ -107,39 +107,48 @@ void
 RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap) {
     int xMin = static_cast<int>(std::ceil(left.getX()));
     int xMax = static_cast<int>(std::ceil(right.getX()));
+    float xDist = xMax - xMin;
 
     // starting colour - ending colour - current interpolated colour
     Maths::Vec3 minColour   = left.getColour();
     Maths::Vec3 maxColour   = right.getColour();
-    Maths::Vec3 lerpColour; 
+    Maths::Vec3 colourStep((maxColour.x - minColour.x) / xDist,
+                           (maxColour.y - minColour.y) / xDist,
+                           (maxColour.z - minColour.z) / xDist);
+    Maths::Vec3 currColour = minColour;
 
-    // start texCoord - ending texCoord - current interpolated texCoord
+    // start texCoord - ending t exCoord - current interpolated texCoord
     Maths::Vec2 minTexCoord  = left.getTexCoord();
     Maths::Vec2 maxTexCoord  = right.getTexCoord();
-    // minTexCoord.x /= left.getW(); // perspective correc the texCoord
-    // maxTexCoord.x /= right.getW();
-
-    Maths::Vec2 lerpTexCoord;
+    // minTexCoord.x /= left.getOneOverW();
+    // maxTexCoord.x /= right.getOneOverW();
+    Maths::Vec2 texCoordStep((maxTexCoord.x - minTexCoord.x) / xDist,
+                             (maxTexCoord.y - minTexCoord.y) / xDist);
+    Maths::Vec2 currTexCoord = minTexCoord;
     Maths::Vec3 texColour;
    
 
     // final output colour
     Maths::Vec3 finalColour;
 
+
+
     float lerpAmount = 0.0f;
     float lerpStep = 1.0f / (xMax - xMin);
+
+    
 
     for(int x = xMin; x < xMax; x++) {
 
         // colour lerp
-        lerpColour = Maths::lerp(minColour, maxColour, lerpAmount);
+        currColour  += colourStep;
 
         // texCoord lerp
-       
-        lerpTexCoord = Maths::lerp(minTexCoord, maxTexCoord, lerpAmount);
-        texColour = bitmap.getPixel(lerpTexCoord.x * bitmap.getWidth(), lerpTexCoord.y * bitmap.getHeight());
+        currTexCoord += texCoordStep;
+        texColour     = bitmap.getPixel(currTexCoord.x * bitmap.getWidth(),
+                                        currTexCoord.y * bitmap.getHeight());
 
-        finalColour = lerpColour * texColour;
+        finalColour = currColour * texColour;
 
         float r = static_cast<unsigned char>(finalColour.x * 255.99f);
         float g = static_cast<unsigned char>(finalColour.y * 255.99f);
