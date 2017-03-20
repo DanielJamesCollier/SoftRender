@@ -1,6 +1,7 @@
 // std
 #include <string>
 #include <chrono>
+#include <vector>
 
 // dependancies
 #include "SDL.h"
@@ -35,11 +36,11 @@ int main(int argc, char* argv[]) {
     //..
 
     // window spec
-    bool vSync = true;
+    bool vSync = false;
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 1.0f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     //..
 
@@ -52,8 +53,32 @@ int main(int argc, char* argv[]) {
     Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0,1,0)); // top
     Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0,0,1)); // bottom right
     //..
+    
+    // pyramid mesh
+    std::vector<Vertex> pyramid;
 
-    Bitmap randomBitmap = createRandomBitmap(50, 50);
+    // front 
+    pyramid.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
+    pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+    pyramid.push_back(Vertex(Maths::Vec3( 1, -1, -1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
+
+    // back
+    pyramid.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
+    pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+    pyramid.push_back(Vertex(Maths::Vec3( 1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
+
+    // left
+    pyramid.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
+    pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+    pyramid.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
+
+    // right
+    pyramid.push_back(Vertex(Maths::Vec3(1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
+    pyramid.push_back(Vertex(Maths::Vec3(0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+    pyramid.push_back(Vertex(Maths::Vec3(1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
+    //..
+
+    Bitmap randomBitmap = createRandomBitmap(100, 100);
     
     // game loop vars
     auto frames = 0;
@@ -85,7 +110,7 @@ int main(int argc, char* argv[]) {
         begin = clock::now();
 
         // update
-        //starField.update(delta);
+        starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
         temp+= .00001f * delta;
         rot += 0.0005f * delta;
@@ -130,10 +155,12 @@ int main(int argc, char* argv[]) {
         // render
         window.clear();
         {
-            //  starField.render();
+            starField.render();
             //rContext.drawLine(v1_line.transform(line_model), v2_line.transform(line_model));
-            rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model), randomBitmap);
+            //rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model), randomBitmap);
             //rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));
+
+            rContext.drawMesh(pyramid, model, randomBitmap);
         }
         window.swapBackBuffer();
     }

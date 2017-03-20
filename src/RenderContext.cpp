@@ -1,21 +1,25 @@
 // my
 #include "RenderContext.hpp"
 #include "Colour.hpp"
-#include "Maths/Transform.hpp"
 #include "Edge.hpp"
 #include "Maths/Maths.hpp"
 
 // std
+#include <algorithm>
 #include <iostream>
 #include <utility>
 #include <cmath>
+#include <limits>
 
 //------------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
     Bitmap(width, height)
-{
+{   
     m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
     std::cout << "context width: " << width << " context height: " << height << std::endl;  
+
+    m_depthBuffer.resize(width * height);
+    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -100);
 }
 
 //------------------------------------------------------------
@@ -138,22 +142,31 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
 
         float z = 1.0f / currW;
         
+        // get the texutre colour
         texColour = bitmap.getPixel((currTexCoord.x * z) * bitmap.getWidth(),
                                     (currTexCoord.y * z) * bitmap.getHeight());
+
+        Maths::Vec3 lerpColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
        
 
-        finalColour = currColour * texColour;
+        finalColour = lerpColour * texColour; // texture + colou
+        //finalColour = texColour;            // texture only drawing
+        //finalColour = lerpColour;           // colour only drawing
 
-        float r = static_cast<unsigned char>((finalColour.x * z) * 255.99f);
-        float g = static_cast<unsigned char>((finalColour.y * z) * 255.99f);
-        float b = static_cast<unsigned char>((finalColour.z * z) * 255.99f);
+        float r = static_cast<unsigned char>(finalColour.x * 255.99f);
+        float g = static_cast<unsigned char>(finalColour.y * 255.99f);
+        float b = static_cast<unsigned char>(finalColour.z * 255.99f);
 
-        setPixel(x, y, b, g, r);
+        if(m_depthBuffer[m_width * y + x] < currW) {
+            setPixel(x, y, b, g, r);
+            m_depthBuffer[m_width * y + x] = currW;
+        }
+        
 
         // step all the things
-        currColour  += colourStep;
+        currColour   += colourStep;
         currTexCoord += texCoordStep;
-        currW += wStep;
+        currW        += wStep;
     }
 }
 
@@ -213,4 +226,24 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
         currX += xStep;
         currY += yStep;
     }
+}
+
+//------------------------------------------------------------
+void
+RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap) {   
+    // transform vertices
+    for(size_t i = 0; i < mesh.size(); i++) {
+        Maths::transform(mesh[i].position, transform);
+    }
+
+    // draw triangles
+    for(size_t i = 0; i < mesh.size(); i+= 3) {
+        //std::sort(mesh);
+        fillTriangle(mesh[i + 0],
+                     mesh[i + 1],
+                     mesh[i + 2],
+                     bitmap);
+    }
+
+    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -1000); // fix : remove this magic number
 }
