@@ -11,8 +11,6 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
     m_yStart(static_cast<int>(std::ceil(minY.getY())))
 ,   m_yEnd(static_cast<int>(std::ceil(maxY.getY())))
 ,   m_x(minY.getX())
-,   m_colour(minY.colour)
-,   m_texCoord(minY.texCoord)
 {   
     float xDist = maxY.getX() - minY.getX();
     float yDist = maxY.getY() - minY.getY();
@@ -21,18 +19,30 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
     m_xStep  = xDist / yDist;
     // m_x            = minY.getX() + yPrestep * m_xStep;
 
-    m_oneOverW = (1.0f / minY.position.w);
-    m_oneOverW_step = ( (1.0f / maxY.position.w) -  (1.0f / minY.position.w) / yDist);
+    float minOneOverW = 1.0f / minY.position.w;
+    float maxOneOverW = 1.0f / maxY.position.w;
 
-    // calc how much to increment tex per step
-    m_texCoordStep = Maths::Vec2((maxY.texCoord.x - minY.texCoord.x) / yDist,
-                                 (maxY.texCoord.y - minY.texCoord.y) / yDist);
+    m_oneOverW = minOneOverW;
+    m_oneOverW_step = (maxOneOverW - minOneOverW) / yDist;
+
+    
+    Maths::Vec2 texMinCorrected = minY.texCoord / minY.position.w;
+    Maths::Vec2 texMaxCorrected = maxY.texCoord / maxY.position.w;
+    m_texCoord = texMinCorrected;
+    m_texCoordStep = Maths::Vec2((texMaxCorrected.x - texMinCorrected.x) / yDist,
+                                 (texMaxCorrected.y - texMinCorrected.y) / yDist);
+                                 
 
 
     // calc how much to increment colour per step
-    m_colourStep = Maths::Vec3((maxY.colour.x - minY.colour.x) / yDist,
-                               (maxY.colour.y - minY.colour.y) / yDist,
-                               (maxY.colour.z - minY.colour.z) / yDist);
+    Maths::Vec3 colMinCorrected = minY.colour / minY.position.w;
+    Maths::Vec3 colMaxCorrected = maxY.colour / maxY.position.w;
+
+    m_colour = colMinCorrected;
+
+    m_colourStep = Maths::Vec3((colMaxCorrected.x - colMinCorrected.x) / yDist,
+                               (colMaxCorrected.y - colMinCorrected.y) / yDist,
+                               (colMaxCorrected.z - colMinCorrected.z) / yDist);
 }
 
 //------------------------------------------------------------

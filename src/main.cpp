@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     //..
 
     // window spec
-    bool vSync = false;
+    bool vSync = true;
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
@@ -85,10 +85,10 @@ int main(int argc, char* argv[]) {
         begin = clock::now();
 
         // update
-        starField.update(delta);
+        //starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0,rot,0));
         temp+= .00001f * delta;
-        rot += 0.001f * delta;
+        rot += 0.0005f * delta;
 
         if(input.isLeftDown()) {
             x-= 0.001f * delta;
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
         // render
         window.clear();
         {
-            starField.render();
+            //  starField.render();
             //rContext.drawLine(v1_line.transform(line_model), v2_line.transform(line_model));
             rContext.fillTriangle(v3.transform(model), v2.transform(model), v1.transform(model), randomBitmap);
             //rContext.wireTriangle(v3.transform(wire_model), v2.transform(wire_model), v1.transform(wire_model));

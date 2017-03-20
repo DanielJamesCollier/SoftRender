@@ -100,8 +100,6 @@ RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex con
     }
 }
 
-// RESOURCE
-//http://archive.gamedev.net/archive/reference/articles/article852.html
 //------------------------------------------------------------
 void 
 RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap) {
@@ -120,42 +118,42 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
     // start texCoord - ending t exCoord - current interpolated texCoord
     Maths::Vec2 minTexCoord  = left.getTexCoord();
     Maths::Vec2 maxTexCoord  = right.getTexCoord();
-    // minTexCoord.x /= left.getOneOverW();
-    // maxTexCoord.x /= right.getOneOverW();
     Maths::Vec2 texCoordStep((maxTexCoord.x - minTexCoord.x) / xDist,
                              (maxTexCoord.y - minTexCoord.y) / xDist);
     Maths::Vec2 currTexCoord = minTexCoord;
     Maths::Vec3 texColour;
+
+    // w
+    float minW  = left.getOneOverW();
+    float maxW  = right.getOneOverW();
+    float wStep = (maxW - minW) / xDist;
+    float currW = minW;
    
 
     // final output colour
     Maths::Vec3 finalColour;
 
-
-
-    float lerpAmount = 0.0f;
-    float lerpStep = 1.0f / (xMax - xMin);
-
-    
-
+    // perf : dont do perspective correction every pixel but every few pixels
     for(int x = xMin; x < xMax; x++) {
 
-        // colour lerp
-        currColour  += colourStep;
-
-        // texCoord lerp
-        currTexCoord += texCoordStep;
-        texColour     = bitmap.getPixel(currTexCoord.x * bitmap.getWidth(),
-                                        currTexCoord.y * bitmap.getHeight());
+        float z = 1.0f / currW;
+        
+        texColour = bitmap.getPixel((currTexCoord.x * z) * bitmap.getWidth(),
+                                    (currTexCoord.y * z) * bitmap.getHeight());
+       
 
         finalColour = currColour * texColour;
 
-        float r = static_cast<unsigned char>(finalColour.x * 255.99f);
-        float g = static_cast<unsigned char>(finalColour.y * 255.99f);
-        float b = static_cast<unsigned char>(finalColour.z * 255.99f);
+        float r = static_cast<unsigned char>((finalColour.x * z) * 255.99f);
+        float g = static_cast<unsigned char>((finalColour.y * z) * 255.99f);
+        float b = static_cast<unsigned char>((finalColour.z * z) * 255.99f);
 
         setPixel(x, y, b, g, r);
-        lerpAmount += lerpStep;
+
+        // step all the things
+        currColour  += colourStep;
+        currTexCoord += texCoordStep;
+        currW += wStep;
     }
 }
 
