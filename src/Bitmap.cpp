@@ -3,12 +3,13 @@
 
 // my
 #include "Bitmap.hpp"
-#include "Colour.hpp"
 
 //------------------------------------------------------------
 Bitmap::Bitmap(int width, int height) :
     m_width(width)
 ,   m_height(height)
+,   m_widthF(static_cast<float>(width))
+,   m_heightF(static_cast<float>(height))
 {
     m_buffer.resize(width * height * 4);
     clear();
@@ -33,6 +34,18 @@ Bitmap::getHeight() const {
 }
 
 //------------------------------------------------------------
+float
+Bitmap::getWidthF() const {
+    return m_widthF;
+}
+
+//------------------------------------------------------------
+float
+Bitmap::getHeightF() const {
+    return m_heightF;
+}
+
+//------------------------------------------------------------
 Bitmap::Buffer & 
 Bitmap::getBuffer() {
     return m_buffer;
@@ -52,19 +65,6 @@ Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r
 }
 
 //------------------------------------------------------------
-void // fix: x and y should be bounded 
-Bitmap::setPixel(int x, int y, Colour const & colour) {
-    int index = (m_width * y + x) * 4;
-
-    if(x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1) return; // cleanup - probably should never be called - this could be an assert
-
-    m_buffer[index + 0] = colour.getB_uc();
-    m_buffer[index + 1] = colour.getG_uc();
-    m_buffer[index + 2] = colour.getR_uc();
-    m_buffer[index + 3] = 255;
-}
-
-//------------------------------------------------------------
 Maths::Vec3
 Bitmap::getPixel(int x, int y) {
     int index = (m_width * y + x) * 4;
@@ -77,4 +77,15 @@ Bitmap::getPixel(int x, int y) {
 void 
 Bitmap::clear() {
    std::fill(std::begin(m_buffer), std::end(m_buffer), 0);
+}
+
+//------------------------------------------------------------
+void 
+Bitmap::resize(int width, int height) {
+    m_width   = width;
+    m_height  = height;
+    m_widthF  = static_cast<float>(width);
+    m_heightF = static_cast<float>(height);
+    m_buffer.resize(width * height * 4);
+    clear();
 }

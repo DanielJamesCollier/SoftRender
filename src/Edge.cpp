@@ -10,48 +10,41 @@
 Edge::Edge(Vertex const & minY, Vertex const & maxY) :
     m_yStart(static_cast<int>(std::ceil(minY.getY())))
 ,   m_yEnd(static_cast<int>(std::ceil(maxY.getY())))
-,   m_x(minY.getX())
+,   x(minY.getX())
 {   
-    float xDist = maxY.getX() - minY.getX();
-    float yDist = maxY.getY() - minY.getY();
-    // float yPrestep = m_yStart - minY.getY();
+    float yDist = maxY.position.y - minY.position.y;
 
-    m_xStep  = xDist / yDist;
-    // m_x            = minY.getX() + yPrestep * m_xStep;
+    m_xStep  = (maxY.position.x - minY.position.x) / yDist;
 
-    float minOneOverW = 1.0f / minY.position.w;
-    float maxOneOverW = 1.0f / maxY.position.w;
 
-    m_oneOverW = minOneOverW;
-    m_oneOverW_step = (maxOneOverW - minOneOverW) / yDist;
+    oneOverW = 1.0f / minY.position.w;;
+    m_oneOverW_step = ((1.0f / maxY.position.w) - oneOverW) / yDist;
 
     
-    Maths::Vec2 texMinCorrected = minY.texCoord / minY.position.w;
+   
+    texCoord = minY.texCoord / minY.position.w;
     Maths::Vec2 texMaxCorrected = maxY.texCoord / maxY.position.w;
-    m_texCoord = texMinCorrected;
-    m_texCoordStep = Maths::Vec2((texMaxCorrected.x - texMinCorrected.x) / yDist,
-                                 (texMaxCorrected.y - texMinCorrected.y) / yDist);
+    m_texCoordStep = Maths::Vec2((texMaxCorrected.x - texCoord.x) / yDist,
+                                 (texMaxCorrected.y - texCoord.y) / yDist);
                                  
 
 
     // calc how much to increment colour per step
-    Maths::Vec3 colMinCorrected = minY.colour / minY.position.w;
+    colour = minY.colour / minY.position.w;
     Maths::Vec3 colMaxCorrected = maxY.colour / maxY.position.w;
 
-    m_colour = colMinCorrected;
-
-    m_colourStep = Maths::Vec3((colMaxCorrected.x - colMinCorrected.x) / yDist,
-                               (colMaxCorrected.y - colMinCorrected.y) / yDist,
-                               (colMaxCorrected.z - colMinCorrected.z) / yDist);
+    m_colourStep = Maths::Vec3((colMaxCorrected.x - colour.x) / yDist,
+                               (colMaxCorrected.y - colour.y) / yDist,
+                               (colMaxCorrected.z - colour.z) / yDist);
 }
 
 //------------------------------------------------------------
 void 
 Edge::step() {
-    m_x           += m_xStep;
-    m_oneOverW    += m_oneOverW_step;
-    m_colour      += m_colourStep;
-    m_texCoord    += m_texCoordStep;
+    x        += m_xStep;
+    oneOverW += m_oneOverW_step;
+    colour   += m_colourStep;
+    texCoord += m_texCoordStep;
 }
 
 //------------------------------------------------------------
@@ -64,28 +57,4 @@ Edge::getYStart() const {
 float 
 Edge::getYEnd() const {
     return m_yEnd;
-}
-
-//------------------------------------------------------------
-float 
-Edge::getX() const {
-    return m_x;
-}
-
-//------------------------------------------------------------
-float 
-Edge::getOneOverW() const {
-    return m_oneOverW;
-}
-
-//------------------------------------------------------------
-Maths::Vec3 const &
-Edge::getColour() const {
-    return m_colour;
-}
-
-//------------------------------------------------------------
-Maths::Vec2 const & 
-Edge::getTexCoord() const {
-    return m_texCoord;
 }

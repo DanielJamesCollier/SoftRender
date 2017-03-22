@@ -4,7 +4,6 @@
 // my
 #include "RenderContext.hpp"
 #include "StarField.hpp"
-#include "Colour.hpp"
 #include "Maths/Maths.hpp"
 
 //------------------------------------------------------------
@@ -48,7 +47,7 @@ StarField::render() {
         if(x < 0 || x >= m_rContext.getWidth() || y < 0 || y >= m_rContext.getHeight()) {
             initStar(i);
         } else {
-            m_rContext.setPixel(x, y, Colour(255, 255, 255));
+            m_rContext.setPixel(x, y, 255,255,255);
         }
     }
 }

@@ -7,8 +7,6 @@
 // std
 #include <vector>
 
-class Colour;
-
 class Bitmap {
     using Buffer = std::vector<unsigned char>;
 public:
@@ -19,19 +17,27 @@ public:
 
     int getWidth() const;
     int getHeight() const;
+
+    // get width as float
+    float getWidthF() const;
+    float getHeightF() const;
+
     Buffer & getBuffer();
     
     void setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r);
-    void setPixel(int x, int y, Colour const & colour);
     Maths::Vec3 getPixel(int x, int y);
 
     void clear();
+
+    void resize(int width, int height);
 
     friend Bitmap createRandomBitmap(int width, int height);
 
 protected:
     int m_width;
     int m_height;
+    float m_widthF;
+    float m_heightF;
     Buffer m_buffer;
 };
 

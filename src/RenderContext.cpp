@@ -1,6 +1,5 @@
 // my
 #include "RenderContext.hpp"
-#include "Colour.hpp"
 #include "Edge.hpp"
 #include "Maths/Maths.hpp"
 
@@ -10,6 +9,8 @@
 #include <utility>
 #include <cmath>
 #include <limits>
+
+/* PUBLIC */
 
 //------------------------------------------------------------
 RenderContext::RenderContext(int width, int height) :
@@ -23,154 +24,6 @@ RenderContext::RenderContext(int width, int height) :
 }
 
 //------------------------------------------------------------
-void // fix : call this function when screen size changes - need to account for scale
-RenderContext::updateContextSize(float width, float height) {
-    m_width = width;
-    m_height = height;
-    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
-    m_buffer.resize(m_width * m_height * 4);
-}
-
-//------------------------------------------------------------
-void
-RenderContext::fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
-
-    // change vectors from -1 ~ 1 space to 0 ~ screenWidth
-    Maths::transform(v1.position, m_screenSpaceTransform);
-    Maths::transform(v2.position, m_screenSpaceTransform);
-    Maths::transform(v3.position, m_screenSpaceTransform);
-
-    Maths::perspectiveDivide(v1.position);
-    Maths::perspectiveDivide(v2.position);
-    Maths::perspectiveDivide(v3.position); // perf : could be inlined.
-
-    // sort by y order
-    // v1 will be minY
-    // v2 will be midY
-    // v3 will be maxY
-
-    if(v3.getY() < v2.getY()) {
-        std::swap(v3, v2);
-    }
-
-    if(v2.getY() < v1.getY()) {
-        std::swap(v2, v1);
-    }
-
-    if(v3.getY() < v2.getY()) {
-        std::swap(v3, v2);
-    }
-
-    bool isleftHanded = v2.getX() >= v1.getX() ? true : false;
-
-    scanTriangle(v1, v2, v3, isleftHanded, bitmap); // perf ? chamge to if 
-}
-
-//------------------------------------------------------------
-void
-RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap) {
-    Edge minToMax(minY, maxY);
-    Edge minToMid(minY, midY);
-    Edge midToMax(midY, maxY);
-
-    if(isleftHanded) {
-        // top 
-        for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
-            drawScanLine(minToMax, minToMid, y, bitmap);
-            minToMax.step();
-            minToMid.step();
-        }
-
-        for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
-            drawScanLine(minToMax, midToMax, y, bitmap);
-            minToMax.step();
-            midToMax.step();
-        }
-    }
-    else 
-    {   
-        // top
-        for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
-            drawScanLine(minToMid, minToMax,y, bitmap);
-            minToMid.step();
-            minToMax.step();
-        }
-
-        for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
-            drawScanLine(midToMax, minToMax, y, bitmap);
-            minToMax.step();
-            midToMax.step();
-        }
-    }
-}
-
-//------------------------------------------------------------
-void 
-RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap) {
-    int xMin = static_cast<int>(std::ceil(left.getX()));
-    int xMax = static_cast<int>(std::ceil(right.getX()));
-    float xDist = xMax - xMin;
-
-    // starting colour - ending colour - current interpolated colour
-    Maths::Vec3 minColour   = left.getColour();
-    Maths::Vec3 maxColour   = right.getColour();
-    Maths::Vec3 colourStep((maxColour.x - minColour.x) / xDist,
-                           (maxColour.y - minColour.y) / xDist,
-                           (maxColour.z - minColour.z) / xDist);
-    Maths::Vec3 currColour = minColour;
-
-    // start texCoord - ending t exCoord - current interpolated texCoord
-    Maths::Vec2 minTexCoord  = left.getTexCoord();
-    Maths::Vec2 maxTexCoord  = right.getTexCoord();
-    Maths::Vec2 texCoordStep((maxTexCoord.x - minTexCoord.x) / xDist,
-                             (maxTexCoord.y - minTexCoord.y) / xDist);
-    Maths::Vec2 currTexCoord = minTexCoord;
-    Maths::Vec3 texColour;
-
-    // w
-    float minW  = left.getOneOverW();
-    float maxW  = right.getOneOverW();
-    float wStep = (maxW - minW) / xDist;
-    float currW = minW;
-   
-
-    // final output colour
-    Maths::Vec3 finalColour;
-
-    // perf : dont do perspective correction every pixel but every few pixels
-    for(int x = xMin; x < xMax; x++) {
-
-        float z = 1.0f / currW;
-        
-        // get the texutre colour
-        texColour = bitmap.getPixel((currTexCoord.x * z) * bitmap.getWidth(),
-                                    (currTexCoord.y * z) * bitmap.getHeight());
-
-        Maths::Vec3 lerpColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
-       
-
-        finalColour = lerpColour * texColour; // texture + colou
-        //finalColour = texColour;            // texture only drawing
-        //finalColour = lerpColour;           // colour only drawing
-
-        float r = static_cast<unsigned char>(finalColour.x * 255.99f);
-        float g = static_cast<unsigned char>(finalColour.y * 255.99f);
-        float b = static_cast<unsigned char>(finalColour.z * 255.99f);
-
-        if(m_depthBuffer[m_width * y + x] < currW) {
-            setPixel(x, y, b, g, r);
-            m_depthBuffer[m_width * y + x] = currW;
-        }
-        
-
-        // step all the things
-        currColour   += colourStep;
-        currTexCoord += texCoordStep;
-        currW        += wStep;
-    }
-}
-
-//------------------------------------------------------------
 void
 RenderContext::wireTriangle(Vertex v1, Vertex v2, Vertex v3) {
     drawLine(v1, v2);
@@ -181,8 +34,6 @@ RenderContext::wireTriangle(Vertex v1, Vertex v2, Vertex v3) {
 //------------------------------------------------------------
 void
 RenderContext::drawLine(Vertex v1, Vertex v2) {
-    // transform input vector4 into screen space from -1 to 1
-    //  do perspective perspectiveDivide
     v1 = v1.transform(m_screenSpaceTransform);
     v2 = v2.transform(m_screenSpaceTransform);
 
@@ -230,7 +81,8 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
 
 //------------------------------------------------------------
 void
-RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap) {   
+RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap) {  
+
     // transform vertices
     for(size_t i = 0; i < mesh.size(); i++) {
         Maths::transform(mesh[i].position, transform);
@@ -243,7 +95,151 @@ RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitm
                      mesh[i + 1],
                      mesh[i + 2],
                      bitmap);
+    }    
+}
+
+//------------------------------------------------------------
+void 
+RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, Maths::Mat4f & transform, Bitmap & bitmap) {
+     // transform vertices
+    for(size_t i = 0; i < vertices.size(); i++) {
+        Maths::transform(vertices[i].position, transform);
     }
 
+    // draw triangles
+    for(size_t i = 0; i < indices.size(); i+= 3) {
+        //std::sort(mesh);
+        fillTriangle(vertices[indices[i + 0]],
+                     vertices[indices[i + 1]],
+                     vertices[indices[i + 2]],
+                     bitmap);
+    }
+}
+
+//------------------------------------------------------------
+void
+RenderContext::clearDepthBuffer() {
     std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -1000); // fix : remove this magic number
+}
+
+/* PRIVATE */
+
+//------------------------------------------------------------
+void
+RenderContext::fillTriangle(Vertex & v1, Vertex  & v2, Vertex & v3, Bitmap & bitmap) {
+
+    // change vectors from -1 ~ 1 space to 0 ~ screenWidth
+    Maths::transform(v1.position, m_screenSpaceTransform);
+    Maths::transform(v2.position, m_screenSpaceTransform);
+    Maths::transform(v3.position, m_screenSpaceTransform);
+
+    Maths::perspectiveDivide(v1.position);
+    Maths::perspectiveDivide(v2.position);
+    Maths::perspectiveDivide(v3.position); // perf : could be inlined.
+
+
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
+    }
+
+    if(v2.getY() < v1.getY()) {
+        std::swap(v2, v1);
+    }
+
+    if(v3.getY() < v2.getY()) {
+        std::swap(v3, v2);
+    }
+
+    bool isleftHanded = v2.getX() >= v1.getX() ? true : false;
+
+    scanTriangle(v1, v2, v3, isleftHanded, bitmap);
+}
+
+//------------------------------------------------------------
+void
+RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap) {
+    Edge minToMax(minY, maxY); // perf : alot of data gets duplicated here
+    Edge minToMid(minY, midY);
+    Edge midToMax(midY, maxY);
+
+    if(isleftHanded) {
+        // top 
+        for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
+            drawScanLine(minToMax, minToMid, y, bitmap);
+            minToMax.step();
+            minToMid.step();
+        }
+
+        for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
+            drawScanLine(minToMax, midToMax, y, bitmap);
+            minToMax.step();
+            midToMax.step();
+        }
+    }
+    else 
+    {   
+        // top
+        for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
+            drawScanLine(minToMid, minToMax,y, bitmap);
+            minToMid.step();
+            minToMax.step();
+        }
+
+        for(int y = midToMax.getYStart(); y < midToMax.getYEnd(); y++) {
+            drawScanLine(midToMax, minToMax, y, bitmap);
+            minToMax.step();
+            midToMax.step();
+        }
+    }
+}
+
+//------------------------------------------------------------
+void 
+RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap) {
+    float xMin  = static_cast<int>(std::ceil(left.x));
+    float xMax  = static_cast<int>(std::ceil(right.x));
+    float xDist = xMax - xMin;
+
+    Maths::Vec3 currColour = left.colour;
+    Maths::Vec3 colourStep((right.colour - left.colour) / xDist);
+
+    Maths::Vec2 currTexCoord = left.texCoord;
+    Maths::Vec2 texCoordStep((right.texCoord - left.texCoord) / xDist);
+
+    float currW = left.oneOverW;
+    float wStep = (right.oneOverW - currW) / xDist;
+
+
+    // perf : dont do perspective correction every pixel but every few pixels
+    for(float x = xMin; x < xMax; ++x) {
+
+        if(m_depthBuffer[m_width * y + x] > currW) return;
+        m_depthBuffer[m_width * y + x] = currW;
+
+        float z = 1.0f / currW;
+        
+        Maths::Vec3 correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * bitmap.getWidthF(), (currTexCoord.y * z) * bitmap.getHeightF());
+        Maths::Vec3 correctedColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
+    
+        Maths::Vec3 finalColour = correctedColour * correctedTexColour;
+
+
+        setPixel(x, y, 
+                    static_cast<unsigned char>(finalColour.z * 255.99f),
+                    static_cast<unsigned char>(finalColour.y * 255.99f), 
+                    static_cast<unsigned char>(finalColour.x * 255.99f));
+        
+
+        // step all the things
+        currColour   += colourStep;
+        currTexCoord += texCoordStep;
+        currW        += wStep;
+    }
+}
+
+//------------------------------------------------------------
+void // fix : call this function when screen size changes - need to account for scale
+RenderContext::updateContextSize(float width, float height) {
+    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
+    Bitmap::resize(width, height);
 }
