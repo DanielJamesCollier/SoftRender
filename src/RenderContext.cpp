@@ -8,6 +8,7 @@
 #include <iostream>
 #include <utility>
 #include <cmath>
+#include <cstdint> // used for inline asm
 #include <limits>
 
 /* PUBLIC */
@@ -32,7 +33,7 @@ RenderContext::wireTriangle(Vertex v1, Vertex v2, Vertex v3) {
 }
 
 //------------------------------------------------------------
-void
+void // fix to use edges
 RenderContext::drawLine(Vertex v1, Vertex v2) {
     v1 = v1.transform(m_screenSpaceTransform);
     v2 = v2.transform(m_screenSpaceTransform);
@@ -81,6 +82,32 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
 
 //------------------------------------------------------------
 void
+RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
+    // clip triangle
+    std::vector<Vertex> vertices;
+    std::vector<Vertex> vertricesClipped;
+
+    vertices.reserve(3);
+    vertices.push_back(v1);
+    vertices.push_back(v2);
+    vertices.push_back(v3);
+
+    if(clipPolygonAxis(vertices, vertricesClipped, 0) &&
+       clipPolygonAxis(vertices, vertricesClipped, 1) &&
+       clipPolygonAxis(vertices, vertricesClipped, 2)) {
+           
+
+        // triangle fan drawing
+        for(int i = 1; i < vertices.size() - 1; i++) {
+            fillTriangle(vertices[0], vertices[i], vertices[i + 1], bitmap);
+        }
+    }
+
+    // rename and inline other functions into processtriangle
+}
+
+//------------------------------------------------------------
+void
 RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap) {  
 
     // transform vertices
@@ -101,18 +128,20 @@ RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitm
 //------------------------------------------------------------
 void 
 RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, Maths::Mat4f & transform, Bitmap & bitmap) {
-     // transform vertices
+
     for(size_t i = 0; i < vertices.size(); i++) {
         Maths::transform(vertices[i].position, transform);
     }
 
     // draw triangles
     for(size_t i = 0; i < indices.size(); i+= 3) {
-        //std::sort(mesh);
-        fillTriangle(vertices[indices[i + 0]],
-                     vertices[indices[i + 1]],
-                     vertices[indices[i + 2]],
-                     bitmap);
+
+        int indexOne = indices[i + 0];
+        int indexTwo = indices[i + 1];
+        int indexTre = indices[i + 2];
+
+        drawTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap);
+        //fillTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap);
     }
 }
 
@@ -125,13 +154,65 @@ RenderContext::clearDepthBuffer() {
 /* PRIVATE */
 
 //------------------------------------------------------------
+bool
+RenderContext::clipPolygonAxis(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis) {
+    clipPolygonAxisComponent(vertices, output, axis, 1.0f);
+    vertices.clear();
+
+    if(output.empty()) {
+        return false; // all verts where outside the positive axis
+    }
+
+    clipPolygonAxisComponent(output, vertices, axis, -1.0f);
+    output.clear();
+
+    return !vertices.empty();
+}
+
+//------------------------------------------------------------
 void
-RenderContext::fillTriangle(Vertex & v1, Vertex  & v2, Vertex & v3, Bitmap & bitmap) {
+RenderContext::clipPolygonAxisComponent(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis, float sign) {
+
+    Vertex lastVertex = vertices[vertices.size() - 1];
+    float  lastComp   = lastVertex.position[axis] * sign;
+    bool   lastInside = lastComp <= lastVertex.position.w;
+
+    for(int i = 0; i < vertices.size(); i++) {
+
+        Vertex currVertex = vertices[i];
+        float  currComp   = currVertex.position[axis] * sign;
+        bool   currInside = currComp <= currVertex.position.w;
+        
+        if(currInside ^ lastInside) {
+           float lerpStep = (lastVertex.position.w - lastComp) /
+                           ((lastVertex.position.w - lastComp) -
+                            (currVertex.position.w - currComp));
+
+           output.push_back(lerp(lastVertex, currVertex, lerpStep));
+        }
+
+        if(currInside) {
+            output.push_back(currVertex);
+        }
+
+        lastVertex = currVertex;
+        lastComp = currComp;
+        lastInside = currInside;
+    }
+}
+
+//------------------------------------------------------------
+void // vertices must be clipped before uing this function
+RenderContext::fillTriangle(Vertex v1, Vertex  v2, Vertex v3, Bitmap & bitmap) {
 
     // change vectors from -1 ~ 1 space to 0 ~ screenWidth
     Maths::transform(v1.position, m_screenSpaceTransform);
     Maths::transform(v2.position, m_screenSpaceTransform);
     Maths::transform(v3.position, m_screenSpaceTransform);
+
+    // @perf : avoid not needed matrix vector mult just do below
+    //x' = x*halfWidth + halfWidth
+    //y' = y*halfHeight + halfHeight
 
     Maths::perspectiveDivide(v1.position);
     Maths::perspectiveDivide(v2.position);
@@ -150,13 +231,18 @@ RenderContext::fillTriangle(Vertex & v1, Vertex  & v2, Vertex & v3, Bitmap & bit
         std::swap(v3, v2);
     }
 
-    bool isleftHanded = v2.getX() >= v1.getX() ? true : false;
+    float pointLineIntersect = (v2.position.x - v1.position.x) * 
+                               (v3.position.y - v1.position.y) -
+                               (v2.position.y - v1.position.y) * 
+                               (v3.position.x - v1.position.x);
+
+    bool isleftHanded = pointLineIntersect >= 0 ? true : false;
 
     scanTriangle(v1, v2, v3, isleftHanded, bitmap);
 }
 
 //------------------------------------------------------------
-void
+void // @perf : everything beyond this point should be 3D not 4D - no need to send a vec4 only need a vec3 because z is not needed send (x, y, w)
 RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap) {
     Edge minToMax(minY, maxY); // perf : alot of data gets duplicated here
     Edge minToMid(minY, midY);
@@ -211,24 +297,26 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
 
 
     // perf : dont do perspective correction every pixel but every few pixels
+    int row = m_width * y;
     for(float x = xMin; x < xMax; ++x) {
 
-        if(m_depthBuffer[m_width * y + x] > currW) return;
-        m_depthBuffer[m_width * y + x] = currW;
+        if(m_depthBuffer[row + x] <  1.0 * currW) {
+            m_depthBuffer[row + x] = 1.0 * currW;
 
-        float z = 1.0f / currW;
+            float z = 1.0f / currW;
         
-        Maths::Vec3 correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * bitmap.getWidthF(), (currTexCoord.y * z) * bitmap.getHeightF());
-        Maths::Vec3 correctedColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
-    
-        Maths::Vec3 finalColour = correctedColour * correctedTexColour;
+            Maths::Vec3 correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * (bitmap.getWidthF() - 1.0f) + 0.5f,
+                                                             (currTexCoord.y * z) * (bitmap.getHeightF() - 1.0f) + 0.5f);
 
-
-        setPixel(x, y, 
-                    static_cast<unsigned char>(finalColour.z * 255.99f),
-                    static_cast<unsigned char>(finalColour.y * 255.99f), 
-                    static_cast<unsigned char>(finalColour.x * 255.99f));
+            Maths::Vec3 correctedColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
         
+            Maths::Vec3 finalColour = correctedColour * correctedTexColour;
+
+            setPixel(x, y, static_cast<unsigned char>(finalColour.z * 255.99f),
+                           static_cast<unsigned char>(finalColour.y * 255.99f), 
+                           static_cast<unsigned char>(finalColour.x * 255.99f));
+        
+        }
 
         // step all the things
         currColour   += colourStep;

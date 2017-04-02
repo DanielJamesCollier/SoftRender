@@ -5,6 +5,7 @@
 #include "Maths/Vec2.hpp"
 #include "Maths/Vec3.hpp"
 #include "Maths/Mat4f.hpp"
+#include "Maths/MathsUtils.hpp"
 
 class Mat4f;
 
@@ -16,7 +17,7 @@ public:
 
     Vertex transform(Maths::Mat4f & matrix);
 
-    // helper funcs
+    // fix : remove these garbage functions
     float getX() const {
         return position.x;
     }
@@ -29,4 +30,11 @@ public:
     Maths::Vec2 texCoord;
     Maths::Vec3 colour;
 };
+
+inline Vertex lerp(Vertex v0, Vertex v1, float t) {
+    return Vertex(Maths::lerp(v0.position, v1.position, t),
+                  Maths::lerp(v0.texCoord, v1.texCoord, t),
+                  Maths::lerp(v0.colour,   v1.colour,   t));
+}
+
 #endif /* Vertex_hpp  */

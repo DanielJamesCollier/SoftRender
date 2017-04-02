@@ -24,24 +24,111 @@ struct Mesh {
 };
 
 //------------------------------------------------------------
-Mesh 
+std::vector<Mesh> 
 loadDannyFile(std::string const & filePath) {
-    Mesh mesh;
+    std::vector<Mesh> meshes;
 
     std::ifstream file(filePath);
 
-    if(file.is_open()) {
-        
-        std::string str; 
-        while (std::getline(file, str)) {
-            std::stringstream ss(str);
-            std::istream_iterator<std::string> begin(ss);
-            std::istream_iterator<std::string> end;
-            std::vector<std::string> vstrings(begin, end);
-        }
-    }
+    auto stringToVec = [](std::string const & string) -> std::vector<std::string> {
+        std::stringstream ss(string);
+        std::istream_iterator<std::string> begin(ss);
+        std::istream_iterator<std::string> end;
+        std::vector<std::string> vstrings(begin, end);
+        return vstrings;
+    };
 
-    return mesh;
+    if(file.is_open()) {
+        std::string line; 
+        std::vector<std::string> splitLine;
+
+        std::getline(file, line); // get the first line containing the mesh count
+
+        splitLine = stringToVec(line); // will only contain two entries "meshCount: " + numberOfMeshes
+        
+        const int meshCount = std::stoi(splitLine[1]);
+
+        int currentLineNumber = 1 + meshCount;
+
+        struct MeshSize {
+            int numVertices;
+            int numIndices;
+        };
+
+        std::vector<MeshSize> meshSizes; 
+        meshSizes.resize(meshCount);
+
+        for(int currMesh = 0; currMesh < meshCount; currMesh++) {
+            std::getline(file, line);
+            splitLine = stringToVec(line);
+
+            int numVertices = std::stoi(splitLine[1]);
+            int numIndices  = std::stoi(splitLine[2]);
+
+            meshSizes[currMesh].numVertices = numVertices;
+            meshSizes[currMesh].numIndices = numIndices;
+            
+            std::cout << numVertices << " " << numIndices << std::endl;
+
+        }
+       
+        std::cout << meshCount << std::endl;
+
+       // int meshOneEndLine = currentLineNumber
+       for(int i = 0; i < meshSizes.size(); i++) {
+            Mesh mesh;
+             
+
+            int loopEnd = currentLineNumber + meshSizes[i].numVertices;
+
+            // extract vertices
+            for(int j = currentLineNumber; j < loopEnd; j++) {
+                std::getline(file, line);
+                splitLine = stringToVec(line);
+                
+                // extract position
+                Maths::Vec3 position;
+                position.x = std::stof(splitLine[0]);
+                position.y = std::stof(splitLine[1]);
+                position.z = std::stof(splitLine[2]);
+
+                // extract texture coordinates
+                Maths::Vec2 texcoord;
+                texcoord.x = std::stof(splitLine[3]);
+                texcoord.y = std::stof(splitLine[4]);
+
+                // extract colours
+                Maths::Vec3 colour;
+                colour.x = std::stof(splitLine[5]);
+                colour.y = std::stof(splitLine[6]);
+                colour.z = std::stof(splitLine[7]);
+
+                Vertex v(position, texcoord, colour);
+
+                mesh.vertices.push_back(v);
+            }
+
+            currentLineNumber = loopEnd;
+            loopEnd += meshSizes[i].numIndices;
+
+            // extract indices
+            for(int j = currentLineNumber; j < loopEnd; j++) {
+                std::getline(file, line);
+                splitLine = stringToVec(line);
+                mesh.indices.push_back(std::stoi(splitLine[0]));
+            }
+            currentLineNumber = loopEnd;
+
+            meshes.push_back(mesh);
+          
+       }
+
+        return meshes;
+
+    } else {
+        std::cerr << "file was not opened" << std::endl;
+        return meshes;
+    }
 }
 
 //------------------------------------------------------------
@@ -61,7 +148,7 @@ int main(int argc, char* argv[]) {
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 1.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     //..
 
@@ -97,6 +184,30 @@ int main(int argc, char* argv[]) {
         pyramid.push_back(Vertex(Maths::Vec3(1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
         pyramid.push_back(Vertex(Maths::Vec3(0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
         pyramid.push_back(Vertex(Maths::Vec3(1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
+    //..
+
+    // pyramid mesh
+        std::vector<Vertex> pyramidNo;
+
+        // back 
+        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 1.0f, 1.0f))); // left
+        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 0.0f, 0.0f))); // top
+        pyramidNo.push_back(Vertex(Maths::Vec3( 1, -1, -1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 0.0f))); // right
+
+        // front
+        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
+        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+        pyramidNo.push_back(Vertex(Maths::Vec3( 1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
+
+        // left
+        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
+        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
+
+        // right
+        pyramidNo.push_back(Vertex(Maths::Vec3(1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
+        pyramidNo.push_back(Vertex(Maths::Vec3(0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
+        pyramidNo.push_back(Vertex(Maths::Vec3(1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
     //..
 
     // cube - indexed mesh
@@ -176,7 +287,9 @@ int main(int argc, char* argv[]) {
     Bitmap randomBitmap = createRandomBitmap(100, 100);
 
     //  tree loaded from danny file
-    Mesh mesh = loadDannyFile("../../res/mesh.danny");
+    std::vector<Mesh> tree = loadDannyFile("../../res/head.danny");
+
+    std::cout << "size: " << tree.size() << std::endl;
     
     // game loop vars
     auto frames = 0;
@@ -185,13 +298,16 @@ int main(int argc, char* argv[]) {
     //..
 
     float x = 0.0f;
-    float z = -3.0f;
+    float y =  0.0f;
+    float z =  -3.0f;
+
+    float movementSpeed = 0.0005f;
 
     // matricies
-    Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+    Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
     Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0.0f));
-    Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1.0f));
-    Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(80.0f), 0.01f, 1000.0f, (float)width / (float)height);
+    Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1));
+    Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(83.0f), 0.01f, 1000.0f, (float)width / (float)height);
     //..
 
     // incrementers
@@ -209,20 +325,20 @@ int main(int argc, char* argv[]) {
         // update
         starField.update(delta);
         rotation = Maths::createRotationMatrix(Maths::Vec3(0, rot, 0));
-        rot += 0.0005f * delta;
+        rot += movementSpeed * delta;
 
         if(input.isLeftDown()) {
-            x-= 0.001f * delta;
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+            x-= movementSpeed * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
         } else if(input.isRightDown()) {
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-            x+= 0.001f  * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
+            x+= movementSpeed  * delta;
         } else if(input.isUpDown()) {
-            z += -0.001f  * delta;
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
+            z += movementSpeed  * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
         } else if(input.isDownDown()) {
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, 0, z)); 
-            z += 0.001f * delta;
+            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
+            z -= movementSpeed * delta;
         }
 
         Maths::Mat4f model = proj * translation * rotation * scale;
@@ -241,9 +357,16 @@ int main(int argc, char* argv[]) {
         window.clear();
         rContext.clearDepthBuffer();
         {
-            starField.render();
-            rContext.drawMesh(pyramid, model, randomBitmap);
+            //starField.render();
+          //  rContext.drawMesh(pyramidNo, model, randomBitmap);
+            //rContext.drawMesh(pyramid, model, randomBitmap);
+
+        for(auto i = 0; i < tree.size(); i++) {
+            rContext.drawIndexedMesh(tree[i].vertices, tree[i].indices, model, randomBitmap);
+        }
+            
             //rContext.drawMesh(cube, cubeIndices, model, randomBitmap);
+
         }
         window.swapBackBuffer();
     }

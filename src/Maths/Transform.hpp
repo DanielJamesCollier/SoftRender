@@ -91,7 +91,6 @@ createRotationMatrix(Vec3 const & rotation) {
     setRotationY(rotY, rotation.y);
     Mat4f rotZ = createIdentityMatrix();
     setRotationZ(rotZ, rotation.z);
-    //return rotZ * rotY * rotX;
     return rotX * rotY * rotZ;
 }
 
@@ -112,8 +111,8 @@ createScreenSpaceTransform(float halfWidth, float halfHeight) {
     Mat4f screen = createIdentityMatrix();
     screen[0] =  halfWidth;
     screen[5] = -halfHeight;
-    screen[12] = halfWidth;
-    screen[13] = halfHeight;
+    screen[12] = halfWidth - 0.5f;
+    screen[13] = halfHeight - 0.5f;
     return screen;
 }
 

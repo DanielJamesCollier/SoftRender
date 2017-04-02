@@ -21,6 +21,7 @@ public:
    
     void wireTriangle(Vertex v1, Vertex v2, Vertex v3);
     void drawLine(Vertex v1, Vertex v2);
+    void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
 
     void drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap); // no indices
     void drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, Maths::Mat4f & transform, Bitmap & bitmap); // uses indices
@@ -28,7 +29,9 @@ public:
     void clearDepthBuffer();
 
 private:
-    void fillTriangle(Vertex & v1, Vertex & v2, Vertex & v3, Bitmap & bitmap);
+    bool clipPolygonAxis(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis);
+    void clipPolygonAxisComponent(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis, /* 0 = x, 1 = y, 2 = z*/ float sign /* (-1 = -w) (+1 = +w) */);
+    void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
     void scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap);
     void drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap);
 
@@ -37,5 +40,8 @@ private:
 private:
     Maths::Mat4f m_screenSpaceTransform;
     std::vector<float> m_depthBuffer;
+
+    float m_halfWidth;
+    float m_halfHeight;
 };
 #endif /* RenderContext_hpp */

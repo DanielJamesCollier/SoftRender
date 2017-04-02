@@ -56,7 +56,7 @@ void
 Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r) {
     int index = (m_width * y + x) * 4;
 
-    if(x < 0 || x > m_width - 1 || y < 0 || y > m_height - 1) return; // cleanup - probably should never be called - this could be an assert
+    if(index > (m_width * m_height) * 4) return;
 
     m_buffer[index + 0] = b;
     m_buffer[index + 1] = g;
@@ -68,6 +68,9 @@ Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r
 Maths::Vec3
 Bitmap::getPixel(int x, int y) {
     int index = (m_width * y + x) * 4;
+
+    if(index > (m_width * m_height) * 4) return Maths::Vec3(0.0f);
+
     return Maths::Vec3((float)m_buffer[index + 2] / 255.0f,  // r
                        (float)m_buffer[index + 1] / 255.0f,  // g
                        (float)m_buffer[index + 0] / 255.0f); // b
