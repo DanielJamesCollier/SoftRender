@@ -310,7 +310,8 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
 
             Maths::Vec3 correctedColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
         
-            Maths::Vec3 finalColour = correctedColour * correctedTexColour;
+           // Maths::Vec3 finalColour = correctedColour * correctedTexColour;
+            Maths::Vec3 finalColour = correctedTexColour;
 
             setPixel(x, y, static_cast<unsigned char>(finalColour.z * 255.99f),
                            static_cast<unsigned char>(finalColour.y * 255.99f), 

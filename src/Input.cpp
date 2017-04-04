@@ -61,14 +61,18 @@ Input::update() {
                 break;
 
             case SDL_CONTROLLERBUTTONDOWN:
-                std::cout << "button down" << std::endl;
-                handleButton(m_event.cbutton.button, true);
+                for(auto observer : m_observers) {
+                    observer->controllerButtonDownEvent(m_event.cbutton.button);
+                }
                 break;
 
             case SDL_CONTROLLERBUTTONUP:
-                std::cout << "button up" << std::endl;
-                handleButton(m_event.cbutton.button, false);
+                for(auto observer : m_observers) {
+                    observer->controllerButtonUpEvent(m_event.cbutton.button);
+                }
                 break;
+
+            /* keyboard */ // todo
         }
     }
 

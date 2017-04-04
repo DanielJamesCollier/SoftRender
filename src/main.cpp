@@ -16,6 +16,7 @@
 #include "Input.hpp"
 #include "Maths/Maths.hpp"
 #include "Vertex.hpp"
+#include "Camera.hpp"
 
 //------------------------------------------------------------
 struct Mesh {
@@ -148,141 +149,17 @@ int main(int argc, char* argv[]) {
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 1.0f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 0.2f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
+    
     //..
+  
+    Input input; // subject
+    Camera camera(70.0f, 0.001f, 1000.0f, (float) width / (float) height); // observer
+    input.attachObserver(camera);
 
-    Input input;
     RenderContext & rContext = window.getRenderContext();
     StarField starField(rContext, 0.00001f, 0.1);
-
-    // triangle
-    Vertex v1(Maths::Vec3(-1, -1, 0), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1,0,0)); // bottom left
-    Vertex v2(Maths::Vec3( 0,  1, 0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0,1,0)); // top
-    Vertex v3(Maths::Vec3( 1, -1, 0), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0,0,1)); // bottom right
-    //..
-    
-    // pyramid mesh
-        std::vector<Vertex> pyramid;
-
-        // front 
-        pyramid.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
-        pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramid.push_back(Vertex(Maths::Vec3( 1, -1, -1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
-
-        // back
-        pyramid.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
-        pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramid.push_back(Vertex(Maths::Vec3( 1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
-
-        // left
-        pyramid.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
-        pyramid.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramid.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
-
-        // right
-        pyramid.push_back(Vertex(Maths::Vec3(1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
-        pyramid.push_back(Vertex(Maths::Vec3(0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramid.push_back(Vertex(Maths::Vec3(1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
-    //..
-
-    // pyramid mesh
-        std::vector<Vertex> pyramidNo;
-
-        // back 
-        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 1.0f, 1.0f))); // left
-        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 0.0f, 0.0f))); // top
-        pyramidNo.push_back(Vertex(Maths::Vec3( 1, -1, -1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 0.0f))); // right
-
-        // front
-        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
-        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramidNo.push_back(Vertex(Maths::Vec3( 1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
-
-        // left
-        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // left
-        pyramidNo.push_back(Vertex(Maths::Vec3( 0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramidNo.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // right
-
-        // right
-        pyramidNo.push_back(Vertex(Maths::Vec3(1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // left
-        pyramidNo.push_back(Vertex(Maths::Vec3(0,  1,  0), Maths::Vec2(0.5f, 0.0f), Maths::Vec3(0.0f, 1.0f, 0.0f))); // top
-        pyramidNo.push_back(Vertex(Maths::Vec3(1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // right
-    //..
-
-    // cube - indexed mesh
-    std::vector<Vertex> cube;
-
-    // front square
-    cube.push_back(Vertex(Maths::Vec3(-1, -1,  1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // bottom left  // 0
-    cube.push_back(Vertex(Maths::Vec3(-1,  1,  1), Maths::Vec2(0.0f, 0.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // top left     // 1
-    cube.push_back(Vertex(Maths::Vec3( 1,  1,  1), Maths::Vec2(1.0f, 0.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // top right    // 2
-    cube.push_back(Vertex(Maths::Vec3( 1, -1,  1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // bottom right // 3
-
-    // back square
-    cube.push_back(Vertex(Maths::Vec3(-1, -1, -1), Maths::Vec2(1.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // bottom left  // 4
-    cube.push_back(Vertex(Maths::Vec3(-1,  1, -1), Maths::Vec2(1.0f, 0.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // top left     // 5
-    cube.push_back(Vertex(Maths::Vec3( 1,  1, -1), Maths::Vec2(0.0f, 0.0f), Maths::Vec3(0.0f, 0.0f, 1.0f))); // top right    // 6
-    cube.push_back(Vertex(Maths::Vec3( 1, -1, -1), Maths::Vec2(0.0f, 1.0f), Maths::Vec3(1.0f, 0.0f, 0.0f))); // bottom right // 7
-
-    std::vector<unsigned int> cubeIndices;
-
-   
-    cubeIndices.push_back(7); // 1.0, 1.0
-    cubeIndices.push_back(3); // 1.0, 1.0
-    cubeIndices.push_back(0); // 0.0, 1.0
-    
-
-    // // front
-    // {
-    //      // front - top left tri
-    //     cubeIndices.push_back(0);
-    //     cubeIndices.push_back(1);
-    //     cubeIndices.push_back(2);
-
-    //     // front - bot right tri
-    //     cubeIndices.push_back(2);
-    //     cubeIndices.push_back(3);
-    //     cubeIndices.push_back(0);
-    // }
-       
-    // // back 
-    // {
-    //     cubeIndices.push_back(4);
-    //     cubeIndices.push_back(5);
-    //     cubeIndices.push_back(6);
-
-    //     // back - top right tri
-    //     cubeIndices.push_back(6);
-    //     cubeIndices.push_back(7);
-    //     cubeIndices.push_back(4);
-    // }
-
-    //  // top
-    // {
-    //     cubeIndices.push_back(1);
-    //     cubeIndices.push_back(5);
-    //     cubeIndices.push_back(6);
-
-    //     // back - top right tri
-    //     cubeIndices.push_back(6);
-    //     cubeIndices.push_back(2);
-    //     cubeIndices.push_back(1);
-    // }
-
-    //  // bottom
-    // {
-    //     cubeIndices.push_back(0);
-    //     cubeIndices.push_back(4);
-    //     cubeIndices.push_back(7);
-
-    //     // back - top right tri
-    //     cubeIndices.push_back(7);
-    //     cubeIndices.push_back(3);
-    //     cubeIndices.push_back(0);
-    // }
-    
-    //..
 
     Bitmap randomBitmap = createRandomBitmap(100, 100);
 
@@ -307,7 +184,7 @@ int main(int argc, char* argv[]) {
     Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
     Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0.0f));
     Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1));
-    Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(83.0f), 0.01f, 1000.0f, (float)width / (float)height);
+    Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
     //..
 
     // incrementers

@@ -1,11 +1,19 @@
 #ifndef Input_hpp
 #define Input_hpp
 
+// my
+#include "Messages/Subject.hpp"
+#include "Messages/ObserverInput.hpp"
+
+
+// std
+#include <vector>
+
 // dependencies
 #include "SDL_Events.h"
 #include "SDL_Haptic.h"
 
-class Input final {
+class Input final : public Subject<ObserverInput> {
 public:
     Input();
     ~Input();
