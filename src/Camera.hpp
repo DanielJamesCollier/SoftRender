@@ -27,17 +27,39 @@ public:
     }
 
     // * observer Input virual overides *//
-    void controllerAxisEvent() {
-
-    }
 
     void controllerButtonDownEvent(int button) {
         std::cout << "button down" << std::endl;
     }
 
     void controllerButtonUpEvent(int button) {
-
+        std::cout << "button up" << std::endl;
     }
+
+    void controllerLeftStickXEvent(float x) {
+        std::cout << "left stick x " << x << std::endl;
+    };
+
+    void controllerLeftStickYEvent(float y) {
+        std::cout << "left stick y" << std::endl;
+    };
+
+    void controllerRightStickXEvent(float x) {
+        std::cout << "right stick x" << std::endl;
+    };
+
+    void controllerRightStickYEvent(float y) {
+        std::cout << "right stick y" << std::endl;
+    };
+
+    void leftTriggerEvent(float amount) {
+        std::cout << "left trigger" << std::endl;
+    }
+
+    void rightTriggerEvent(float amount) {
+        std::cout << "right trigger" << std::endl;
+    }
+
 
 private:
     Maths::Mat4f m_projection;

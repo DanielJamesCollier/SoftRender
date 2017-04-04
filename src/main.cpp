@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
     bool fullScreen = false;
     int width = 900;
     int height = width / 16 * 10;
-    float bufferScale = 0.2f; // size of the framebuffer compared to the screen width & height
+    float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     
     //..

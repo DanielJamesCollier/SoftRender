@@ -7,10 +7,35 @@ public:
     ObserverInput() = default;
     ~ObserverInput() = default;
 
-    virtual void controllerAxisEvent() {
+    /* controller */
+
+    // joy sticks
+    virtual void controllerLeftStickXEvent(float x) {
 
     };
 
+    virtual void controllerLeftStickYEvent(float y) {
+
+    };
+
+    virtual void controllerRightStickXEvent(float x) {
+
+    };
+
+    virtual void controllerRightStickYEvent(float y) {
+
+    };
+
+    // triggers
+    virtual void leftTriggerEvent(float amount) {
+
+    }
+
+    virtual void rightTriggerEvent(float amount) {
+
+    }
+
+    // buttons - includes joystick click buttons
     virtual void controllerButtonDownEvent(int button) {
 
     }
@@ -18,6 +43,9 @@ public:
     virtual void controllerButtonUpEvent(int button) {
 
     }
+
+    /* keyboard */ 
+    // todo
 };
 
 #endif /* ObserverInput_hpp */

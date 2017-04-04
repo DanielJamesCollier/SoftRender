@@ -3,13 +3,14 @@
 
 // my
 #include "Input.hpp"
-#include "SDL.h"
+#include "Maths/MathsUtils.hpp"
+
+// dependancies
+#include "SDL.h" // needed for SDL_INIT_GAME_CONTROLLER - could remove somehow 
 
 //------------------------------------------------------------
 Input::Input() :
     m_controller(nullptr)
-,   m_joystick(nullptr)
-,   m_haptic(nullptr)
 {
     if(SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) != 0) {
         std::cerr << "SDL_Init(SDL_INIT_GAMECONTROLLER) failed" << std::endl;
@@ -17,22 +18,11 @@ Input::Input() :
         exit(-1);
     }
 
-    if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0) {
-        std::cerr << "SDL_Init(SDL_INIT_JOYSTICK) failed" << std::endl;
-        std::cerr << SDL_GetError() << std::endl;
-        exit(-1);
-    }
-
-    if(SDL_InitSubSystem(SDL_INIT_HAPTIC) != 0) {
-        std::cerr << "SDL_Init(SDL_INIT_HAPTIC) failed" << std::endl;
-        std::cerr << SDL_GetError() << std::endl;
-        exit(-1); // fix - should not crash
-    }
-
     SDL_GameControllerAddMappingsFromFile("../../res/controler_mappings.txt");
     std::cout << "Input ctor" << std::endl;  
 }
 
+//------------------------------------------------------------
 Input::~Input() {
       std::cout << "input dtor" << std::endl;    
 }
@@ -40,12 +30,11 @@ Input::~Input() {
 //------------------------------------------------------------
 bool
 Input::update() {
-    bool running = true;
     while(SDL_PollEvent(&m_event)) {
         switch(m_event.type) {
             case SDL_QUIT:
-                running = false;
-            break;
+                return false;
+                break;
 
             /* CONTROLER */
             case SDL_CONTROLLERDEVICEADDED:
@@ -55,10 +44,62 @@ Input::update() {
             case SDL_CONTROLLERDEVICEREMOVED:
                 removeController(); 
                 break;
+            
+
+            // need to scale m_event.caxis.value to values between -1.0 to 1.0 from vals between -32768 to 32767
 
             case SDL_CONTROLLERAXISMOTION:
-                //std::cout << "moved" << std::endl;
+            {
+                bool inDeadZone = m_event.caxis.value > -m_joystickDeadZone && m_event.caxis.value < m_joystickDeadZone;
+
+                float trigger = (static_cast<float>(m_event.caxis.value) + 32768.0f) / 65535.0f;
+                float stick   = ((trigger * 2.0f) - 1.0f);
+
+                if(inDeadZone) {
+                    stick = 0;
+                    trigger = 0;
+                }
+                
+                switch(m_event.caxis.axis) {
+
+                    case SDL_CONTROLLER_AXIS_LEFTX:
+                        for(auto observer : m_observers) {
+                            observer->controllerLeftStickXEvent(stick);
+                        }
+                        break;
+
+                    case SDL_CONTROLLER_AXIS_LEFTY: 
+                        for(auto observer : m_observers) {
+                            observer->controllerLeftStickYEvent(stick);
+                        }
+                        break;  
+
+                    case SDL_CONTROLLER_AXIS_RIGHTX:
+                        for(auto observer : m_observers) {
+                            observer->controllerRightStickXEvent(stick);
+                        }
+                        break;
+
+                    case SDL_CONTROLLER_AXIS_RIGHTY:
+                        for(auto observer : m_observers) {
+                            observer->controllerRightStickYEvent(stick);
+                        }
+                        break;
+                    
+                    case SDL_CONTROLLER_AXIS_TRIGGERLEFT: 
+                        for(auto observer : m_observers) {
+                            observer->leftTriggerEvent(trigger);
+                        }
+                        break;
+
+                    case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
+                        for(auto observer : m_observers) {
+                            observer->rightTriggerEvent(trigger);
+                        }
+                        break; 
+                }   
                 break;
+            }
 
             case SDL_CONTROLLERBUTTONDOWN:
                 for(auto observer : m_observers) {
@@ -76,42 +117,30 @@ Input::update() {
         }
     }
 
-    return running;
+    return true;
 }
 
 //------------------------------------------------------------
-void
+void // fix : only allow one controller
 Input::addController() {
-    if(nullptr == m_controller) {
-         if(SDL_IsGameController(0)) {
-            m_controller = SDL_GameControllerOpen(0);
-            if(m_controller) {
-                std::cout << "controller added" << std::endl;
-                
-                m_joystick = SDL_GameControllerGetJoystick(m_controller);
 
-                if(m_joystick) {
-                    std::cout << "joystick working" << std::endl;
+    int lotsOfJoy = SDL_NumJoysticks();
+    
+    std::cout << "num joysticks: " << lotsOfJoy << '\n';
+    
+    for(int i = 0; i < lotsOfJoy; i++) {
+       if(SDL_IsGameController(i)) {
+           std::cout << "joystick " << i << ": is a game controller\n";
 
-                    m_haptic = SDL_HapticOpenFromJoystick(m_joystick);
+           m_controller = SDL_GameControllerOpen(i);
 
-                    if(m_haptic != nullptr) {
-                        std::cout << "haptic working" << std::endl;
-                    } else {
-                        std::cerr << "controller does not support haptic feedback" << std::endl;
-                        std::cerr << SDL_GetError() << std::endl;
-                    }
-                } else {
-                    std::cerr << "joystick failed" << std::endl;
-                    std::cerr << SDL_GetError() << std::endl;
-                }
-            } else {
-                std::cerr << "controller failed" << std::endl;
-                std::cerr << SDL_GetError() << std::endl;
-            }
-        }
-    } else {
-        std::cerr << "only one controller supported" << std::endl;
+           if(m_controller) {
+               std::cout << "game controller opened\n";
+               break;
+           } else {
+               std::cerr << "game controller could not be opened\n";
+           }
+       }
     }
 }
 
@@ -121,90 +150,4 @@ Input::removeController() { // todo
     SDL_GameControllerClose(m_controller);
     m_controller = nullptr;
     std::cout << "removed" << std::endl;
-}
-
-//------------------------------------------------------------
-void
-Input::handleButton(int button, bool updown) {
-    switch(button) {
-        case SDL_CONTROLLER_BUTTON_A:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_B:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_X:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_Y:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_BACK:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_GUIDE:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_START:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_LEFTSTICK:
-           
-        break;
-
-        case SDL_CONTROLLER_BUTTON_RIGHTSTICK:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
-
-        break;
-
-        case SDL_CONTROLLER_BUTTON_DPAD_UP:
-            if(updown) {
-                upDown = true;
-            } else {
-                upDown = false;
-            }
-        break;
-
-        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-            if(updown) {
-                downDown = true;
-            } else {
-                downDown = false;
-            }
-        break;
-
-        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-            if(updown) {
-                leftDown = true;
-            } else {
-                leftDown = false;
-            }
-        break;
-
-        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-            if(updown) {
-                rightDown = true;
-            } else {
-                rightDown = false;
-            }
-        break;
-        
-        case SDL_CONTROLLER_BUTTON_INVALID:
-
-        break;
-    }
 }

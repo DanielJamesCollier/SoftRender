@@ -39,21 +39,18 @@ public:
 private:
     void addController();
     void removeController();
-    void handleButton(int button, bool updown);
-
-   
 
 private:
     SDL_Event m_event;
     
     // controller
     SDL_GameController * m_controller;
-    SDL_Joystick * m_joystick;
-    SDL_Haptic * m_haptic;
 
     bool leftDown = false;
     bool rightDown = false;
     bool upDown = false;
     bool downDown = false;
+
+    int m_joystickDeadZone = 8000;
 };
 #endif /* Input_hpp */
