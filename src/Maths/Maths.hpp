@@ -8,8 +8,11 @@
 #include "Vec2.hpp"
 #include "Vec3.hpp"
 #include "Vec4.hpp"
-#include "Mat4f.hpp"
+
+// matricies
+#include "Matrices.hpp"
 #include "Transform.hpp"
+
 #include "MathsUtils.hpp"
 
 #endif /*Maths_hpp */ 

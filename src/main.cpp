@@ -153,6 +153,26 @@ int main(int argc, char* argv[]) {
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
     
     //..
+
+    Maths::Mat4f mat4_rot = Maths::createRotationMatrix(Maths::Vec3(1.0f));
+    std::cout << "mat4 rot: " << mat4_rot << std::endl;
+
+
+    /// MATRIX 3 TESTS ////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Maths::Mat3<float> mat_default;
+    
+    Maths::Mat3<float> mat_rot = Maths::createMat3RotationMatrix<float>(Maths::Vec3(1.0f));
+
+    Maths::Mat3<float> mat_identity =  Maths::createMat3IdentityMatrix<float>();
+
+    Maths::Mat3<float> mat_times_test =  mat_identity * mat_rot;
+
+    std::cout << "default: " << mat_default << std::endl;
+    std::cout << "rot: " << mat_rot << std::endl;
+
+    std::cout << "times: " << mat_identity * mat_identity << std::endl;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
     Input input; // subject
     Camera camera(70.0f, 0.001f, 1000.0f, (float) width / (float) height); // observer

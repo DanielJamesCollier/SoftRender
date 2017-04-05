@@ -1,6 +1,9 @@
 #ifndef Mat4f_hpp
 #define Mat4f_hpp
 
+// std 
+#include <iostream> // used for << operator
+
 // my
 #include "Vec3.hpp"
 #include "Vec4.hpp"
