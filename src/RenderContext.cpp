@@ -102,8 +102,6 @@ RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
             fillTriangle(vertices[0], vertices[i], vertices[i + 1], bitmap);
         }
     }
-
-    // rename and inline other functions into processtriangle
 }
 
 //------------------------------------------------------------
@@ -117,8 +115,7 @@ RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitm
 
     // draw triangles
     for(size_t i = 0; i < mesh.size(); i+= 3) {
-        //std::sort(mesh);
-        fillTriangle(mesh[i + 0],
+        drawTriangle(mesh[i + 0],
                      mesh[i + 1],
                      mesh[i + 2],
                      bitmap);
@@ -140,8 +137,7 @@ RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigne
         int indexTwo = indices[i + 1];
         int indexTre = indices[i + 2];
 
-        drawTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap);
-        //fillTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap);
+        drawTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap); // does clipping if needed
     }
 }
 

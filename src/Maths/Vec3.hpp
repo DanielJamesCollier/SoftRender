@@ -3,6 +3,7 @@
 
 // std
 #include <iostream>
+#include <cmath>
 
 namespace Maths {
 

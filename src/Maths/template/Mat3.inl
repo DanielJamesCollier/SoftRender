@@ -3,7 +3,7 @@ namespace Maths {
 //------------------------------------------------------------
 template<typename T>
 Mat3<T>::Mat3() {
-    m_matrix.fill(0);
+    m_matrix.fill(T());
 }
 
 //------------------------------------------------------------
@@ -15,22 +15,19 @@ Mat3<T>::Mat3(std::array<T, 9> matrix)
 }
 
 //------------------------------------------------------------
-template<typename T>
-inline void
+template<typename T> void
 Mat3<T>::clear() {
-    m_matrix.fill(0);
+    m_matrix.fill(T());
 }
 
 //------------------------------------------------------------
-template<typename T>
-inline void
+template<typename T> void
 Mat3<T>::clear(T value) {
     m_matrix.fill(value);
 }
 
 //------------------------------------------------------------
-template<typename T> // friend free function
-Mat3<T> 
+template<typename T> /* friend */ Mat3<T> 
 operator * (Mat3<T> const & lhs, Mat3<T> const & rhs) {
 
     // transforms use column major
@@ -57,8 +54,15 @@ operator * (Mat3<T> const & lhs, Mat3<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T>
-std::ostream & 
+template<typename T> Vec3X<T>
+operator * (Mat3<T> const & lhs, Vec3X<T> const & rhs) {
+    return Vec3X<T>((lhs[0] * rhs.x) + (lhs[3] * rhs.y) + (lhs[6] * rhs.z),
+                    (lhs[1] * rhs.x) + (lhs[4] * rhs.y) + (lhs[7] * rhs.z),
+                    (lhs[2] * rhs.x) + (lhs[5] * rhs.y) + (lhs[8] * rhs.z));
+}
+
+//------------------------------------------------------------
+template<typename T> /* friend */ std::ostream & 
 operator << (std::ostream & lhs, Mat3<T> const & rhs) {
 
     lhs << " Mat3f\n-----------------\n";
@@ -73,14 +77,14 @@ operator << (std::ostream & lhs, Mat3<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T>
-float & Mat3<T>::operator [] (int index) {
+template<typename T> float & 
+Mat3<T>::operator [] (std::size_t index) {
     return m_matrix[index];
 }
 
 //------------------------------------------------------------
-template<typename T>
-float const & Mat3<T>::operator [] (int index) const {
+template<typename T> float const & 
+Mat3<T>::operator [] (std::size_t index) const {
     return m_matrix[index];
 }
 

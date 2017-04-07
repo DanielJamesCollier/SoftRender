@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 
 // dependancies
 #include "SDL.h"
@@ -17,6 +18,9 @@
 #include "Maths/Maths.hpp"
 #include "Vertex.hpp"
 #include "Camera.hpp"
+
+
+#include "Maths/MathsTest.hpp"
 
 //------------------------------------------------------------
 struct Mesh {
@@ -134,6 +138,9 @@ loadDannyFile(std::string const & filePath) {
 
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
+
+    //Maths::testMatricies();
+    Maths::testVectors();
     
     // using
     using clock = std::chrono::high_resolution_clock;
@@ -151,28 +158,8 @@ int main(int argc, char* argv[]) {
     int height = width / 16 * 10;
     float bufferScale = 2.0f; // size of the framebuffer compared to the screen width & height
     Window window("SoftRender", -1, -1, width, height, bufferScale, vSync, fullScreen);
-    
     //..
 
-    Maths::Mat4f mat4_rot = Maths::createRotationMatrix(Maths::Vec3(1.0f));
-    std::cout << "mat4 rot: " << mat4_rot << std::endl;
-
-
-    /// MATRIX 3 TESTS ////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Maths::Mat3<float> mat_default;
-    
-    Maths::Mat3<float> mat_rot = Maths::createMat3RotationMatrix<float>(Maths::Vec3(1.0f));
-
-    Maths::Mat3<float> mat_identity =  Maths::createMat3IdentityMatrix<float>();
-
-    Maths::Mat3<float> mat_times_test =  mat_identity * mat_rot;
-
-    std::cout << "default: " << mat_default << std::endl;
-    std::cout << "rot: " << mat_rot << std::endl;
-
-    std::cout << "times: " << mat_identity * mat_identity << std::endl;
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
     Input input; // subject
     Camera camera(70.0f, 0.001f, 1000.0f, (float) width / (float) height); // observer
@@ -195,8 +182,8 @@ int main(int argc, char* argv[]) {
     //..
 
     float x = 0.0f;
-    float y =  0.0f;
-    float z =  -3.0f;
+    float y = 0.0f;
+    float z = -3.0f;
 
     float movementSpeed = 0.0005f;
 
@@ -221,7 +208,7 @@ int main(int argc, char* argv[]) {
 
         // update
         starField.update(delta);
-        rotation = Maths::createRotationMatrix(Maths::Vec3(0, rot, 0));
+        rotation = Maths::createRotationMatrix(Maths::Vec3(std::cos(rot), std::sin(rot), std::cos(rot)));
         rot += movementSpeed * delta;
 
         if(input.isLeftDown()) {
@@ -238,7 +225,7 @@ int main(int argc, char* argv[]) {
             z -= movementSpeed * delta;
         }
 
-        Maths::Mat4f model = proj * translation * rotation * scale;
+        Maths::Mat4f modelMatrix = proj * translation * rotation * scale;
         //..
         
 
@@ -259,7 +246,7 @@ int main(int argc, char* argv[]) {
             //rContext.drawMesh(pyramid, model, randomBitmap);
 
         for(auto i = 0; i < tree.size(); i++) {
-            rContext.drawIndexedMesh(tree[i].vertices, tree[i].indices, model, randomBitmap);
+            rContext.drawIndexedMesh(tree[i].vertices, tree[i].indices, modelMatrix, randomBitmap);
         }
             
             //rContext.drawMesh(cube, cubeIndices, model, randomBitmap);
