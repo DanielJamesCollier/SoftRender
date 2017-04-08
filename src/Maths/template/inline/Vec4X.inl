@@ -1,8 +1,6 @@
 // included at the bottom of Vec4X.hpp
 
-namespace Maths {
-
-// RAII
+namespace djc_math {
 
 //------------------------------------------------------------
 template<typename T>
@@ -21,6 +19,39 @@ Vec4X<T>::Vec4X(T _x, T _y, T _z, T _w)
 :   x(_x)
 ,   y(_y)
 ,   z(_z)
+,   w(_w)
+{
+    // empty
+}
+
+//------------------------------------------------------------
+template<typename T>
+Vec4X<T>::Vec4X(Vec2X<T> const & vecXY, Vec2X<T> const & vecZW)
+:   x(vecXY.x)
+,   y(vecXY.y)
+,   z(vecZW.x)
+,   w(vecZW.y)
+{
+    // empty
+}
+
+//------------------------------------------------------------
+template<typename T>
+Vec4X<T>::Vec4X(Vec2X<T> const & vec, T _z, T _w)
+:   x(vec.x)
+,   y(vec.y)
+,   z(_z)
+,   w(_w)
+{
+    // empty
+}
+
+//------------------------------------------------------------
+template<typename T>
+Vec4X<T>::Vec4X(Vec3X<T> const & vec, T _w) 
+:   x(vec.x)
+,   y(vec.y)
+,   z(vec.z)
 ,   w(_w)
 {
     // empty
@@ -54,6 +85,18 @@ Vec4X<T>::normalise() {
 template<typename T> T
 Vec4X<T>::dot(Vec4X<T> const & vec) const {
      return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
+}
+
+//------------------------------------------------------------
+template<typename T> Vec3X<T>
+Vec4X<T>::toVec2X() const {
+    return Vec2X<T>(x, y);
+}
+
+//------------------------------------------------------------
+template<typename T> Vec3X<T>
+Vec4X<T>::toVec3X() const {
+    return Vec3X<T>(x, y, z);
 }
 
 // member - operator overloads
@@ -200,4 +243,10 @@ operator / (T lhs, Vec4X<T> const & rhs) {
     return Vec4X<T>(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.z);
 }
 
-} /* namespace Maths */
+//------------------------------------------------------------
+template<typename T> std::ostream &
+operator << (std::ostream & lhs, Vec4X<T> const & rhs) {
+    lhs << "Vec4X(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ", " << rhs.w << ")";
+}
+
+} /* namespace djc_math */

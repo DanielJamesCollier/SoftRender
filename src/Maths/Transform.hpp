@@ -2,55 +2,11 @@
 #define Transform_hpp
 
 // my
-#include "Vec3.hpp"
 #include "Vec4.hpp"
-#include "Matrices.hpp"
+#include "Vec3.hpp"
+#include "Mat4f.hpp"
 
 namespace Maths {
-
-//-------------------
-/*      Mat3       */
-//-------------------
-
-// create new
-template<typename T> inline Mat3<T>
-createMat3IdentityMatrix();
-
-template<typename T> inline Mat3<T>
-createMat3RotationMatrix(Vec3 const & vec);
-
-// use existing
-
-//-------------------
-/*      Mat4       */
-//-------------------
-
-// create new
-template<typename T> inline Mat4<T> 
-createMat4IdentityMatrix();
-
-template<typename T> inline Mat4<T>
-createMat4TranslationMatrix(Vec3 const & vec);
-
-template<typename T> inline Mat4<T>
-createMat4RotationMatrix(Vec3 const & vec);
-
-template<typename T> inline Mat4<T>
-createMat4ScaleMatrix(Vec3 const & vec);
-
-template<typename T> inline Mat4<T>
-createMat4ModelMatrix(Vec3 const & position, Vec3 const & rotation, Vec3 const & scale);
-
-template<typename T> inline Mat4<T>
-createMat4ProjectionMatrix(float fov, float near, float far, float aspect);
-
-template<typename T> inline Mat4<T>
-createMat4ScreenSpaceTransform(float halfWifth, float halfHeight);
-
-// use existing
-template<typename T> inline void 
-setMat4Identity(Mat4<T> & matrix);
-
 
 //-------------------
 /*      Mat4f       */

@@ -139,8 +139,8 @@ loadDannyFile(std::string const & filePath) {
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
 
-    //Maths::testMatricies();
-    Maths::testVectors();
+    djc_math::testMatricies();
+    djc_math::testVectors();
     
     // using
     using clock = std::chrono::high_resolution_clock;

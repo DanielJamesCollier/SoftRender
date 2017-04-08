@@ -1,4 +1,4 @@
-namespace Maths {
+namespace djc_math {
 
 // RAII
 
@@ -17,6 +17,16 @@ template<typename T>
 Vec3X<T>::Vec3X(T _x, T _y, T _z) 
 : x(_x)
 , y(_y)
+, z(_z)
+{
+    // empty
+}
+
+//------------------------------------------------------------
+template<typename T>
+Vec3X<T>::Vec3X(Vec2X<T> const & vec, T _z) 
+: x(vec.x)
+, y(vec.y)
 , z(_z)
 {
     // empty
@@ -58,6 +68,12 @@ Vec3X<T>::cross(Vec3X<T> const & vec) const {
     T y = (z * vec.x) - (x * vec.z);
     T z = (x * vec.y) - (y * vec.x);
     return Vec3X<T>(x, y, z);
+}
+
+//------------------------------------------------------------
+template<typename T> Vec2X<T>
+Vec3X<T>::toVec2X() const {
+    return Vec2X<T>(x, y);
 }
 
 // member - operator overloads
@@ -220,5 +236,11 @@ operator / (Vec3X<T> const & lhs, T rhs) {
     return Vec3X<T>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
 }
 
+//------------------------------------------------------------
+template<typename T> std::ostream &
+operator << (std::ostream & lhs, Vec3X<T> const & rhs) {
+    lhs << "Vec3X(" << rhs.x << ", " << rhs.y << ", " << rhs.z  << ")";
+}
 
-} /* namespace Maths */
+
+} /* namespace djc_math */

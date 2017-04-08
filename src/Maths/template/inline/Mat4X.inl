@@ -1,34 +1,44 @@
-namespace Maths {
+namespace djc_math {
 
 //------------------------------------------------------------
 template<typename T>
-Mat4<T>::Mat4() {
+Mat4X<T>::Mat4X() {
     m_matrix.fill(T());
 }
 
 //------------------------------------------------------------
 template<typename T>
-Mat4<T>::Mat4(std::array<T, 16> matrix) 
+Mat4X<T>::Mat4X(std::array<T, 16> matrix) 
 : m_matrix(matrix)
 {
     // empty
 }
 
 //------------------------------------------------------------
-template<typename T> void
-Mat4<T>::clear() {
-    m_matrix.fill(T());
+template<typename T> Mat3X<T>
+Mat4X<T>::toMat3X() const {
+    return Mat3X<T>(std::array<T, 9> {{
+        m_matrix[0], m_matrix[4], m_matrix[ 8],
+        m_matrix[1], m_matrix[5], m_matrix[ 9],
+        m_matrix[2], m_matrix[6], m_matrix[10]
+    }});
 }
 
-//------------------------------------------------------------
-template<typename T> void
-Mat4<T>::clear(T value) {
-    m_matrix.fill(value);
-}
+// //------------------------------------------------------------
+// template<typename T> void
+// Mat4X<T>::clear() {
+//     m_matrix.fill(T());
+// }
+
+// //------------------------------------------------------------
+// template<typename T> void
+// Mat4X<T>::clear(T value) {
+//     m_matrix.fill(value);
+// }
 
 //------------------------------------------------------------
-template<typename T> /* friend */ Mat4<T> 
-operator * (Mat4<T> const & lhs, Mat4<T> const & rhs) {
+template<typename T> /* friend */ Mat4X<T> 
+operator * (Mat4X<T> const & lhs, Mat4X<T> const & rhs) {
     // transforms use column major
     //-------------------- 
     // [0]  [4]  [8]  [12] 
@@ -37,7 +47,7 @@ operator * (Mat4<T> const & lhs, Mat4<T> const & rhs) {
     // [3]  [7]  [11] [15]
     //---------------------
     
-    return Mat4<T>(std::array<T, 16>{{
+    return Mat4X<T>(std::array<T, 16>{{
        // column one
        (lhs[0] * rhs[ 0]) + (lhs[4] * rhs[ 1]) + (lhs[ 8] * rhs[ 2]) + (lhs[12] * rhs[ 3]), // 0
        (lhs[1] * rhs[ 0]) + (lhs[5] * rhs[ 1]) + (lhs[ 9] * rhs[ 2]) + (lhs[13] * rhs[ 3]), // 1
@@ -63,7 +73,7 @@ operator * (Mat4<T> const & lhs, Mat4<T> const & rhs) {
 
 //------------------------------------------------------------
 template<typename T> /* friend */ Vec4X<T> 
-operator * (Mat4<T> const & lhs, Vec4X<T> const & rhs) {
+operator * (Mat4X<T> const & lhs, Vec4X<T> const & rhs) {
     return Vec4X<T>(
         (lhs[0] * rhs.x) + (lhs[4] + rhs.y) + (lhs[ 8] + rhs.z) + (lhs[12] + rhs.w),
         (lhs[1] * rhs.x) + (lhs[5] + rhs.y) + (lhs[ 9] + rhs.z) + (lhs[13] + rhs.w),
@@ -74,8 +84,8 @@ operator * (Mat4<T> const & lhs, Vec4X<T> const & rhs) {
 
 //------------------------------------------------------------
 template<typename T> /* friend */ std::ostream & 
-operator << (std::ostream & lhs, Mat4<T> const & rhs) {
-    lhs << "Mat4\n-----------------\n";
+operator << (std::ostream & lhs, Mat4X<T> const & rhs) {
+    lhs << "Mat4X\n-----------------\n";
     for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
                 lhs << "[" << rhs.m_matrix[4 * x + y] << "] "; 
@@ -88,15 +98,15 @@ operator << (std::ostream & lhs, Mat4<T> const & rhs) {
 
 //------------------------------------------------------------
 template<typename T> float & 
-Mat4<T>::operator [] (std::size_t index) {
+Mat4X<T>::operator [] (std::size_t index) {
     return m_matrix[index];
 }
 
 //------------------------------------------------------------
 template<typename T> float const & 
-Mat4<T>::operator [] (std::size_t index) const {
+Mat4X<T>::operator [] (std::size_t index) const {
     return m_matrix[index];
 }
 
 
-} /* namespace Maths */
+} /* namespace djc_math */

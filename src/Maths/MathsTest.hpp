@@ -4,13 +4,9 @@
 // std
 #include <iostream>
 
-// my
-#include "Maths.hpp"
+#include "template/MathsX.hpp"
 
-#include "template/Vec2X.hpp"
-#include "template/Vec3X.hpp"
-
-namespace Maths {
+namespace djc_math {
 
 inline void testMatricies() {
     // todo : remove Matrix ending from create funtions
@@ -19,47 +15,26 @@ inline void testMatricies() {
     std::cout << "\n-----------------------------------------------------------\n" << std::endl;
     /// MATRIX 3 TESTS //// 
     ///////////////////////////////////////////////////////////////////////
-    Mat3<float> mat_default;
-    auto mat_rotation = Maths::createMat3RotationMatrix<float>(Maths::Vec3(1.0f));
-    auto mat_identity = Maths::createMat3IdentityMatrix<float>();
+    Mat3X<float> mat_default;
+    auto mat_identity = createMat3XIdentityMatrix<float>();
+    auto mat_rotation = createMat3XRotationMatrix<float>(Vec3X<float>(1.0f));
 
     std::cout << "default: " << mat_default << std::endl;
     std::cout << "rot: " << mat_rotation << std::endl;
     std::cout << "idendity: " << mat_identity * mat_identity << std::endl;
     ///////////////////////////////////////////////////////////////////////
 
-    std::cout << "\n-----------------------------------------------------------\n" << std::endl;
+    // std::cout << "\n-----------------------------------------------------------\n" << std::endl;
 
-    /// MATRIX 4f ///
-    ///////////////////////////////////////////////////////////////////////
-    Mat4f mat4f_default;
-    auto mat4f_identity    = Maths::createIdentityMatrix();
-    auto mat4f_translation = Maths::createTranslationMatrix(Maths::Vec3(0.0f));
-    auto mat4f_rotation    = Maths::createRotationMatrix(Maths::Vec3(1.0f));
-    auto mat4f_scale       = Maths::createScaleMatrix(Maths::Vec3(1.0f));
-    auto mat4f_model       = Maths::createModelMatrix(Vec3(0.0f), Vec3(0.0f), Vec3(1.0));
-    auto mat4f_projection   = Maths::createProjectionMatrix(70.0f, 0.001f, 1000.0f, 900.0f / 600.0f);
-
-    std::cout << "default:     " << mat4f_default << std::endl;
-    std::cout << "identity:    " << mat4f_identity * mat4f_identity << std::endl;
-    std::cout << "translation: " << mat4f_translation << std::endl;
-    std::cout << "rotation:    " << mat4f_rotation << std::endl;
-    std::cout << "scale:       " << mat4f_scale << std::endl;
-    std::cout << "model:       " << mat4f_model << std::endl;
-    std::cout << "projection:  " << mat4f_projection << std::endl;
-    ///////////////////////////////////////////////////////////////////////
-
-    std::cout << "\n-----------------------------------------------------------\n" << std::endl;
-
-    /// MATRIX 4 ///
-    ///////////////////////////////////////////////////////////////////////
-    Mat4<float> mat4_default;
-    auto mat4_identity    = Maths::createMat4IdentityMatrix<float>();
-    auto mat4_translation = Maths::createMat4TranslationMatrix<float>(Maths::Vec3(0.0f));
-    auto mat4_rotation    = Maths::createMat4RotationMatrix<float>(Maths::Vec3(1.0f));
-    auto mat4_scale       = Maths::createMat4ScaleMatrix<float>(Maths::Vec3(1.0f));
-    auto mat4_model       = Maths::createMat4ModelMatrix<float>(Maths::Vec3(0.0f), Maths::Vec3(0.0f), Maths::Vec3(1.0f));
-    auto mat4_projection  = Maths::createMat4ProjectionMatrix<float>(70.0f, 0.001f, 1000.0f, 900.0f / 600.0f);
+    // /// MATRIX 4 ///
+    // ///////////////////////////////////////////////////////////////////////
+    Mat4X<float> mat4_default;
+    auto mat4_identity    = createMat4XIdentityMatrix<float>();
+    auto mat4_translation = createMat4XTranslationMatrix<float>(Vec3X<float>(0.0f));
+    auto mat4_rotation    = createMat4XRotationMatrix<float>(Vec3X<float>(1.0f));
+    auto mat4_scale       = createMat4XScaleMatrix<float>(Vec3X<float>(1.0f));
+    auto mat4_model       = createMat4XModelMatrix<float>(Vec3X<float>(0.0f), Vec3X<float>(0.0f), Vec3X<float>(1.0f));
+    auto mat4_projection  = createMat4XProjectionMatrix<float>(70.0f, 0.001f, 1000.0f, 900.0f / 600.0f);
 
     std::cout << "default:     " << mat4_default << std::endl;
     std::cout << "identity:    " << mat4_identity * mat4_identity << std::endl;
@@ -68,7 +43,7 @@ inline void testMatricies() {
     std::cout << "scale:       " << mat4_scale << std::endl;
     std::cout << "model:       " << mat4_model << std::endl;
     std::cout << "projection:  " << mat4_projection << std::endl;
-    ///////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
 
     std::cout << "\n-----------------------------------------------------------\n" << std::endl;
     std::cout << "//// END MATHS TESTS ////" << std::endl;
@@ -79,7 +54,7 @@ inline void testVectors() {
     ///////////////////////////////////////////////////////////////////////
     
     // default
-    Vec3X<float> vec3x_default;
+    Vec3X<> vec3x_default;
     Vec3X<>      vec3x_implicit;
     Vec3X<>      vec3x_custom(1.0f);
 

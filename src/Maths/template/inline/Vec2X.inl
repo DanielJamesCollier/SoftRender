@@ -1,4 +1,4 @@
-namespace Maths {
+namespace djc_math {
 
 // RAII
 
@@ -194,4 +194,10 @@ operator / (Vec2X<T> const & lhs, T rhs) {
     return Vec2X<T>(lhs.x / rhs, lhs.y / rhs);
 }
 
-} /* namespace Maths */
+//------------------------------------------------------------
+template<typename T> std::ostream &
+operator << (std::ostream & lhs, Vec2X<T> const & rhs) {
+    lhs << "Vec2X(" << rhs.x << ", " << rhs.y << ", " << ")";
+}
+
+} /* namespace djc_math */
