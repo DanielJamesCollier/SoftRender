@@ -22,7 +22,7 @@ Vertex::Vertex(djc_math::Vec4<float> const & _position, djc_math::Vec2<float> _t
 //------------------------------------------------------------
 Vertex 
 Vertex::transform(djc_math::Mat4<float> & matrix) { 
-    djc_math::Vec4<float> pos = matrix * position;
+    auto pos = matrix * position;
     return Vertex(djc_math::Vec4<float>(pos.x, pos.y, pos.z, pos.w), texCoord, colour); 
 }
 

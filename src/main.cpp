@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
     Bitmap randomBitmap = createRandomBitmap(100, 100);
 
     //  tree loaded from danny file
-    std::vector<Mesh> tree = loadDannyFile("../../res/head.danny");
+    std::vector<Mesh> tree = loadDannyFile("../../res/box.danny");
 
     // std::cout << "size: " << tree.size() << std::endl;
     
@@ -185,10 +185,10 @@ int main(int argc, char* argv[]) {
     float movementSpeed = 0.0005f;
 
     // matricies
-    auto translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
-    auto rotation    = djc_math::createMat4RotationMatrix<float>(djc_math::Vec3<float>(0.0f));
-    auto scale       = djc_math::createMat4ScaleMatrix<float>(djc_math::Vec3<float>(1.0f));
-    auto proj        = djc_math::createMat4ProjectionMatrix<float>(djc_math::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
+    auto translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
+    auto rotation    = djc_math::createMat4RotationMatrix(djc_math::Vec3<float>(0.0f));
+    auto scale       = djc_math::createMat4ScaleMatrix(djc_math::Vec3<float>(1.0f));
+    auto proj        = djc_math::createMat4ProjectionMatrix(djc_math::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
     //..
 
     // incrementers
@@ -205,21 +205,21 @@ int main(int argc, char* argv[]) {
 
         // update
         //starField.update(delta);
-        rotation = djc_math::createMat4RotationMatrix<float>(djc_math::Vec3<float>(std::cos(rot), std::sin(rot), std::cos(rot)));
+        rotation = djc_math::createMat4RotationMatrix(djc_math::Vec3<float>(0, rot, 0));
         rot += movementSpeed * delta;
 
         if(input.isLeftDown()) {
             x-= movementSpeed * delta;
-            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isRightDown()) {
             x+= movementSpeed  * delta;
-            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isUpDown()) {
             z += movementSpeed  * delta;
-            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isDownDown()) {
             z -= movementSpeed * delta;
-            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
         }
 
         auto modelMatrix = proj * translation * rotation * scale;
