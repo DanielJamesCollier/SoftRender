@@ -57,6 +57,13 @@ createMat4ScreenSpaceTransform(T halfWifth, T halfHeight);
 template<typename T> inline void 
 setMat4Identity(Mat4<T> & matrix);
 
+//-------------------//
+/*      Other        */
+//-------------------//
+
+template<typename T> inline Mat4<T>
+rotate(T angle, Vec3<T> axis);
+
 } /* namespace djc_math */
 #include "inline/Transform.inl"
 #endif /* Transform_hpp */

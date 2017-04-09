@@ -178,4 +178,14 @@ setMat4Identity(Mat4<T> & matrix) {
     }});
 }
 
+//-------------------//
+/*      Other        */
+//-------------------//
+
+//------------------------------------------------------------
+template<typename T> inline Mat4<T>
+rotate(T angle, Vec3<T> axis) {
+    return createMat4RotationMatrix<T>(axis + angle);
+}
+
 } /* namespace djc_math */
