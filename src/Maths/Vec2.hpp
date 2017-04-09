@@ -1,48 +1,67 @@
 #ifndef Vec2_hpp
 #define Vec2_hpp
 
+// std
+#include <cmath>
 #include <iostream>
+#include <type_traits>
 
-namespace Maths {
+namespace djc_math {
 
+template<typename T = float>
 class Vec2 final {
-public:
-    explicit Vec2(float _x = 0, float _y = 0);
+    static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "T must be intergral or floating point");
+public: // RAII
+    explicit Vec2(T all = T());
+    Vec2(T _x, T _y);
     ~Vec2() = default;
 
-    // vector exlusive operations
-    float length() const;
-    float length2() const;
-    void normalise();
-    float dot(Vec2 const & vec) const;
+public: // member - functions
+     T length() const;
+     T length2() const;
+     void normalise();
+     T dot(Vec2<T> const & vec);
 
-    // unary opps
-    Vec2   operator + () const;
-    Vec2   operator - () const;
+public: // member - operator overloads
+    Vec2<T>   operator + () const;
+    Vec2<T>   operator - () const;
     
-    // maths operators -  ((non const this, const vec) || (non const this, float scalar)
-    Vec2   operator + (Vec2 const & vec);
-    Vec2   operator - (Vec2 const & vec);
-    Vec2   operator * (Vec2 const & vec);
-    Vec2   operator / (Vec2 const & vec);
-    Vec2   operator + (float scalar);
-    Vec2   operator - (float scalar);
-    Vec2   operator * (float scalar);
-    Vec2   operator / (float scalar);
+    Vec2<T> & operator += (Vec2<T> const & rhs);
+    Vec2<T> & operator -= (Vec2<T> const & rhs);
+    Vec2<T> & operator *= (Vec2<T> const & rhs);
+    Vec2<T> & operator /= (Vec2<T> const & rhs);
 
-    // assignment operators (Vec3 [operator] Vec3)
-    Vec2 & operator += (Vec2 const & vec);
-    Vec2 & operator -= (Vec2 const & vec);
-    Vec2 & operator *= (Vec2 const & vec);
-    Vec2 & operator /= (Vec2 const & vec);
-    Vec2 & operator += (float scalar);
-    Vec2 & operator -= (float scalar);
-    Vec2 & operator *= (float scalar);
-    Vec2 & operator /= (float scalar);
+    Vec2<T> & operator += (T rhs);
+    Vec2<T> & operator -= (T rhs);
+    Vec2<T> & operator *= (T rhs);
+    Vec2<T> & operator /= (T rhs);
 
-    float x, y;
+
+public: // free function operator overloads - defined in Vec2.inl
+    // Vec2<T> operator + (Vec2<T> const & lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator - (Vec2<T> const & lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator * (Vec2<T> const & lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator / (Vec2<T> const & lhs, Vec2<T> const & rhs);
+
+    // Vec2<T> operator + (T lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator - (T lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator * (T lhs, Vec2<T> const & rhs);
+    // Vec2<T> operator / (T lhs, Vec2<T> const & rhs);
+
+    // Vec2<T> operator + (Vec2<T> const & lhs, float rhs);
+    // Vec2<T> operator - (Vec2<T> const & lhs, float rhs);
+    // Vec2<T> operator * (Vec2<T> const & lhs, float rhs);
+    // Vec2<T> operator / (Vec2<T> const & lhs, float rhs);
+
+    // std::ostream & operator << (std::ostream & lhs, Vec2<T> const & rhs);  
+
+public: // free function operator overload for use with other classes
+    // Vec2<T> operator * (Mat2<T> const & rhs & lhs, Vec2<T> const & rhs); - defined in Mat2.inl
+
+public:
+    T x;
+    T y;
 };
-
-} /* namespace Maths */
-#include "Vec2.inl"
+} /* namespace djc_math */
+#include "inline/Vec2.inl"
 #endif /* Vec2_hpp */

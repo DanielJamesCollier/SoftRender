@@ -1,12 +1,12 @@
-// std
-#include <iostream>
-
 // my
 #include "Input.hpp"
-#include "Maths/MathsUtils.hpp"
+#include "Maths/Utils.hpp"
 
 // dependancies
 #include "SDL.h" // needed for SDL_INIT_GAME_CONTROLLER - could remove somehow 
+
+// std
+#include <iostream>
 
 //------------------------------------------------------------
 Input::Input() :

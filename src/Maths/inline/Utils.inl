@@ -1,13 +1,4 @@
-#ifndef MathsUtils_hpp
-#define MathsUtils_hpp
-
-// std
-#include <cstdlib> 
-
-// defines
-#define PI 3.14159265359
-
-namespace Maths {
+namespace djc_math {
 
 //------------------------------------------------------------
 inline constexpr float 
@@ -50,5 +41,13 @@ inline T clamp(T v, T low, T hi) {
     return v;
 }
 
+//------------------------------------------------------------
+template<typename T>
+inline void perspectiveDivide(Vec4<T> & vec) {
+    vec.x /= vec.w;
+    vec.y /= vec.w;
+    vec.z /= vec.w;
+    //vec.w /= vec.w  // do not do this because we need w info retained for persp texture mapper
+}
+
 } /* namespace djc_math */
-#endif /* MathsUtils_hpp */

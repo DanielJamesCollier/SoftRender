@@ -4,18 +4,18 @@
 // my
 #include "Maths/Vec2.hpp"
 #include "Maths/Vec3.hpp"
-#include "Maths/Mat4f.hpp"
-#include "Maths/MathsUtils.hpp"
+#include "Maths/Mat4.hpp"
+#include "Maths/Utils.hpp"
 
 class Mat4f;
 
 class Vertex {
     friend class RenderContext;
 public:
-    Vertex(Maths::Vec3 _position, Maths::Vec2 _texCoord = Maths::Vec2(0,0), Maths::Vec3 _colour = Maths::Vec3(1, 1, 1));
-    Vertex(Maths::Vec4 const & _position, Maths::Vec2 _texCoord, Maths::Vec3 _colour);
+    Vertex(djc_math::Vec3<float> _position, djc_math::Vec2<float> _texCoord = djc_math::Vec2<float>(0,0), djc_math::Vec3<float> _colour = djc_math::Vec3<float>(1, 1, 1));
+    Vertex(djc_math::Vec4<float> const & _position, djc_math::Vec2<float> _texCoord, djc_math::Vec3<float> _colour);
 
-    Vertex transform(Maths::Mat4f & matrix);
+    Vertex transform(djc_math::Mat4<float> & matrix);
 
     // fix : remove these garbage functions
     float getX() const {
@@ -26,15 +26,15 @@ public:
         return position.y;
     }
    
-    Maths::Vec4 position;
-    Maths::Vec2 texCoord;
-    Maths::Vec3 colour;
+    djc_math::Vec4<float> position;
+    djc_math::Vec2<float> texCoord;
+    djc_math::Vec3<float> colour;
 };
 
 inline Vertex lerp(Vertex v0, Vertex v1, float t) {
-    return Vertex(Maths::lerp(v0.position, v1.position, t),
-                  Maths::lerp(v0.texCoord, v1.texCoord, t),
-                  Maths::lerp(v0.colour,   v1.colour,   t));
+    return Vertex(djc_math::lerp(v0.position, v1.position, t),
+                  djc_math::lerp(v0.texCoord, v1.texCoord, t),
+                  djc_math::lerp(v0.colour,   v1.colour,   t));
 }
 
 #endif /* Vertex_hpp  */

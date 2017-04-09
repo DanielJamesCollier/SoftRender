@@ -1,10 +1,9 @@
-// included at the bottom of Vec4X.hpp
-
+// included at the bottom of Vec4.hpp
 namespace djc_math {
 
 //------------------------------------------------------------
 template<typename T>
-Vec4X<T>::Vec4X(T all) 
+Vec4<T>::Vec4(T all) 
 :   x(all)
 ,   y(all)
 ,   z(all)
@@ -15,7 +14,7 @@ Vec4X<T>::Vec4X(T all)
 
 //------------------------------------------------------------
 template<typename T>
-Vec4X<T>::Vec4X(T _x, T _y, T _z, T _w) 
+Vec4<T>::Vec4(T _x, T _y, T _z, T _w) 
 :   x(_x)
 ,   y(_y)
 ,   z(_z)
@@ -26,7 +25,7 @@ Vec4X<T>::Vec4X(T _x, T _y, T _z, T _w)
 
 //------------------------------------------------------------
 template<typename T>
-Vec4X<T>::Vec4X(Vec2X<T> const & vecXY, Vec2X<T> const & vecZW)
+Vec4<T>::Vec4(Vec2<T> const & vecXY, Vec2<T> const & vecZW)
 :   x(vecXY.x)
 ,   y(vecXY.y)
 ,   z(vecZW.x)
@@ -37,7 +36,7 @@ Vec4X<T>::Vec4X(Vec2X<T> const & vecXY, Vec2X<T> const & vecZW)
 
 //------------------------------------------------------------
 template<typename T>
-Vec4X<T>::Vec4X(Vec2X<T> const & vec, T _z, T _w)
+Vec4<T>::Vec4(Vec2<T> const & vec, T _z, T _w)
 :   x(vec.x)
 ,   y(vec.y)
 ,   z(_z)
@@ -48,7 +47,7 @@ Vec4X<T>::Vec4X(Vec2X<T> const & vec, T _z, T _w)
 
 //------------------------------------------------------------
 template<typename T>
-Vec4X<T>::Vec4X(Vec3X<T> const & vec, T _w) 
+Vec4<T>::Vec4(Vec3<T> const & vec, T _w) 
 :   x(vec.x)
 ,   y(vec.y)
 ,   z(vec.z)
@@ -61,19 +60,19 @@ Vec4X<T>::Vec4X(Vec3X<T> const & vec, T _w)
 
 //------------------------------------------------------------
 template<typename T> T
-Vec4X<T>::length() const {
+Vec4<T>::length() const {
     return std::sqrt(x * x + y * y + z * z + w * w);
 }
 
 //------------------------------------------------------------
 template<typename T> T
-Vec4X<T>::length2() const {
+Vec4<T>::length2() const {
     return x * x + y * y + z * z + w * w;
 }
 
 //------------------------------------------------------------
 template<typename T> void
-Vec4X<T>::normalise() {
+Vec4<T>::normalise() {
     T length = std::sqrt(x * x + y * y + z * z + w * w);
     x /= length;
     y /= length;
@@ -83,39 +82,39 @@ Vec4X<T>::normalise() {
 
 //------------------------------------------------------------
 template<typename T> T
-Vec4X<T>::dot(Vec4X<T> const & vec) const {
+Vec4<T>::dot(Vec4<T> const & vec) const {
      return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
 }
 
 //------------------------------------------------------------
-template<typename T> Vec3X<T>
-Vec4X<T>::toVec2X() const {
-    return Vec2X<T>(x, y);
+template<typename T> Vec2<T>
+Vec4<T>::toVec2() const {
+    return Vec2<T>(x, y);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec3X<T>
-Vec4X<T>::toVec3X() const {
-    return Vec3X<T>(x, y, z);
+template<typename T> Vec3<T>
+Vec4<T>::toVec3() const {
+    return Vec3<T>(x, y, z);
 }
 
 // member - operator overloads
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-Vec4X<T>::operator + () const {
-    return Vec4X<T>(x, y, z, w);
+template<typename T> Vec4<T>
+Vec4<T>::operator + () const {
+    return Vec4<T>(x, y, z, w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-Vec4X<T>::operator - () const {
-    return Vec4X<T>(-x, -y, -z, -w);
+template<typename T> Vec4<T>
+Vec4<T>::operator - () const {
+    return Vec4<T>(-x, -y, -z, -w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator += (Vec4X<T> const & rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator += (Vec4<T> const & rhs) {
     x += rhs.x;
     y += rhs.y;
     z += rhs.z;
@@ -124,8 +123,8 @@ Vec4X<T>::operator += (Vec4X<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator -= (Vec4X<T> const & rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator -= (Vec4<T> const & rhs) {
     x -= rhs.x;
     y -= rhs.y;
     z -= rhs.z;
@@ -134,8 +133,8 @@ Vec4X<T>::operator -= (Vec4X<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator *= (Vec4X<T> const & rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator *= (Vec4<T> const & rhs) {
     x *= rhs.x;
     y *= rhs.y;
     z *= rhs.z;
@@ -144,8 +143,8 @@ Vec4X<T>::operator *= (Vec4X<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator /= (Vec4X<T> const & rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator /= (Vec4<T> const & rhs) {
     x /= rhs.x;
     y /= rhs.y;
     z /= rhs.z;
@@ -154,8 +153,8 @@ Vec4X<T>::operator /= (Vec4X<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator += (T rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator += (T rhs) {
     x += rhs;
     y += rhs;
     z += rhs;
@@ -164,8 +163,8 @@ Vec4X<T>::operator += (T rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator -= (T rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator -= (T rhs) {
     x -= rhs;
     y -= rhs;
     z -= rhs;
@@ -174,8 +173,8 @@ Vec4X<T>::operator -= (T rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator *= (T rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator *= (T rhs) {
     x *= rhs;
     y *= rhs;
     z *= rhs;
@@ -184,8 +183,8 @@ Vec4X<T>::operator *= (T rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> &
-Vec4X<T>::operator /= (T rhs) {
+template<typename T> Vec4<T> &
+Vec4<T>::operator /= (T rhs) {
     x /= rhs;
     y /= rhs;
     z /= rhs;
@@ -196,57 +195,57 @@ Vec4X<T>::operator /= (T rhs) {
 // free function operator overloads
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> 
-operator + (Vec4X<T> const & lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
+template<typename T> Vec4<T> 
+operator + (Vec4<T> const & lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> 
-operator - (Vec4X<T> const & lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+template<typename T> Vec4<T> 
+operator - (Vec4<T> const & lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> 
-operator * (Vec4X<T> const & lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
+template<typename T> Vec4<T> 
+operator * (Vec4<T> const & lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T> 
-operator / (Vec4X<T> const & lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
+template<typename T> Vec4<T> 
+operator / (Vec4<T> const & lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-operator + (T lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z, lhs + rhs.z);
+template<typename T> Vec4<T>
+operator + (T lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z, lhs + rhs.z);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-operator - (T lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z, lhs - rhs.z);
+template<typename T> Vec4<T>
+operator - (T lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z, lhs - rhs.z);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-operator * (T lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.z);
+template<typename T> Vec4<T>
+operator * (T lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.z);
 }
 
 //------------------------------------------------------------
-template<typename T> Vec4X<T>
-operator / (T lhs, Vec4X<T> const & rhs) {
-    return Vec4X<T>(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.z);
+template<typename T> Vec4<T>
+operator / (T lhs, Vec4<T> const & rhs) {
+    return Vec4<T>(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.z);
 }
 
 //------------------------------------------------------------
 template<typename T> std::ostream &
-operator << (std::ostream & lhs, Vec4X<T> const & rhs) {
-    lhs << "Vec4X(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ", " << rhs.w << ")";
+operator << (std::ostream & lhs, Vec4<T> const & rhs) {
+    lhs << "Vec4(" << rhs.x << ", " << rhs.y << ", " << rhs.z << ", " << rhs.w << ")";
 }
 
 } /* namespace djc_math */

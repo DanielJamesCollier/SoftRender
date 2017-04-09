@@ -28,12 +28,12 @@ public:
     float       m_oneOverW_step;
 
     // colour interpolation across triangle
-    Maths::Vec3 colour;
-    Maths::Vec3 m_colourStep;
+    djc_math::Vec3<float> colour;
+    djc_math::Vec3<float> m_colourStep;
 
     // texture coordinate interpolation across the triangle
-    Maths::Vec2 texCoord;
-    Maths::Vec2 m_texCoordStep;
+    djc_math::Vec2<float> texCoord;
+    djc_math::Vec2<float> m_texCoordStep;
 
 private:
     // edge  y range

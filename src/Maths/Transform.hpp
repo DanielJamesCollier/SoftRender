@@ -1,70 +1,63 @@
 #ifndef Transform_hpp
 #define Transform_hpp
 
+// std
+#include <array>
+#include <cmath>
+
 // my
-#include "Vec4.hpp"
 #include "Vec3.hpp"
-#include "Mat4f.hpp"
+#include "Mat3.hpp"
+#include "Mat4.hpp"
 
-namespace Maths {
+namespace djc_math {
 
-//-------------------
-/*      Mat4f       */
-//-------------------
+//-----------------//
+/*      Mat3       */
+//-----------------//
 
-// creates new Mat4
-//------------------------------------------------------------
-inline Mat4f
-createIdentityMatrix();
+// create new //
 
-inline Mat4f 
-createProjectionMatrix(float fov, float near, float far, float aspect);
+template<typename T> inline Mat3<T>
+createMat3IdentityMatrix();
 
-inline Mat4f 
-createModelMatrix(Vec3 const & position, Vec3 const & rotation, Vec3 const & scale);
+template<typename T> inline Mat3<T>
+createMat3RotationMatrix(Vec3<T> const & vec);
 
-inline Mat4f
-createTranslationMatrix(Vec3 const & position);
+// use existing //
 
-inline Mat4f
-createRotationMatrix(Vec3 const & rotation);
+//-------------------//
+/*      Mat4        */
+//-------------------//
 
-inline Mat4f
-createScaleMatrix(Vec3 const & scale);
+// create new //
 
-inline Mat4f
-createScreenSpaceTransform(float halfWidth, float halfHeight);
+template<typename T> inline Mat4<T> 
+createMat4IdentityMatrix();
 
-// operatres on existing Mat4f
-//--------------------------------------------------------------
-inline void 
-transform(Vec4 & position, Mat4f & transformation);
+template<typename T> inline Mat4<T>
+createMat4TranslationMatrix(Vec3<T> const & vec);
 
-inline void 
-setIdentity(Mat4f & matrix);
+template<typename T> inline Mat4<T>
+createMat4RotationMatrix(Vec3<T> const & vec);
 
-inline void
-setTranslation(Mat4f & matrix, Vec3 const & position);
+template<typename T> inline Mat4<T>
+createMat4ScaleMatrix(Vec3<T> const & vec);
 
-inline void
-setRotationX(Mat4f & matrix, float angle);
+template<typename T> inline Mat4<T>
+createMat4ModelMatrix(Vec3<T> const & position, Vec3<T> const & rotation, Vec3<T> const & scale);
 
-inline void
-setRotationY(Mat4f & matrix, float angle);
+template<typename T> inline Mat4<T>
+createMat4ProjectionMatrix(T fov, T near, T far, T aspect);
 
-inline void
-setRotationZ(Mat4f & matrix, float angle);
+template<typename T> inline Mat4<T>
+createMat4ScreenSpaceTransform(T halfWifth, T halfHeight);
 
-inline void 
-setScale(Mat4f & matrix, Vec3 const & scale);
+// use existing
+template<typename T> inline void 
+setMat4Identity(Mat4<T> & matrix);
 
-/* Vec4 */
-//-------------------
-inline void
-perspectiveDivide(Vec4 & vec);
-
-
-
-} /* namespace Maths */
-#include "Transform.inl"
+} /* namespace djc_math */
+#include "inline/Transform.inl"
 #endif /* Transform_hpp */
+

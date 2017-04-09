@@ -1,7 +1,8 @@
 // my
 #include "RenderContext.hpp"
 #include "Edge.hpp"
-#include "Maths/Maths.hpp"
+
+#include "Maths/djc_math.hpp"
 
 // std
 #include <algorithm>
@@ -17,8 +18,7 @@
 RenderContext::RenderContext(int width, int height) :
     Bitmap(width, height)
 {   
-    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
-    std::cout << "context width: " << width << " context height: " << height << std::endl;  
+    m_screenSpaceTransform = djc_math::createMat4ScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f); 
 
     m_depthBuffer.resize(width * height);
     std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -100);
@@ -38,8 +38,8 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
     v1 = v1.transform(m_screenSpaceTransform);
     v2 = v2.transform(m_screenSpaceTransform);
 
-    Maths::perspectiveDivide(v1.position);
-    Maths::perspectiveDivide(v2.position);
+    djc_math::perspectiveDivide(v1.position);
+    djc_math::perspectiveDivide(v2.position);
 
     // vec2 
     float startY = v1.position.y;
@@ -71,7 +71,7 @@ RenderContext::drawLine(Vertex v1, Vertex v2) {
         float currXNormal = (currX - startX) / (endX - startX);
         //float currYNormal = (currY - startY) / (endY - startY);
 
-        Maths::Vec3 currentColour = Maths::lerp(v1.colour, v2.colour, currXNormal);
+        auto currentColour = djc_math::lerp(v1.colour, v2.colour, currXNormal);
         //..
 
        // setPixel(static_cast<int>(std::ceil(currX)), static_cast<int>(std::ceil(currY)), currentColour);
@@ -96,7 +96,6 @@ RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
        clipPolygonAxis(vertices, vertricesClipped, 1) &&
        clipPolygonAxis(vertices, vertricesClipped, 2)) {
            
-
         // triangle fan drawing
         for(int i = 1; i < vertices.size() - 1; i++) {
             fillTriangle(vertices[0], vertices[i], vertices[i + 1], bitmap);
@@ -106,11 +105,11 @@ RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
 
 //------------------------------------------------------------
 void
-RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap) {  
+RenderContext::drawMesh(std::vector<Vertex> mesh, djc_math::Mat4<float> & transform, Bitmap & bitmap) {  
 
     // transform vertices
     for(size_t i = 0; i < mesh.size(); i++) {
-        Maths::transform(mesh[i].position, transform);
+        mesh[i].position = transform * mesh[i].position;
     }
 
     // draw triangles
@@ -124,10 +123,10 @@ RenderContext::drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitm
 
 //------------------------------------------------------------
 void 
-RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, Maths::Mat4f & transform, Bitmap & bitmap) {
+RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4<float> & transform, Bitmap & bitmap) {
 
     for(size_t i = 0; i < vertices.size(); i++) {
-        Maths::transform(vertices[i].position, transform);
+        vertices[i].position = transform * vertices[i].position;
     }
 
     // draw triangles
@@ -202,17 +201,17 @@ void // vertices must be clipped before uing this function
 RenderContext::fillTriangle(Vertex v1, Vertex  v2, Vertex v3, Bitmap & bitmap) {
 
     // change vectors from -1 ~ 1 space to 0 ~ screenWidth
-    Maths::transform(v1.position, m_screenSpaceTransform);
-    Maths::transform(v2.position, m_screenSpaceTransform);
-    Maths::transform(v3.position, m_screenSpaceTransform);
+    v1.position = m_screenSpaceTransform * v1.position;
+    v2.position = m_screenSpaceTransform * v2.position;
+    v3.position = m_screenSpaceTransform * v3.position;
 
     // @perf : avoid not needed matrix vector mult just do below
     //x' = x*halfWidth + halfWidth
     //y' = y*halfHeight + halfHeight
 
-    Maths::perspectiveDivide(v1.position);
-    Maths::perspectiveDivide(v2.position);
-    Maths::perspectiveDivide(v3.position); // perf : could be inlined.
+    djc_math::perspectiveDivide(v1.position);
+    djc_math::perspectiveDivide(v2.position);
+    djc_math::perspectiveDivide(v3.position); // perf : could be inlined.
 
 
     if(v3.getY() < v2.getY()) {
@@ -282,16 +281,16 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
     float xMax  = static_cast<int>(std::ceil(right.x));
     float xDist = xMax - xMin;
 
-    Maths::Vec3 currColour = left.colour;
-    Maths::Vec3 colourStep((right.colour - left.colour) / xDist);
+    auto currColour = left.colour;
+    auto colourStep((right.colour - left.colour) / xDist);
 
-    Maths::Vec2 currTexCoord = left.texCoord;
-    Maths::Vec2 texCoordStep((right.texCoord - left.texCoord) / xDist);
+    auto currTexCoord = left.texCoord;
+    auto texCoordStep((right.texCoord - left.texCoord) / xDist);
 
     float currW = left.oneOverW;
     float wStep = (right.oneOverW - currW) / xDist;
 
-
+    
     // perf : dont do perspective correction every pixel but every few pixels
     int row = m_width * y;
     for(float x = xMin; x < xMax; ++x) {
@@ -300,14 +299,14 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
             m_depthBuffer[row + x] = 1.0 * currW;
 
             float z = 1.0f / currW;
-        
-            Maths::Vec3 correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * (bitmap.getWidthF() - 1.0f) + 0.5f,
+
+            auto correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * (bitmap.getWidthF() - 1.0f) + 0.5f,
                                                              (currTexCoord.y * z) * (bitmap.getHeightF() - 1.0f) + 0.5f);
 
-            Maths::Vec3 correctedColour = Maths::Vec3(currColour.x * z, currColour.y * z, currColour.z * z);                                    
+            auto correctedColour = djc_math::Vec3<float>(currColour.x * z, currColour.y * z, currColour.z * z);                                    
         
-           // Maths::Vec3 finalColour = correctedColour * correctedTexColour;
-            Maths::Vec3 finalColour = correctedTexColour;
+           //auto finalColour = correctedColour * correctedTexColour;
+            auto finalColour = correctedTexColour;
 
             setPixel(x, y, static_cast<unsigned char>(finalColour.z * 255.99f),
                            static_cast<unsigned char>(finalColour.y * 255.99f), 
@@ -325,6 +324,6 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
 //------------------------------------------------------------
 void // fix : call this function when screen size changes - need to account for scale
 RenderContext::updateContextSize(float width, float height) {
-    m_screenSpaceTransform = Maths::createScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
+    m_screenSpaceTransform = djc_math::createMat4ScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f);
     Bitmap::resize(width, height);
 }

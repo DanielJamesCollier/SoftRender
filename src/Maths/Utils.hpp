@@ -1,6 +1,9 @@
 #ifndef MathsUtils_hpp
 #define MathsUtils_hpp
 
+// my
+#include "Vec4.hpp"
+
 // std
 #include <cstdlib> 
 
@@ -26,6 +29,9 @@ inline T lerp(T v0, T v1, float t);
 
 template<typename T>
 inline T clamp(T v, T low, T hi);
+
+template<typename T>
+inline void perspectiveDivide(Vec4<T> & vec);
 
 } /* namespace djc_math */
 #include "inline/Utils.inl"

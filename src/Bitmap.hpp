@@ -2,7 +2,7 @@
 #define Bitmap_hpp
 
 // my
-#include "Maths/MathsUtils.hpp"
+#include "Maths/Utils.hpp"
 #include "Maths/Vec3.hpp"
 // std
 #include <vector>
@@ -25,7 +25,7 @@ public:
     Buffer & getBuffer();
     
     void setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r);
-    Maths::Vec3 getPixel(int x, int y);
+    djc_math::Vec3<float> getPixel(int x, int y);
 
     void clear();
 
@@ -46,7 +46,7 @@ createRandomBitmap(int width, int height) {
     Bitmap bMap(width, height);
 
     for(unsigned char & pixel : bMap.m_buffer) {
-        pixel = Maths::randUCBetween0N255();
+        pixel = djc_math::randUCBetween0N255();
     }
 
     return bMap;

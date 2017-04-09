@@ -2,13 +2,13 @@ namespace djc_math {
 
 //------------------------------------------------------------
 template<typename T>
-Mat3X<T>::Mat3X() {
+Mat3<T>::Mat3() {
     m_matrix.fill(T());
 }
 
 //------------------------------------------------------------
 template<typename T>
-Mat3X<T>::Mat3X(std::array<T, 9> matrix)
+Mat3<T>::Mat3(std::array<T, 9> matrix)
 : m_matrix(matrix) 
 {
     // empty
@@ -27,8 +27,8 @@ Mat3X<T>::Mat3X(std::array<T, 9> matrix)
 // }
 
 //------------------------------------------------------------
-template<typename T> /* friend */ Mat3X<T> 
-operator * (Mat3X<T> const & lhs, Mat3X<T> const & rhs) {
+template<typename T> /* friend */ Mat3<T> 
+operator * (Mat3<T> const & lhs, Mat3<T> const & rhs) {
 
     // transforms use column major
     //-------------------- 
@@ -37,7 +37,7 @@ operator * (Mat3X<T> const & lhs, Mat3X<T> const & rhs) {
     //   [2]  [5]  [8] 
     //---------------------
     
-    return Mat3X<T>(std::array<T, 9>{{
+    return Mat3<T>(std::array<T, 9>{{
         // column 0
         (lhs[0] * rhs[0]) + (lhs[3] * rhs[1]) + (lhs[6] * rhs[2]), // 0
         (lhs[1] * rhs[0]) + (lhs[4] * rhs[1]) + (lhs[7] * rhs[2]), // 1
@@ -54,18 +54,18 @@ operator * (Mat3X<T> const & lhs, Mat3X<T> const & rhs) {
 }
 
 //------------------------------------------------------------
-template<typename T> Vec3X<T>
-operator * (Mat3X<T> const & lhs, Vec3X<T> const & rhs) {
-    return Vec3X<T>((lhs[0] * rhs.x) + (lhs[3] * rhs.y) + (lhs[6] * rhs.z),
+template<typename T> Vec3<T>
+operator * (Mat3<T> const & lhs, Vec3<T> const & rhs) {
+    return Vec3<T>((lhs[0] * rhs.x) + (lhs[3] * rhs.y) + (lhs[6] * rhs.z),
                     (lhs[1] * rhs.x) + (lhs[4] * rhs.y) + (lhs[7] * rhs.z),
                     (lhs[2] * rhs.x) + (lhs[5] * rhs.y) + (lhs[8] * rhs.z));
 }
 
 //------------------------------------------------------------
 template<typename T> /* friend */ std::ostream & 
-operator << (std::ostream & lhs, Mat3X<T> const & rhs) {
+operator << (std::ostream & lhs, Mat3<T> const & rhs) {
 
-    lhs << " Mat3X\n-----------------\n";
+    lhs << " Mat3\n-----------------\n";
     for (int x = 0; x < 3; x++) {
         for (int y = 0; y < 3; y++) {
                 lhs << "[" << rhs.m_matrix[3 * x + y] << "] "; 
@@ -78,13 +78,13 @@ operator << (std::ostream & lhs, Mat3X<T> const & rhs) {
 
 //------------------------------------------------------------
 template<typename T> float & 
-Mat3X<T>::operator [] (std::size_t index) {
+Mat3<T>::operator [] (std::size_t index) {
     return m_matrix[index];
 }
 
 //------------------------------------------------------------
 template<typename T> float const & 
-Mat3X<T>::operator [] (std::size_t index) const {
+Mat3<T>::operator [] (std::size_t index) const {
     return m_matrix[index];
 }
 

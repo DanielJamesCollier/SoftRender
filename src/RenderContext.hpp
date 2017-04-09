@@ -7,10 +7,9 @@
 // my
 #include "Bitmap.hpp" 
 #include "Vertex.hpp"
-#include "Maths/Mat4f.hpp"
+#include "Maths/Mat4.hpp"
 
 class Edge;
-class Mat4;
 
 class RenderContext : public Bitmap {
     friend class Window;
@@ -23,8 +22,8 @@ public:
     void drawLine(Vertex v1, Vertex v2);
     void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
 
-    void drawMesh(std::vector<Vertex> mesh, Maths::Mat4f & transform, Bitmap & bitmap); // no indices
-    void drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, Maths::Mat4f & transform, Bitmap & bitmap); // uses indices
+    void drawMesh(std::vector<Vertex> mesh, djc_math::Mat4<float> & transform, Bitmap & bitmap); // no indices
+    void drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4<float> & transform, Bitmap & bitmap); // uses indices
 
     void clearDepthBuffer();
 
@@ -38,7 +37,7 @@ private:
     void updateContextSize(float width, float height); // todo : call from window when it gets resized
 
 private:
-    Maths::Mat4f m_screenSpaceTransform;
+    djc_math::Mat4<float> m_screenSpaceTransform;
     std::vector<float> m_depthBuffer;
 
     float m_halfWidth;

@@ -2,52 +2,72 @@
 #define Vec3_hpp
 
 // std
-#include <iostream>
 #include <cmath>
+#include <iostream>
+#include <type_traits>
 
-namespace Maths {
+// my
+#include "Vec2.hpp"
 
+namespace djc_math {
+
+template<typename T = float>
 class Vec3 final {
-public:
-    explicit Vec3(float xyz = 0.0f);
-    Vec3(float _x , float _y, float _z);
+    static_assert(std::is_integral<T>::value || std::is_floating_point<T>::value, "T must be intergral or floating point");
+public: // RAII
+    explicit Vec3(T all = T());
+    Vec3(T _x, T _y, T _z);
+    Vec3(Vec2<T> const & vec, T _z);
     ~Vec3() = default;
-    
-    // vector exlusive operations
-    float length() const;
-    float length2() const;
+
+public: // member - functions
+    T length() const;
+    T length2() const;
     void normalise();
-    float dot(Vec3 const & vec) const;
-    Vec3 cross(Vec3 const & vec);
+    T dot(Vec3<T> const & vec) const;
+    Vec3<T> cross(Vec3<T> const & vec) const;
+    Vec2<T> toVec2() const;
 
-    // unary opps
-    Vec3 operator + () const;
-    Vec3 operator - () const;
-    
-    // maths operators -  ((non const this, const vec) || (non const this, float scalar)
-    Vec3 operator + (Vec3 const & vec);
-    Vec3 operator - (Vec3 const & vec);
-    Vec3 operator * (Vec3 const & vec);
-    Vec3 operator / (Vec3 const & vec);
-    Vec3 operator + (float scalar);
-    Vec3 operator - (float scalar);
-    Vec3 operator * (float scalar);
-    Vec3 operator / (float scalar);
+public:  // member - operator overloads
+    Vec3<T> operator + () const;
+    Vec3<T> operator - () const;
 
-    // assignment operators (Vec3 [operator] Vec3)
-    Vec3 & operator += (Vec3 const & vec);
-    Vec3 & operator -= (Vec3 const & vec);
-    Vec3 & operator *= (Vec3 const & vec);
-    Vec3 & operator /= (Vec3 const & vec);
-    Vec3 & operator += (float scalar);
-    Vec3 & operator -= (float scalar);
-    Vec3 & operator *= (float scalar);
-    Vec3 & operator /= (float scalar);
+    Vec3<T> & operator += (Vec3<T> const & rhs);
+    Vec3<T> & operator -= (Vec3<T> const & rhs);
+    Vec3<T> & operator *= (Vec3<T> const & rhs);
+    Vec3<T> & operator /= (Vec3<T> const & rhs);
 
-//public
-    float x, y, z;
+    Vec3<T> & operator += (T rhs);
+    Vec3<T> & operator -= (T rhs);
+    Vec3<T> & operator *= (T rhs);
+    Vec3<T> & operator /= (T rhs);
+
+public: // free function operator overloads - defined in Vec3.inl
+    // Vec3<T> operator + (Vec3<T> const & lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator - (Vec3<T> const & lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator * (Vec3<T> const & lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator / (Vec3<T> const & lhs, Vec3<T> const & rhs);
+
+    // Vec3<T> operator + (T lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator - (T lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator * (T lhs, Vec3<T> const & rhs);
+    // Vec3<T> operator / (T lhs, Vec3<T> const & rhs);
+
+    // Vec3<T> operator + (Vec3<T> const & lhs, float rhs);
+    // Vec3<T> operator - (Vec3<T> const & lhs, float rhs);
+    // Vec3<T> operator * (Vec3<T> const & lhs, float rhs);
+    // Vec3<T> operator / (Vec3<T> const & lhs, float rhs);
+
+    // std::ostream & operator << (std::ostream & lhs, Vec3<T> const & rhs);  
+
+public: // free function operator overload for use with other classes - defined in Vec3.inl
+    // Vec3<T> operator * (Mat3<T> const & lhs, Vec3<T> const & rhs); - defined in Mat3.inl
+
+public: // public data
+    T x;
+    T y;
+    T z;
 };
-
-} /* namespace Maths */
-#include "Vec3.inl"
+} /* namespace djc_math */
+#include "inline/Vec3.inl"
 #endif /* Vec3_hpp */

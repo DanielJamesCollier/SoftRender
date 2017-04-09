@@ -4,7 +4,7 @@
 
     # file(s) to compile 
     # default directory is ../../src/
-files="../../src/main.cpp ../../src/Window.cpp ../../src/Maths/Vec3.cpp ../../src/Bitmap.cpp ../../src/StarField.cpp ../../src/RenderContext.cpp ../../src/Maths/Mat4f.cpp ../../src/Input.cpp ../../src/Vertex.cpp ../../src/Maths/Vec4.cpp ../../src/Edge.cpp ../../src/Maths/Vec2.cpp"
+files="../../src/main.cpp ../../src/Window.cpp ../../src/RenderContext.cpp ../../src/Vertex.cpp ../../src/Bitmap.cpp ../../src/Edge.cpp ../../src/Input.cpp ../../src/StarField.cpp"
 
     # include lookup directory('s)
 includePath="dependencies/SDL2.framework/Versions/A/Headers/"

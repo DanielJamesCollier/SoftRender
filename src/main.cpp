@@ -15,12 +15,10 @@
 #include "RenderContext.hpp"
 #include "StarField.hpp"
 #include "Input.hpp"
-#include "Maths/Maths.hpp"
+#include "Maths/djc_math.hpp"
 #include "Vertex.hpp"
 #include "Camera.hpp"
 
-
-#include "Maths/MathsTest.hpp"
 
 //------------------------------------------------------------
 struct Mesh {
@@ -82,8 +80,7 @@ loadDannyFile(std::string const & filePath) {
        // int meshOneEndLine = currentLineNumber
        for(int i = 0; i < meshSizes.size(); i++) {
             Mesh mesh;
-             
-
+            
             int loopEnd = currentLineNumber + meshSizes[i].numVertices;
 
             // extract vertices
@@ -92,18 +89,18 @@ loadDannyFile(std::string const & filePath) {
                 splitLine = stringToVec(line);
                 
                 // extract position
-                Maths::Vec3 position;
+                djc_math::Vec3<float> position;
                 position.x = std::stof(splitLine[0]);
                 position.y = std::stof(splitLine[1]);
                 position.z = std::stof(splitLine[2]);
 
                 // extract texture coordinates
-                Maths::Vec2 texcoord;
+                djc_math::Vec2<float> texcoord;
                 texcoord.x = std::stof(splitLine[3]);
                 texcoord.y = std::stof(splitLine[4]);
 
                 // extract colours
-                Maths::Vec3 colour;
+                djc_math::Vec3<float> colour;
                 colour.x = std::stof(splitLine[5]);
                 colour.y = std::stof(splitLine[6]);
                 colour.z = std::stof(splitLine[7]);
@@ -139,8 +136,8 @@ loadDannyFile(std::string const & filePath) {
 //------------------------------------------------------------
 int main(int argc, char* argv[]) {
 
-    djc_math::testMatricies();
-    djc_math::testVectors();
+    //djc_math::testMatricies();
+    //djc_math::testVectors();
     
     // using
     using clock = std::chrono::high_resolution_clock;
@@ -173,7 +170,7 @@ int main(int argc, char* argv[]) {
     //  tree loaded from danny file
     std::vector<Mesh> tree = loadDannyFile("../../res/head.danny");
 
-    std::cout << "size: " << tree.size() << std::endl;
+    // std::cout << "size: " << tree.size() << std::endl;
     
     // game loop vars
     auto frames = 0;
@@ -188,10 +185,10 @@ int main(int argc, char* argv[]) {
     float movementSpeed = 0.0005f;
 
     // matricies
-    Maths::Mat4f translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
-    Maths::Mat4f rotation    = Maths::createRotationMatrix(Maths::Vec3(0.0f));
-    Maths::Mat4f scale       = Maths::createScaleMatrix(Maths::Vec3(1));
-    Maths::Mat4f proj        = Maths::createProjectionMatrix(Maths::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
+    auto translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
+    auto rotation    = djc_math::createMat4RotationMatrix<float>(djc_math::Vec3<float>(0.0f));
+    auto scale       = djc_math::createMat4ScaleMatrix<float>(djc_math::Vec3<float>(1.0f));
+    auto proj        = djc_math::createMat4ProjectionMatrix<float>(djc_math::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
     //..
 
     // incrementers
@@ -207,25 +204,25 @@ int main(int argc, char* argv[]) {
         begin = clock::now();
 
         // update
-        starField.update(delta);
-        rotation = Maths::createRotationMatrix(Maths::Vec3(std::cos(rot), std::sin(rot), std::cos(rot)));
+        //starField.update(delta);
+        rotation = djc_math::createMat4RotationMatrix<float>(djc_math::Vec3<float>(std::cos(rot), std::sin(rot), std::cos(rot)));
         rot += movementSpeed * delta;
 
         if(input.isLeftDown()) {
             x-= movementSpeed * delta;
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isRightDown()) {
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
             x+= movementSpeed  * delta;
+            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isUpDown()) {
             z += movementSpeed  * delta;
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
         } else if(input.isDownDown()) {
-            translation = Maths::createTranslationMatrix(Maths::Vec3(x, y, z)); 
             z -= movementSpeed * delta;
+            translation = djc_math::createMat4TranslationMatrix<float>(djc_math::Vec3<float>(x, y, z)); 
         }
 
-        Maths::Mat4f modelMatrix = proj * translation * rotation * scale;
+        auto modelMatrix = proj * translation * rotation * scale;
         //..
         
 
@@ -241,16 +238,11 @@ int main(int argc, char* argv[]) {
         window.clear();
         rContext.clearDepthBuffer();
         {
-            //starField.render();
-          //  rContext.drawMesh(pyramidNo, model, randomBitmap);
-            //rContext.drawMesh(pyramid, model, randomBitmap);
+           // starField.render();
 
-        for(auto i = 0; i < tree.size(); i++) {
-            rContext.drawIndexedMesh(tree[i].vertices, tree[i].indices, modelMatrix, randomBitmap);
-        }
-            
-            //rContext.drawMesh(cube, cubeIndices, model, randomBitmap);
-
+            for(auto i = 0; i < tree.size(); i++) {
+                rContext.drawIndexedMesh(tree[i].vertices, tree[i].indices, modelMatrix, randomBitmap);
+            }
         }
         window.swapBackBuffer();
     }

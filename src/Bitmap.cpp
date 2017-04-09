@@ -65,15 +65,15 @@ Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r
 }
 
 //------------------------------------------------------------
-Maths::Vec3
+djc_math::Vec3<float>
 Bitmap::getPixel(int x, int y) {
     int index = (m_width * y + x) * 4;
 
-    if(index > (m_width * m_height) * 4) return Maths::Vec3(0.0f);
+    if(index > (m_width * m_height) * 4) return djc_math::Vec3<float>(0.0f);
 
-    return Maths::Vec3((float)m_buffer[index + 2] / 255.0f,  // r
-                       (float)m_buffer[index + 1] / 255.0f,  // g
-                       (float)m_buffer[index + 0] / 255.0f); // b
+    return djc_math::Vec3<float>((float)m_buffer[index + 2] / 255.0f,  // r
+                                 (float)m_buffer[index + 1] / 255.0f,  // g
+                                 (float)m_buffer[index + 0] / 255.0f); // b
 }
 
 //------------------------------------------------------------
