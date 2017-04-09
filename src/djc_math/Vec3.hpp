@@ -68,6 +68,12 @@ public: // public data
     T y;
     T z;
 };
+
+// for ease of use in C++ 14 - in C++ 17 class templates can be deduced
+using Vec3i = Vec3<int>;
+using Vec3f = Vec3<float>;
+using Vec3d = Vec3<double>;
+
 } /* namespace djc_math */
 #include "inline/Vec3.inl"
 #endif /* Vec3_hpp */

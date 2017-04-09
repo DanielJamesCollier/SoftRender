@@ -2,7 +2,7 @@
 #include "Vertex.hpp"
 
 //------------------------------------------------------------
-Vertex::Vertex(djc_math::Vec3<float> _position, djc_math::Vec2<float> _texCoord, djc_math::Vec3<float> _colour) :   
+Vertex::Vertex(djc_math::Vec3f _position, djc_math::Vec2f _texCoord, djc_math::Vec3f _colour) :   
     position(_position, 1.0f)
 ,   texCoord(_texCoord)
 ,   colour(_colour)
@@ -11,7 +11,7 @@ Vertex::Vertex(djc_math::Vec3<float> _position, djc_math::Vec2<float> _texCoord,
 }
 
 //------------------------------------------------------------
-Vertex::Vertex(djc_math::Vec4<float> const & _position, djc_math::Vec2<float> _texCoord, djc_math::Vec3<float> _colour) :   
+Vertex::Vertex(djc_math::Vec4f const & _position, djc_math::Vec2f _texCoord, djc_math::Vec3f _colour) :   
     position(_position)
 ,   texCoord(_texCoord)
 ,   colour(_colour)
@@ -21,8 +21,8 @@ Vertex::Vertex(djc_math::Vec4<float> const & _position, djc_math::Vec2<float> _t
 
 //------------------------------------------------------------
 Vertex 
-Vertex::transform(djc_math::Mat4<float> & matrix) { 
+Vertex::transform(djc_math::Mat4f & matrix) { 
     auto pos = matrix * position;
-    return Vertex(djc_math::Vec4<float>(pos.x, pos.y, pos.z, pos.w), texCoord, colour); 
+    return Vertex(djc_math::Vec4f(pos.x, pos.y, pos.z, pos.w), texCoord, colour); 
 }
 

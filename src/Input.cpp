@@ -1,6 +1,6 @@
 // my
 #include "Input.hpp"
-#include "Maths/Utils.hpp"
+#include "djc_math/Utils.hpp"
 
 // dependancies
 #include "SDL.h" // needed for SDL_INIT_GAME_CONTROLLER - could remove somehow 

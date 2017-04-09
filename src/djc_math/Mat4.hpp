@@ -48,6 +48,12 @@ private: // private operators
 private: // private data
     std::array<T, 16> m_matrix;
 };
+
+// for ease of use in C++ 14 - in C++ 17 class templates can be deduced
+using Mat4i = Mat4<int>;
+using Mat4f = Mat4<float>;
+using Mat4d = Mat4<double>;
+
 } /* namespace djc_math */
 #include "inline/Mat4.inl"
 #endif /* Mat4_hpp */

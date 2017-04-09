@@ -2,8 +2,8 @@
 #define Edge_hpp
 
 // my
-#include "Maths/Vec2.hpp"
-#include "Maths/Vec3.hpp"
+#include "djc_math/Vec2.hpp"
+#include "djc_math/Vec3.hpp"
 
 class Vertex;
 
@@ -28,12 +28,12 @@ public:
     float       m_oneOverW_step;
 
     // colour interpolation across triangle
-    djc_math::Vec3<float> colour;
-    djc_math::Vec3<float> m_colourStep;
+    djc_math::Vec3f colour;
+    djc_math::Vec3f m_colourStep;
 
     // texture coordinate interpolation across the triangle
-    djc_math::Vec2<float> texCoord;
-    djc_math::Vec2<float> m_texCoordStep;
+    djc_math::Vec2f texCoord;
+    djc_math::Vec2f m_texCoordStep;
 
 private:
     // edge  y range

@@ -62,6 +62,12 @@ public:
     T x;
     T y;
 };
+
+// for ease of use in C++ 14 - in C++ 17 class templates can be deduced
+using Vec2i = Vec2<int>;
+using Vec2f = Vec2<float>;
+using Vec2d = Vec2<double>;
+
 } /* namespace djc_math */
 #include "inline/Vec2.inl"
 #endif /* Vec2_hpp */

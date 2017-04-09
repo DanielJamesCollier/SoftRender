@@ -1,8 +1,7 @@
 // my
 #include "RenderContext.hpp"
 #include "Edge.hpp"
-
-#include "Maths/djc_math.hpp"
+#include "djc_math/djc_math.hpp"
 
 // std
 #include <algorithm>
@@ -105,7 +104,7 @@ RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
 
 //------------------------------------------------------------
 void
-RenderContext::drawMesh(std::vector<Vertex> mesh, djc_math::Mat4<float> & transform, Bitmap & bitmap) {  
+RenderContext::drawMesh(std::vector<Vertex> mesh, djc_math::Mat4f & transform, Bitmap & bitmap) {  
 
     // transform vertices
     for(size_t i = 0; i < mesh.size(); i++) {
@@ -123,7 +122,7 @@ RenderContext::drawMesh(std::vector<Vertex> mesh, djc_math::Mat4<float> & transf
 
 //------------------------------------------------------------
 void 
-RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4<float> & transform, Bitmap & bitmap) {
+RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4f & transform, Bitmap & bitmap) {
 
     for(size_t i = 0; i < vertices.size(); i++) {
         vertices[i].position = transform * vertices[i].position;
@@ -303,7 +302,7 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
             auto correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * (bitmap.getWidthF() - 1.0f) + 0.5f,
                                                              (currTexCoord.y * z) * (bitmap.getHeightF() - 1.0f) + 0.5f);
 
-            auto correctedColour = djc_math::Vec3<float>(currColour.x * z, currColour.y * z, currColour.z * z);                                    
+            auto correctedColour = djc_math::Vec3f(currColour.x * z, currColour.y * z, currColour.z * z);                                    
         
            //auto finalColour = correctedColour * correctedTexColour;
             auto finalColour = correctedTexColour;

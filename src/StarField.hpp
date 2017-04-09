@@ -5,7 +5,7 @@
 #include <array>
 
 // my includes
-#include "Maths/Vec3.hpp"
+#include "djc_math/Vec3.hpp"
 
 // my defines
 #define NUM_STARS 20000
@@ -26,7 +26,7 @@ private:
 private:
     float m_speed;
     float m_spread;
-    std::array<djc_math::Vec3<float>, NUM_STARS> m_stars;
+    std::array<djc_math::Vec3f, NUM_STARS> m_stars;
     RenderContext & m_rContext;
 };
 #endif /* StarField_hpp */

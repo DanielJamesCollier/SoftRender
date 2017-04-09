@@ -24,8 +24,6 @@ createMat3IdentityMatrix();
 template<typename T> inline Mat3<T>
 createMat3RotationMatrix(Vec3<T> const & vec);
 
-// use existing //
-
 //-------------------//
 /*      Mat4        */
 //-------------------//
@@ -47,8 +45,17 @@ createMat4ScaleMatrix(Vec3<T> const & vec);
 template<typename T> inline Mat4<T>
 createMat4ModelMatrix(Vec3<T> const & position, Vec3<T> const & rotation, Vec3<T> const & scale);
 
+template<typename T, typename U> inline Mat4<U>
+createMat4OrthographicMatrix(T width, T height, U zNear, U zFar);
+
 template<typename T> inline Mat4<T>
-createMat4ProjectionMatrix(T fov, T near, T far, T aspect);
+createMat4ProjectionMatrix(T fov, T aspect, T zNear, T zFar);
+
+template<typename T> inline Mat4<T>
+createMat4ViewMatrix(Vec3<T> const & position, Vec3<T> const & forward, Vec3<T> const & up);
+
+template<typename T> inline Mat4<T>
+createMat4BirdsEyeViewMatrix();
 
 template<typename T> inline Mat4<T>
 createMat4ScreenSpaceTransform(T halfWifth, T halfHeight);
@@ -61,8 +68,11 @@ setMat4Identity(Mat4<T> & matrix);
 /*      Other        */
 //-------------------//
 
+template<typename T> inline Mat3<T>
+rotate(T angle, Vec3<T> const & axis);
+
 template<typename T> inline Mat4<T>
-rotate(T angle, Vec3<T> axis);
+rotate(T angle, Vec4<T> const & axis);
 
 } /* namespace djc_math */
 #include "inline/Transform.inl"

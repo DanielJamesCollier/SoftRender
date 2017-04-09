@@ -138,19 +138,60 @@ createMat4ModelMatrix(Vec3<T> const & position, Vec3<T> const & rotation, Vec3<T
 }
 
 //------------------------------------------------------------
+template<typename T, typename U> inline Mat4<U>
+createMat4OrthographicMatrix(T width, T height, U zNear, U zFar) { 
+    U a =   1.0f / static_cast<U>(width);
+    U b =   1.0f / static_cast<U>(height);
+    U c = -(2.0f / (zFar - zNear));
+    U d = -((zFar + zNear) / (zFar - zNear));
+    U e =   1.0f;
+    return Mat4<U>(std::array<U, 16>{{
+        a, 0, 0, 0,
+        0, b, 0, 0,
+        0, 0, c, 0,
+        0, 0, d, e,
+    }});
+}
+
+//------------------------------------------------------------
 template<typename T> inline Mat4<T>
-createMat4ProjectionMatrix(T fov, T near, T far, T aspect) {
-    T range = std::tan(fov / 2.0f) * near;
-    T Sx    = (2 * near) / (range * aspect + range * aspect);
-    T Sy    = near / range;
-    T Sz    = -(far + near) / (far - near);
-    T Pz    = -(2 * far * near) / (far - near);
+createMat4ProjectionMatrix(T fov, T aspect, T zNear, T zFar) {
+    T range = std::tan(fov / 2.0f) * zNear;
+    T Sx    = (2 * zNear) / (range * aspect + range * aspect);
+    T Sy    = zNear / range;
+    T Sz    = -(zFar + zNear) / (zFar - zNear);
+    T Pz    = -(2 * zFar * zNear) / (zFar - zNear);
 
     return Mat4<T>(std::array<T, 16>{{
         Sx, 0,  0,  0,
         0, Sy,  0,  0,
         0,  0, Sz, -1,
         0,  0, Pz,  0
+    }});
+}
+
+//------------------------------------------------------------
+template<typename T> inline Mat4<T>
+createMat4ViewMatrix(Vec3<T> const & pos, Vec3<T> const & forward, Vec3<T> const & up) {
+
+    Vec3<T> right = forward.cross(up);
+
+    return Mat4<T>(std::array<T, 16>{{
+       right.x, up.x, -forward.x, 0,
+       right.y, up.y, -forward.y, 0,
+       right.z, up.z, -forward.z, 0,
+       -pos.x, -pos.y, -pos.z,    1
+    }});
+}
+
+//----------------------w--------------------------------------
+template<typename T> inline Mat4<T>
+createMat4BirdsEyeViewMatrix() {
+    return Mat4<T>(std::array<T, 16> {{
+        1,  0, 0, 0,
+        0,  0, 1, 0,
+        0, -1, 0, 0,
+        0,  0, 0, 1
     }});
 }
 
@@ -183,8 +224,14 @@ setMat4Identity(Mat4<T> & matrix) {
 //-------------------//
 
 //------------------------------------------------------------
+template<typename T> inline Mat3<T>
+rotate(T angle, Vec3<T> const & axis) {
+    return createMat3RotationMatrix<T>(axis + angle);
+}
+
+//------------------------------------------------------------
 template<typename T> inline Mat4<T>
-rotate(T angle, Vec3<T> axis) {
+rotate(T angle, Vec4<T> const & axis) {
     return createMat4RotationMatrix<T>(axis + angle);
 }
 

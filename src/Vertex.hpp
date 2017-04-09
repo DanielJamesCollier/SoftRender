@@ -2,20 +2,20 @@
 #define Vertex_hpp
 
 // my
-#include "Maths/Vec2.hpp"
-#include "Maths/Vec3.hpp"
-#include "Maths/Mat4.hpp"
-#include "Maths/Utils.hpp"
+#include "djc_math/Vec2.hpp"
+#include "djc_math/Vec3.hpp"
+#include "djc_math/Mat4.hpp"
+#include "djc_math/Utils.hpp"
 
 class Mat4f;
 
 class Vertex {
     friend class RenderContext;
 public:
-    Vertex(djc_math::Vec3<float> _position, djc_math::Vec2<float> _texCoord = djc_math::Vec2<float>(0,0), djc_math::Vec3<float> _colour = djc_math::Vec3<float>(1, 1, 1));
-    Vertex(djc_math::Vec4<float> const & _position, djc_math::Vec2<float> _texCoord, djc_math::Vec3<float> _colour);
+    Vertex(djc_math::Vec3f _position, djc_math::Vec2f _texCoord = djc_math::Vec2f(0,0), djc_math::Vec3f _colour = djc_math::Vec3f(1, 1, 1));
+    Vertex(djc_math::Vec4f const & _position, djc_math::Vec2f _texCoord, djc_math::Vec3f _colour);
 
-    Vertex transform(djc_math::Mat4<float> & matrix);
+    Vertex transform(djc_math::Mat4f & matrix);
 
     // fix : remove these garbage functions
     float getX() const {
@@ -26,9 +26,9 @@ public:
         return position.y;
     }
    
-    djc_math::Vec4<float> position;
-    djc_math::Vec2<float> texCoord;
-    djc_math::Vec3<float> colour;
+    djc_math::Vec4f position;
+    djc_math::Vec2f texCoord;
+    djc_math::Vec3f colour;
 };
 
 inline Vertex lerp(Vertex v0, Vertex v1, float t) {

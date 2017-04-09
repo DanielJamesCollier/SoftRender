@@ -4,7 +4,7 @@
 // my
 #include "Edge.hpp"
 #include "Vertex.hpp"
-#include "Maths/Utils.hpp"
+#include "djc_math/Utils.hpp"
 
 //------------------------------------------------------------
 Edge::Edge(Vertex const & minY, Vertex const & maxY) :
@@ -24,7 +24,7 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
    
     texCoord = minY.texCoord / minY.position.w;
     auto texMaxCorrected = maxY.texCoord / maxY.position.w;
-    m_texCoordStep = djc_math::Vec2<float>((texMaxCorrected.x - texCoord.x) / yDist,
+    m_texCoordStep = djc_math::Vec2f((texMaxCorrected.x - texCoord.x) / yDist,
                                            (texMaxCorrected.y - texCoord.y) / yDist);
                                  
 
@@ -33,7 +33,7 @@ Edge::Edge(Vertex const & minY, Vertex const & maxY) :
     colour = minY.colour / minY.position.w;
     auto colMaxCorrected = maxY.colour / maxY.position.w;
 
-    m_colourStep = djc_math::Vec3<float>((colMaxCorrected.x - colour.x) / yDist,
+    m_colourStep = djc_math::Vec3f((colMaxCorrected.x - colour.x) / yDist,
                                          (colMaxCorrected.y - colour.y) / yDist,
                                          (colMaxCorrected.z - colour.z) / yDist);
 }

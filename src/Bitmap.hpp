@@ -2,8 +2,8 @@
 #define Bitmap_hpp
 
 // my
-#include "Maths/Utils.hpp"
-#include "Maths/Vec3.hpp"
+#include "djc_math/Utils.hpp"
+#include "djc_math/Vec3.hpp"
 // std
 #include <vector>
 
@@ -25,7 +25,7 @@ public:
     Buffer & getBuffer();
     
     void setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r);
-    djc_math::Vec3<float> getPixel(int x, int y);
+    djc_math::Vec3f getPixel(int x, int y);
 
     void clear();
 

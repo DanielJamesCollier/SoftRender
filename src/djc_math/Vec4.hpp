@@ -84,6 +84,11 @@ public: // public data
     T w;
 };
 
+// for ease of use in C++ 14 - in C++ 17 class templates can be deduced
+using Vec4i = Vec4<int>;
+using Vec4f = Vec4<float>;
+using Vec4d = Vec4<double>;
+
 } /* namespace djc_math */
 #include "inline/Vec4.inl"
 #endif /* Vec4_hpp */

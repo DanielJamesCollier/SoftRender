@@ -15,7 +15,7 @@
 #include "RenderContext.hpp"
 #include "StarField.hpp"
 #include "Input.hpp"
-#include "Maths/djc_math.hpp"
+#include "djc_math/djc_math.hpp"
 #include "Vertex.hpp"
 #include "Camera.hpp"
 
@@ -89,18 +89,18 @@ loadDannyFile(std::string const & filePath) {
                 splitLine = stringToVec(line);
                 
                 // extract position
-                djc_math::Vec3<float> position;
+                djc_math::Vec3f position;
                 position.x = std::stof(splitLine[0]);
                 position.y = std::stof(splitLine[1]);
                 position.z = std::stof(splitLine[2]);
 
                 // extract texture coordinates
-                djc_math::Vec2<float> texcoord;
+                djc_math::Vec2f texcoord;
                 texcoord.x = std::stof(splitLine[3]);
                 texcoord.y = std::stof(splitLine[4]);
 
                 // extract colours
-                djc_math::Vec3<float> colour;
+                djc_math::Vec3f colour;
                 colour.x = std::stof(splitLine[5]);
                 colour.y = std::stof(splitLine[6]);
                 colour.z = std::stof(splitLine[7]);
@@ -159,7 +159,7 @@ int main(int argc, char* argv[]) {
 
   
     Input input; // subject
-    Camera camera(70.0f, 0.001f, 1000.0f, (float) width / (float) height); // observer
+    Camera camera(70.0f, 0.01f, 1000.0f, (float) width / (float) height); // observer
     input.attachObserver(camera);
 
     RenderContext & rContext = window.getRenderContext();
@@ -185,10 +185,11 @@ int main(int argc, char* argv[]) {
     float movementSpeed = 0.0005f;
 
     // matricies
-    auto translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
-    auto rotation    = djc_math::createMat4RotationMatrix(djc_math::Vec3<float>(0.0f));
-    auto scale       = djc_math::createMat4ScaleMatrix(djc_math::Vec3<float>(1.0f));
-    auto proj        = djc_math::createMat4ProjectionMatrix(djc_math::toRadians(70.0f), 0.01f, 1000.0f, (float)width / (float)height);
+    auto translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3f(x, y, z)); 
+    auto rotation    = djc_math::createMat4RotationMatrix(djc_math::Vec3f(0.0f));
+    auto scale       = djc_math::createMat4ScaleMatrix(djc_math::Vec3f(1.0f));
+    auto proj        = djc_math::createMat4ProjectionMatrix(djc_math::toRadians(70.0f), (float)width / (float)height, 0.01f, 1000.0f);
+     //auto proj        = djc_math::createMat4OrthographicMatrix(width, height, 0.01f, 1000.0f);
     //..
 
     // incrementers
@@ -205,24 +206,25 @@ int main(int argc, char* argv[]) {
 
         // update
         //starField.update(delta);
-        rotation = djc_math::createMat4RotationMatrix(djc_math::Vec3<float>(0, rot, 0));
+        rotation = djc_math::createMat4RotationMatrix(djc_math::Vec3f(0, rot, 0));
         rot += movementSpeed * delta;
 
         if(input.isLeftDown()) {
             x-= movementSpeed * delta;
-            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3f(x, y, z)); 
         } else if(input.isRightDown()) {
             x+= movementSpeed  * delta;
-            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3f(x, y, z)); 
         } else if(input.isUpDown()) {
             z += movementSpeed  * delta;
-            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3f(x, y, z)); 
         } else if(input.isDownDown()) {
             z -= movementSpeed * delta;
-            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3<float>(x, y, z)); 
+            translation = djc_math::createMat4TranslationMatrix(djc_math::Vec3f(x, y, z)); 
         }
 
-        auto modelMatrix = proj * translation * rotation * scale;
+        //auto modelMatrix = proj * translation * rotation * scale;
+        auto modelMatrix = camera.getViewProjection() * translation * rotation * scale;
         //..
         
 

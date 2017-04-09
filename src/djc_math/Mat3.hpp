@@ -43,6 +43,11 @@ private: // private data
     std::array<T, 9> m_matrix;
 };
 
+// for ease of use in C++ 14 - in C++ 17 class templates can be deduced
+using Mat3i = Mat3<int>;
+using Mat3f = Mat3<float>;
+using Mat3d = Mat3<double>;
+
 } /* namespace djc_math */
 #include "inline/Mat3.inl"
 #endif /* Mat3_hpp */

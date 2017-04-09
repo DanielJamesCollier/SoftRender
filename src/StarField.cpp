@@ -1,7 +1,7 @@
 // my
 #include "RenderContext.hpp"
 #include "StarField.hpp"
-#include "Maths/djc_math.hpp"
+#include "djc_math/djc_math.hpp"
 
 // std
 #include <cmath>
