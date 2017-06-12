@@ -18,22 +18,74 @@ public:
     virtual ~RenderContext() = default;
 
    
-    void wireTriangle(Vertex v1, Vertex v2, Vertex v3);
-    void drawLine(Vertex v1, Vertex v2);
-    void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
+    /*
+        drawTriangle(...)
 
-    void drawMesh(std::vector<Vertex> mesh, djc_math::Mat4f & transform, Bitmap & bitmap); // no indices
-    void drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4f & transform, Bitmap & bitmap); // uses indices
+        - vertices can be outside of the screen
+        - if vertices are outside of the screen they will be clipped
+    */
+    void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap); 
 
+    /*
+        drawMesh(...)
+
+        - draw mesh takes a std::vector of vertices. all vertices bust be in order
+        - if there is repeating vertex data it is preferable to use drawIndexMesh
+        - all vertices that go outside of the screen bounds will be clipped
+    */
+    void drawMesh(std::vector<Vertex> vertices, djc_math::Mat4f & transform, Bitmap & bitmap); 
+
+    /*
+        drawIndexedMes(...)
+
+        - prefer this function over drawMesh(...) when there is repeating vertex data
+        - all vertices that go outside of the screen bounds will be clipped
+    */
+    void drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4f const & transform, Bitmap & bitmap); 
+    
+    /* 
+        clearDepthBuffer()
+
+        - clears the depth buffer if depth buffering is enabled -> todo
+    */
     void clearDepthBuffer();
 
 private:
-    bool clipPolygonAxis(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis);
-    void clipPolygonAxisComponent(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis, /* 0 = x, 1 = y, 2 = z*/ float sign /* (-1 = -w) (+1 = +w) */);
-    void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
+    /*
+        drawTriangleWithinScreenBounds(...)
+
+        - undefined behavior if a vertex is outside of the screen bounds
+    */
+    void drawTriangleWithinScreenBounds(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap);
+   
+    /*
+        scanTriangle(...)
+
+        - scan triangle handles all the different types of triangles, these include
+        - left handed (midY vertex is on the right)
+        - right handed (midY vertex is on the left)
+
+        - undefined behaviour if a vertex is outside of screen bounds
+    */
     void scanTriangle(Vertex const & minY, Vertex const & midY, Vertex const & maxY, bool isleftHanded, Bitmap & bitmap);
+    
+     /*
+        drawScanLine(...)
+
+        - scan triangle handles all the different types of triangles, these include
+        - left handed (midY vertex is on the right)
+        - right handed (midY vertex is on the left)
+
+        - undefined behaviour if a edge start or end is outside of screen bounds
+    */
     void drawScanLine(Edge const & left, Edge const & right, int y, Bitmap & bitmap);
 
+    /*
+        updateContextSize(...)
+
+        - handles updating the back buffer size
+        - handles updating the screen space transform
+    */
     void updateContextSize(float width, float height); // todo : call from window when it gets resized
 
 private:

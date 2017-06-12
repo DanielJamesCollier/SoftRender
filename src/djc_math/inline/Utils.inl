@@ -1,9 +1,9 @@
 namespace djc_math {
 
 //------------------------------------------------------------
-inline constexpr float 
-toRadians(float degrees) {
-    return (degrees * PI) / 180;
+template<typename T> inline constexpr T 
+toRadians(T degrees) {
+    return (degrees * pi<T>) / T(180);
 }
 
 //------------------------------------------------------------

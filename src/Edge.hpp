@@ -35,6 +35,9 @@ public:
     djc_math::Vec2f texCoord;
     djc_math::Vec2f m_texCoordStep;
 
+    float depth;
+    float m_depthStep;
+
 private:
     // edge  y range
     int m_yStart;

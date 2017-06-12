@@ -29,36 +29,36 @@ Mat3<T>::Mat3(std::array<T, 9> matrix)
 //------------------------------------------------------------
 template<typename T> /* friend */ Mat3<T> 
 operator * (Mat3<T> const & lhs, Mat3<T> const & rhs) {
-
-    // transforms use column major
     //-------------------- 
-    //   [0]  [3]  [6] 
-    //   [1]  [4]  [7]   
-    //   [2]  [5]  [8] 
+    //   [0]  [1]  [2] 
+    //   [3]  [4]  [5]   
+    //   [6]  [7]  [8] 
     //---------------------
     
     return Mat3<T>(std::array<T, 9>{{
-        // column 0
-        (lhs[0] * rhs[0]) + (lhs[3] * rhs[1]) + (lhs[6] * rhs[2]), // 0
-        (lhs[1] * rhs[0]) + (lhs[4] * rhs[1]) + (lhs[7] * rhs[2]), // 1
-        (lhs[2] * rhs[0]) + (lhs[5] * rhs[1]) + (lhs[8] * rhs[2]), // 2
-        // column 1
-        (lhs[0] * rhs[3]) + (lhs[3] * rhs[4]) + (lhs[6] * rhs[5]), // 3
-        (lhs[1] * rhs[3]) + (lhs[4] * rhs[4]) + (lhs[7] * rhs[5]), // 4
-        (lhs[2] * rhs[3]) + (lhs[5] * rhs[4]) + (lhs[8] * rhs[5]), // 5
-        // column 2
-        (lhs[0] * rhs[6]) + (lhs[3] * rhs[7]) + (lhs[6] * rhs[8]), // 6
-        (lhs[1] * rhs[6]) + (lhs[4] * rhs[7]) + (lhs[7] * rhs[8]), // 7
-        (lhs[2] * rhs[6]) + (lhs[5] * rhs[7]) + (lhs[8] * rhs[8]), // 8
+        ///////
+        /*[0]*/ (lhs[0] * rhs[0]) + (lhs[1] * rhs[3]) + (lhs[2] * rhs[6]),
+        /*[1]*/ (lhs[0] * rhs[1]) + (lhs[1] * rhs[4]) + (lhs[2] * rhs[7]),
+        /*[2]*/ (lhs[0] * rhs[2]) + (lhs[1] * rhs[5]) + (lhs[2] * rhs[8]),
+        ///////
+        /*[0]*/ (lhs[3] * rhs[0]) + (lhs[4] * rhs[3]) + (lhs[5] * rhs[6]),
+        /*[1]*/ (lhs[3] * rhs[1]) + (lhs[4] * rhs[4]) + (lhs[5] * rhs[7]),
+        /*[2]*/ (lhs[3] * rhs[2]) + (lhs[4] * rhs[5]) + (lhs[5] * rhs[8]),
+        ///////
+        /*[0]*/ (lhs[6] * rhs[0]) + (lhs[7] * rhs[3]) + (lhs[8] * rhs[6]),
+        /*[1]*/ (lhs[6] * rhs[1]) + (lhs[7] * rhs[4]) + (lhs[8] * rhs[7]),
+        /*[2]*/ (lhs[6] * rhs[2]) + (lhs[7] * rhs[5]) + (lhs[8] * rhs[8]),
+        ///////
     }});
 }
 
 //------------------------------------------------------------
 template<typename T> Vec3<T>
 operator * (Mat3<T> const & lhs, Vec3<T> const & rhs) {
-    return Vec3<T>((lhs[0] * rhs.x) + (lhs[3] * rhs.y) + (lhs[6] * rhs.z),
-                    (lhs[1] * rhs.x) + (lhs[4] * rhs.y) + (lhs[7] * rhs.z),
-                    (lhs[2] * rhs.x) + (lhs[5] * rhs.y) + (lhs[8] * rhs.z));
+    return Vec3<T>(
+        /*[x]*/ (lhs[0] * rhs.x) + (lhs[1] * rhs.y) + (lhs[2] * rhs.z),
+        /*[y]*/ (lhs[3] * rhs.x) + (lhs[4] * rhs.y) + (lhs[5] * rhs.z),
+        /*[z]*/ (lhs[6] * rhs.x) + (lhs[7] * rhs.y) + (lhs[8] * rhs.z));
 }
 
 //------------------------------------------------------------

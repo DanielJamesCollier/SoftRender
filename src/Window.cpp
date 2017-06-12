@@ -3,15 +3,14 @@
 
 // my
 #include "Window.hpp"
-#include "SDL.h"
+#include "SDL2/SDL.h"
 
 //------------------------------------------------------------
-Window::Window(std::string const & title, int x, int y, int width, int height, float scale, bool vSync, bool fullscreen) :
+Window::Window(std::string const & title, int x, int y, int width, int height, bool vSync, bool fullscreen) :
     m_title(title)
 ,   m_width(width)
 ,   m_height(height) 
-,   m_scale(scale)
-,   m_rContext(width * scale, height * scale)
+,   m_rContext(width, height)
 ,   m_window(nullptr)
 ,   m_renderer(nullptr)
 ,   m_renderTexture(nullptr)
@@ -66,7 +65,7 @@ Window::Window(std::string const & title, int x, int y, int width, int height, f
     //..
 
     // create render buffer
-    m_renderTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_width * scale, m_height * scale);
+    m_renderTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_width, m_height);
 
     if(m_renderTexture == nullptr) {
         SDL_DestroyRenderer(m_renderer);
@@ -109,7 +108,7 @@ Window::clear() {
 //------------------------------------------------------------
 void 
 Window::swapBackBuffer() { 
-    SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * m_scale * 4);
+    SDL_UpdateTexture(m_renderTexture, NULL, &m_rContext[0], m_width * 4);
     SDL_RenderCopy(m_renderer, m_renderTexture, NULL, NULL);
     SDL_RenderPresent(m_renderer);
 }

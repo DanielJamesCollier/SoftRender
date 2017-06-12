@@ -9,13 +9,13 @@
 
 class Mat4f;
 
-class Vertex {
+class Vertex final {
     friend class RenderContext;
 public:
-    Vertex(djc_math::Vec3f _position, djc_math::Vec2f _texCoord = djc_math::Vec2f(0,0), djc_math::Vec3f _colour = djc_math::Vec3f(1, 1, 1));
+    explicit Vertex(djc_math::Vec3f _position = djc_math::Vec3f(0.0f), djc_math::Vec2f _texCoord = djc_math::Vec2f(0.0f), djc_math::Vec3f _colour = djc_math::Vec3f(1.0f));
     Vertex(djc_math::Vec4f const & _position, djc_math::Vec2f _texCoord, djc_math::Vec3f _colour);
-
     Vertex transform(djc_math::Mat4f & matrix);
+    ~Vertex() = default;
 
     // fix : remove these garbage functions
     float getX() const {

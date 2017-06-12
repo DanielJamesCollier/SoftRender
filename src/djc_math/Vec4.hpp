@@ -47,13 +47,16 @@ public: // member - operator overloads
     Vec4<T> & operator *= (T rhs);
     Vec4<T> & operator /= (T rhs);
 
-    T & operator [] (int index) {
+    T operator [] (int index) {
         switch(index) {
-            case 0: return x;
-            case 1: return y;
-            case 2: return z;
-            case 3: return w;
-            default: return x; // FIX: need to remove this operator for a better solution
+            case 0: return x; break;
+            case 1: return y; break;
+            case 2: return z; break;
+            case 3: return w; break;
+            default: 
+                std::cout << "vec4 index invalid\n";
+                return T(); // FIX: need to remove this operator for a better solution
+                break;
         }
     }
 
@@ -76,6 +79,10 @@ public: // free function operator overloads - defined in Vec4.inl
 
 public: // free function operator overload for use with other classes - defined in Vec34.inl
     // Vec4<T> operator * (Mat4<T> const & rhs & lhs, Vec4<T> const & rhs); - defined in Mat4.inl
+
+public: // free functions
+    // Vec4<T> normalise(Vec4<T> const & vec);
+    // T dot(Vec4<T> const & lhs, Vec4<T> const & rhs);
 
 public: // public data
     T x;

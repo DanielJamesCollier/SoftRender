@@ -52,7 +52,7 @@ template<typename T> inline Mat4<T>
 createMat4ProjectionMatrix(T fov, T aspect, T zNear, T zFar);
 
 template<typename T> inline Mat4<T>
-createMat4ViewMatrix(Vec3<T> const & position, Vec3<T> const & forward, Vec3<T> const & up);
+createMat4ViewMatrix(Vec3<T> const & eye, Vec3<T> const & centre, Vec3<T> const & up);
 
 template<typename T> inline Mat4<T>
 createMat4BirdsEyeViewMatrix();
@@ -67,6 +67,9 @@ setMat4Identity(Mat4<T> & matrix);
 //-------------------//
 /*      Other        */
 //-------------------//
+
+template<typename T> inline void
+transform(Vec4<T> & vec, Mat4<T> const & transformation);
 
 template<typename T> inline Mat3<T>
 rotate(T angle, Vec3<T> const & axis);

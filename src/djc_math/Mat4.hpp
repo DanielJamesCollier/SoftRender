@@ -26,7 +26,7 @@ class Mat4 final {
 public: // RAII
     Mat4();
     explicit Mat4(std::array<T, 16> const & matrix);
-    explicit Mat4(Mat3<T> const & matrix);
+    explicit Mat4(Mat3<T> const & matrix, T lastVal);
     ~Mat4() = default;
 
 public: // member - functions

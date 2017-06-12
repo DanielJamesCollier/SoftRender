@@ -20,10 +20,10 @@ StarField::StarField(RenderContext & renderContext, float speed, float spread) :
 
 //------------------------------------------------------------
 void 
-StarField::update(float delta) {
+StarField::update() {
     for(size_t i = 0; i < m_stars.size(); i++) {
         // move the star in z
-        m_stars[i].z = m_stars[i].z - (m_speed * delta);
+        m_stars[i].z = m_stars[i].z - (m_speed);
 
         // if star behind the camera respawn
         if (m_stars[i].z < 0) {

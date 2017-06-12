@@ -17,7 +17,7 @@ public:
     StarField(RenderContext & renderContext, float speed, float spread);
     ~StarField() = default;
 
-    void update(float delta);
+    void update();
     void render();
 
 private:

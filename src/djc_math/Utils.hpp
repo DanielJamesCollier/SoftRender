@@ -3,17 +3,15 @@
 
 // my
 #include "Vec4.hpp"
+#include "Constants.hpp"
 
 // std
 #include <cstdlib> 
 
-// defines
-#define PI 3.14159265359
-
 namespace djc_math {
 
-inline constexpr float 
-toRadians(float degrees);
+template<typename T> inline constexpr T 
+toRadians(T degrees);
 
 inline float 
 randFBetweenZeroOne();

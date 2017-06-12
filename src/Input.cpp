@@ -3,7 +3,7 @@
 #include "djc_math/Utils.hpp"
 
 // dependancies
-#include "SDL.h" // needed for SDL_INIT_GAME_CONTROLLER - could remove somehow 
+#include "SDL2/SDL.h" // needed for SDL_INIT_GAME_CONTROLLER - could remove somehow 
 
 // std
 #include <iostream>
@@ -102,12 +102,14 @@ Input::update() {
             }
 
             case SDL_CONTROLLERBUTTONDOWN:
+                leftDown = true;
                 for(auto observer : m_observers) {
                     observer->controllerButtonDownEvent(m_event.cbutton.button);
                 }
                 break;
 
             case SDL_CONTROLLERBUTTONUP:
+                leftDown = false;
                 for(auto observer : m_observers) {
                     observer->controllerButtonUpEvent(m_event.cbutton.button);
                 }

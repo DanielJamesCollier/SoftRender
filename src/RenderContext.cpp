@@ -11,208 +11,161 @@
 #include <cstdint> // used for inline asm
 #include <limits>
 
+#define DEPTH_MAX -1000
+
 /* PUBLIC */
 
 //------------------------------------------------------------
-RenderContext::RenderContext(int width, int height) :
-    Bitmap(width, height)
+RenderContext::RenderContext(int width, int height) 
+:   Bitmap(width, height)
+,   m_halfWidth(static_cast<float>(width) / 2.0f)
+,   m_halfHeight(static_cast<float>(height) / 2.0f)
 {   
-    m_screenSpaceTransform = djc_math::createMat4ScreenSpaceTransform((float)width / 2.0f, (float)height / 2.0f); 
+    m_screenSpaceTransform = djc_math::createMat4ScreenSpaceTransform(m_halfWidth, m_halfHeight); 
 
     m_depthBuffer.resize(width * height);
-    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -100);
+    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), DEPTH_MAX);
 }
 
 //------------------------------------------------------------
 void
-RenderContext::wireTriangle(Vertex v1, Vertex v2, Vertex v3) {
-    drawLine(v1, v2);
-    drawLine(v2, v3);
-    drawLine(v3, v1);
-}
-
-//------------------------------------------------------------
-void // fix to use edges
-RenderContext::drawLine(Vertex v1, Vertex v2) {
-    v1 = v1.transform(m_screenSpaceTransform);
-    v2 = v2.transform(m_screenSpaceTransform);
-
-    djc_math::perspectiveDivide(v1.position);
-    djc_math::perspectiveDivide(v2.position);
-
-    // vec2 
-    float startY = v1.position.y;
-    float startX = v1.position.x;
-
-    // vec 2 
-    float endX = v2.position.x;
-    float endY = v2.position.y;
-
-    // vec 2 
-    float xDist = endX - startX;
-    float yDist = endY - startY;
-
-    // length of above
-    float length = std::sqrt(xDist * xDist + yDist * yDist);
-
-    // how many pixels to move in x an y axis per for loop itter
-    float xStep = xDist / length;
-    float yStep = yDist / length;
-
-    // startiny x and y - will be incremented
-    float currX = startX;
-    float currY = startY;
-
-    // draw all the pixels ever
-    for(int i = 0; i < static_cast<int>(length); i++) {
-
-        // get the interpolated colour
-        float currXNormal = (currX - startX) / (endX - startX);
-        //float currYNormal = (currY - startY) / (endY - startY);
-
-        auto currentColour = djc_math::lerp(v1.colour, v2.colour, currXNormal);
-        //..
-
-       // setPixel(static_cast<int>(std::ceil(currX)), static_cast<int>(std::ceil(currY)), currentColour);
-        currX += xStep;
-        currY += yStep;
-    }
-}
-
-//------------------------------------------------------------
-void
-RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
-    // clip triangle
-    std::vector<Vertex> vertices;
-    std::vector<Vertex> vertricesClipped;
-
-    vertices.reserve(3);
-    vertices.push_back(v1);
-    vertices.push_back(v2);
-    vertices.push_back(v3);
-
-    if(clipPolygonAxis(vertices, vertricesClipped, 0) &&
-       clipPolygonAxis(vertices, vertricesClipped, 1) &&
-       clipPolygonAxis(vertices, vertricesClipped, 2)) {
-           
-        // triangle fan drawing
-        for(int i = 1; i < vertices.size() - 1; i++) {
-            fillTriangle(vertices[0], vertices[i], vertices[i + 1], bitmap);
-        }
-    }
-}
-
-//------------------------------------------------------------
-void
-RenderContext::drawMesh(std::vector<Vertex> mesh, djc_math::Mat4f & transform, Bitmap & bitmap) {  
+RenderContext::drawMesh(std::vector<Vertex> vertices, djc_math::Mat4f & transform, Bitmap & bitmap) {  
 
     // transform vertices
-    for(size_t i = 0; i < mesh.size(); i++) {
-        mesh[i].position = transform * mesh[i].position;
+    for(auto & vertex : vertices) {
+        djc_math::transform(vertex.position, transform);
     }
 
     // draw triangles
-    for(size_t i = 0; i < mesh.size(); i+= 3) {
-        drawTriangle(mesh[i + 0],
-                     mesh[i + 1],
-                     mesh[i + 2],
-                     bitmap);
+    for(size_t i = 0; i < vertices.size(); i+= 3) {
+        drawTriangle(vertices[i + 0],
+                    vertices[i + 1],
+                    vertices[i + 2],
+                    bitmap);
     }    
 }
 
 //------------------------------------------------------------
 void 
-RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4f & transform, Bitmap & bitmap) {
-
-    for(size_t i = 0; i < vertices.size(); i++) {
-        vertices[i].position = transform * vertices[i].position;
+RenderContext::drawIndexedMesh(std::vector<Vertex> vertices, std::vector<unsigned int> const & indices, djc_math::Mat4f const & transform, Bitmap & bitmap) {
+    for(auto & vertex : vertices) {
+        djc_math::transform(vertex.position, transform);
     }
 
     // draw triangles
     for(size_t i = 0; i < indices.size(); i+= 3) {
 
-        int indexOne = indices[i + 0];
-        int indexTwo = indices[i + 1];
-        int indexTre = indices[i + 2];
+        size_t index1 = indices[i + 0];
+        size_t index2 = indices[i + 1];
+        size_t index3 = indices[i + 2];
 
-        drawTriangle(vertices[indexOne], vertices[indexTwo], vertices[indexTre], bitmap); // does clipping if needed
+        drawTriangle(vertices[index1], 
+                     vertices[index2],
+                     vertices[index3], 
+                     bitmap);   
     }
 }
 
 //------------------------------------------------------------
 void
 RenderContext::clearDepthBuffer() {
-    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), -1000); // fix : remove this magic number
+    std::fill(std::begin(m_depthBuffer), std::end(m_depthBuffer), DEPTH_MAX); // fix : remove this magic number
 }
 
 /* PRIVATE */
 
 //------------------------------------------------------------
-bool
-RenderContext::clipPolygonAxis(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis) {
-    clipPolygonAxisComponent(vertices, output, axis, 1.0f);
-    vertices.clear();
-
-    if(output.empty()) {
-        return false; // all verts where outside the positive axis
-    }
-
-    clipPolygonAxisComponent(output, vertices, axis, -1.0f);
-    output.clear();
-
-    return !vertices.empty();
-}
-
-//------------------------------------------------------------
 void
-RenderContext::clipPolygonAxisComponent(std::vector<Vertex> & vertices, std::vector<Vertex> & output, int axis, float sign) {
+RenderContext::drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
 
-    Vertex lastVertex = vertices[vertices.size() - 1];
-    float  lastComp   = lastVertex.position[axis] * sign;
-    bool   lastInside = lastComp <= lastVertex.position.w;
+    auto isXinsidePosW = [](Vertex & vert) -> void {
+        if(vert.position.x <= vert.position.w) {
+            
+        } else {
+            std::cout << "vert went off screen: w " << vert.position.w << " x: " << vert.position.x << std::endl;
+            vert.position.x = vert.position.w;
+        }
+    };
 
-    for(int i = 0; i < vertices.size(); i++) {
+    // isXinsidePosW(v1);
+    // isXinsidePosW(v2);
+    // isXinsidePosW(v3);
+    
+    // * clipping * //
 
-        Vertex currVertex = vertices[i];
-        float  currComp   = currVertex.position[axis] * sign;
-        bool   currInside = currComp <= currVertex.position.w;
-        
-        if(currInside ^ lastInside) {
-           float lerpStep = (lastVertex.position.w - lastComp) /
-                           ((lastVertex.position.w - lastComp) -
-                            (currVertex.position.w - currComp));
+    struct VertexPacket {
+        std::array<Vertex, 6> vertices;
+        int count = 0;
+    };
 
-           output.push_back(lerp(lastVertex, currVertex, lerpStep));
+    VertexPacket packetOne;
+    packetOne.vertices[0] = v1;
+    packetOne.vertices[1] = v2;
+    packetOne.vertices[2] = v3;
+    packetOne.count = 3; // 3 vertices to start off
+
+    VertexPacket packetTwo;
+
+    // positive x clip
+    //------------------------------------
+    Vertex last = packetOne.vertices[packetOne.count - 1];
+    bool lastInBounds = last.position.x <= last.position.w;
+    
+    for(int i = 0; i < packetOne.count; i++) {
+
+        std::cout << "i: "  << i << std::endl;
+
+        Vertex current = packetOne.vertices[i];
+        bool currentInBounds = current.position.x <= current.position.w;
+
+        std::cout << current.position.x << std::endl;
+
+        if(lastInBounds ^ currentInBounds) {
+            last.colour = djc_math::Vec3f(0,0,1);
+            last.position.x = 0;
+            packetTwo.vertices[packetTwo.count++] =  last;
         }
 
-        if(currInside) {
-            output.push_back(currVertex);
+        if(currentInBounds) {
+            packetTwo.vertices[packetTwo.count++] =  current;
         }
 
-        lastVertex = currVertex;
-        lastComp = currComp;
-        lastInside = currInside;
+        last = current;
+        lastInBounds = currentInBounds;
+    }
+    //------------------------------------
+
+    std::cout << "count: " << packetTwo.count << std::endl;
+    
+    for(int i = 1; i < packetTwo.count - 1; i++) {
+        drawTriangleWithinScreenBounds(packetTwo.vertices[0], packetTwo.vertices[i], packetTwo.vertices[i + 1], bitmap);
     }
 }
 
 //------------------------------------------------------------
 void // vertices must be clipped before uing this function
-RenderContext::fillTriangle(Vertex v1, Vertex  v2, Vertex v3, Bitmap & bitmap) {
+RenderContext::drawTriangleWithinScreenBounds(Vertex v1, Vertex v2, Vertex v3, Bitmap & bitmap) {
 
-    // change vectors from -1 ~ 1 space to 0 ~ screenWidth
-    v1.position = m_screenSpaceTransform * v1.position;
-    v2.position = m_screenSpaceTransform * v2.position;
-    v3.position = m_screenSpaceTransform * v3.position;
+    // clip space -> ndc space
+    auto fromClipToNDC = [](Vertex & v) {
+        v.position.x = v.position.x / v.position.w;
+        v.position.y = v.position.y / v.position.w;
+        v.position.z = v.position.z / v.position.w;
+    };
 
-    // @perf : avoid not needed matrix vector mult just do below
-    //x' = x*halfWidth + halfWidth
-    //y' = y*halfHeight + halfHeight
+    fromClipToNDC(v1);
+    fromClipToNDC(v2);
+    fromClipToNDC(v3);
 
-    djc_math::perspectiveDivide(v1.position);
-    djc_math::perspectiveDivide(v2.position);
-    djc_math::perspectiveDivide(v3.position); // perf : could be inlined.
+    auto fromNDCToScreen = [this](Vertex & v) {
+        v.position.x = (v.position.x + 1) * m_halfWidth;
+        v.position.y = (v.position.y + 1) * m_halfHeight;
+    };
 
-
+    fromNDCToScreen(v1);
+    fromNDCToScreen(v2);
+    fromNDCToScreen(v3);
+   
     if(v3.getY() < v2.getY()) {
         std::swap(v3, v2);
     }
@@ -255,9 +208,9 @@ RenderContext::scanTriangle(Vertex const & minY, Vertex const & midY, Vertex con
             minToMax.step();
             midToMax.step();
         }
-    }
-    else 
-    {   
+
+    } else {   
+
         // top
         for(int y = minToMid.getYStart(); y < minToMid.getYEnd(); y++) {
             drawScanLine(minToMid, minToMax,y, bitmap);
@@ -289,23 +242,27 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
     float currW = left.oneOverW;
     float wStep = (right.oneOverW - currW) / xDist;
 
-    
-    // perf : dont do perspective correction every pixel but every few pixels
-    int row = m_width * y;
-    for(float x = xMin; x < xMax; ++x) {
+    float currDepth = left.depth;
+    float depthStep = (right.depth - currDepth) / xDist;
 
-        if(m_depthBuffer[row + x] <  1.0 * currW) {
-            m_depthBuffer[row + x] = 1.0 * currW;
+    // perf todo : don't do perspective correction every pixel but every few pixels
+    
+    size_t row = m_width * y;
+    for (float x = xMin; x < xMax; ++x) {
+        if (m_depthBuffer[row + x] <  currDepth) {
+            m_depthBuffer[row + x] = currDepth;
 
             float z = 1.0f / currW;
-
-            auto correctedTexColour = bitmap.getPixel((currTexCoord.x * z) * (bitmap.getWidthF() - 1.0f) + 0.5f,
-                                                             (currTexCoord.y * z) * (bitmap.getHeightF() - 1.0f) + 0.5f);
+            int srcX = (int)((currTexCoord.x * z) * (float)(bitmap.getWidthF() - 1.0f));
+            int srcY = (int)((currTexCoord.y * z) * (float)(bitmap.getHeightF() - 1.0f));
+            
+            auto correctedTexColour = bitmap.getPixel(srcX, srcY);
 
             auto correctedColour = djc_math::Vec3f(currColour.x * z, currColour.y * z, currColour.z * z);                                    
         
-           //auto finalColour = correctedColour * correctedTexColour;
-            auto finalColour = correctedTexColour;
+            //auto finalColour = correctedColour * correctedTexColour; // colour and texture
+            //auto finalColour = correctedTexColour; // texture only
+            auto finalColour = correctedColour; // colour only
 
             setPixel(x, y, static_cast<unsigned char>(finalColour.z * 255.99f),
                            static_cast<unsigned char>(finalColour.y * 255.99f), 
@@ -317,6 +274,7 @@ RenderContext::drawScanLine(Edge const & left, Edge const & right, int y, Bitmap
         currColour   += colourStep;
         currTexCoord += texCoordStep;
         currW        += wStep;
+        currDepth    += depthStep;
     }
 }
 

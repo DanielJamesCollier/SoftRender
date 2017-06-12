@@ -10,5 +10,6 @@
 
 #include "Transform.hpp"
 #include "Utils.hpp"
+#include "Constants.hpp"
 
 #endif /* djc_math_hpp */

@@ -1,0 +1,10 @@
+set (SOURCEFILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Vertex.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/StarField.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RenderContext.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Input.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Edge.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Bitmap.cpp
+    PARENT_SCOPE)

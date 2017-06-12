@@ -54,9 +54,7 @@ Bitmap::getBuffer() {
 //------------------------------------------------------------
 void 
 Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r) {
-    int index = (m_width * y + x) * 4;
-
-    if(index > (m_width * m_height) * 4) return;
+    int index = (m_width * (m_height - y) + x) * 4;
 
     m_buffer[index + 0] = b;
     m_buffer[index + 1] = g;
@@ -67,9 +65,7 @@ Bitmap::setPixel(int x, int y, unsigned char b, unsigned char g, unsigned char r
 //------------------------------------------------------------
 djc_math::Vec3f
 Bitmap::getPixel(int x, int y) {
-    int index = (m_width * y + x) * 4;
-
-    if(index > (m_width * m_height) * 4) return djc_math::Vec3f(0.0f);
+    int index = (m_width * (m_height - y) + x) * 4;
 
     return djc_math::Vec3f((float)m_buffer[index + 2] / 255.0f,  // r
                            (float)m_buffer[index + 1] / 255.0f,  // g

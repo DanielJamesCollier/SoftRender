@@ -16,12 +16,12 @@ Mat4<T>::Mat4(std::array<T, 16> const & matrix)
 
 //------------------------------------------------------------
 template<typename T> 
-Mat4<T>::Mat4(Mat3<T> const & matrix) 
+Mat4<T>::Mat4(Mat3<T> const & matrix, T lastVal) 
 :   m_matrix(std::array<T, 16>{{
-        matrix[0], matrix[3], matrix[6], 0,
-        matrix[1], matrix[4], matrix[7], 0,
-        matrix[2], matrix[5], matrix[8], 0,
-                0,         0,         0, 0 }}) // [15] fix : should be 1 ? 0 maybe make this function in utils?
+        matrix[0], matrix[1], matrix[2], 0,
+        matrix[3], matrix[4], matrix[5], 0,
+        matrix[6], matrix[7], matrix[8], 0,
+                0,         0,         0, lastVal}}) // [15] fix : should be 1 ? 0 maybe make this function in utils?
 {
 
 }
@@ -30,9 +30,9 @@ Mat4<T>::Mat4(Mat3<T> const & matrix)
 template<typename T> Mat3<T>
 Mat4<T>::toMat3() const {
     return Mat3<T>(std::array<T, 9> {{
-        m_matrix[0], m_matrix[4], m_matrix[ 8],
-        m_matrix[1], m_matrix[5], m_matrix[ 9],
-        m_matrix[2], m_matrix[6], m_matrix[10]
+        m_matrix[0], m_matrix[1], m_matrix[2],
+        m_matrix[4], m_matrix[5], m_matrix[6],
+        m_matrix[8], m_matrix[9], m_matrix[10]
     }});
 }
 
@@ -51,35 +51,35 @@ Mat4<T>::toMat3() const {
 //------------------------------------------------------------
 template<typename T> /* friend */ Mat4<T> 
 operator * (Mat4<T> const & lhs, Mat4<T> const & rhs) {
-    // transforms use column major
-    //-------------------- 
-    // [0]  [4]  [8]  [12] 
-    // [1]  [5]  [9]  [13] 
-    // [2]  [6]  [10] [14]
-    // [3]  [7]  [11] [15]
-    //---------------------
+    //----------------------    
+    // [0 ]  [1 ]  [2 ] [3 ]  
+    // [4 ]  [5 ]  [6 ] [7 ]  
+    // [8 ]  [9 ]  [10] [11]  
+    // [12]  [13]  [14] [15]  
+    //----------------------  
     
     return Mat4<T>(std::array<T, 16>{{
-       // column one
-       (lhs[0] * rhs[ 0]) + (lhs[4] * rhs[ 1]) + (lhs[ 8] * rhs[ 2]) + (lhs[12] * rhs[ 3]), // 0
-       (lhs[1] * rhs[ 0]) + (lhs[5] * rhs[ 1]) + (lhs[ 9] * rhs[ 2]) + (lhs[13] * rhs[ 3]), // 1
-       (lhs[2] * rhs[ 0]) + (lhs[6] * rhs[ 1]) + (lhs[10] * rhs[ 2]) + (lhs[14] * rhs[ 3]), // 2
-       (lhs[3] * rhs[ 0]) + (lhs[7] * rhs[ 1]) + (lhs[11] * rhs[ 2]) + (lhs[15] * rhs[ 3]), // 3
-       // column two
-       (lhs[0] * rhs[ 4]) + (lhs[4] * rhs[ 5]) + (lhs[ 8] * rhs[ 6]) + (lhs[12] * rhs[ 7]), // 4
-       (lhs[1] * rhs[ 4]) + (lhs[5] * rhs[ 5]) + (lhs[ 9] * rhs[ 6]) + (lhs[13] * rhs[ 7]), // 5
-       (lhs[2] * rhs[ 4]) + (lhs[6] * rhs[ 5]) + (lhs[10] * rhs[ 6]) + (lhs[14] * rhs[ 7]), // 6
-       (lhs[3] * rhs[ 4]) + (lhs[7] * rhs[ 5]) + (lhs[11] * rhs[ 6]) + (lhs[15] * rhs[ 7]), // 7
-       // column three
-       (lhs[0] * rhs[ 8]) + (lhs[4] * rhs[ 9]) + (lhs[ 8] * rhs[10]) + (lhs[12] * rhs[11]), // 8
-       (lhs[1] * rhs[ 8]) + (lhs[5] * rhs[ 9]) + (lhs[ 9] * rhs[10]) + (lhs[13] * rhs[11]), // 9
-       (lhs[2] * rhs[ 8]) + (lhs[6] * rhs[ 9]) + (lhs[10] * rhs[10]) + (lhs[14] * rhs[11]), // 10
-       (lhs[3] * rhs[ 8]) + (lhs[7] * rhs[ 9]) + (lhs[11] * rhs[10]) + (lhs[15] * rhs[11]), // 11
-       // column four
-       (lhs[0] * rhs[12]) + (lhs[4] * rhs[13]) + (lhs[ 8] * rhs[14]) + (lhs[12] * rhs[15]), // 12
-       (lhs[1] * rhs[12]) + (lhs[5] * rhs[13]) + (lhs[ 9] * rhs[14]) + (lhs[13] * rhs[15]), // 13
-       (lhs[2] * rhs[12]) + (lhs[6] * rhs[13]) + (lhs[10] * rhs[14]) + (lhs[14] * rhs[15]), // 14
-       (lhs[3] * rhs[12]) + (lhs[7] * rhs[13]) + (lhs[11] * rhs[14]) + (lhs[15] * rhs[15])  // 15
+      ///////
+      /*[ 0]*/ (lhs[ 0] * rhs[ 0]) + (lhs[ 1] * rhs[ 4]) + (lhs[ 2] * rhs[ 8]) + (lhs[ 3] * rhs[12]),
+      /*[ 1]*/ (lhs[ 0] * rhs[ 1]) + (lhs[ 1] * rhs[ 5]) + (lhs[ 2] * rhs[ 9]) + (lhs[ 3] * rhs[13]),
+      /*[ 2]*/ (lhs[ 0] * rhs[ 2]) + (lhs[ 1] * rhs[ 6]) + (lhs[ 2] * rhs[10]) + (lhs[ 3] * rhs[14]),
+      /*[ 3]*/ (lhs[ 0] * rhs[ 3]) + (lhs[ 1] * rhs[ 7]) + (lhs[ 2] * rhs[11]) + (lhs[ 3] * rhs[15]),
+      ///////
+      /*[ 4]*/ (lhs[ 4] * rhs[ 0]) + (lhs[ 5] * rhs[ 4]) + (lhs[ 6] * rhs[ 8]) + (lhs[ 7] * rhs[12]),
+      /*[ 5]*/ (lhs[ 4] * rhs[ 1]) + (lhs[ 5] * rhs[ 5]) + (lhs[ 6] * rhs[ 9]) + (lhs[ 7] * rhs[13]),
+      /*[ 6]*/ (lhs[ 4] * rhs[ 2]) + (lhs[ 5] * rhs[ 6]) + (lhs[ 6] * rhs[10]) + (lhs[ 7] * rhs[14]),
+      /*[ 7]*/ (lhs[ 4] * rhs[ 3]) + (lhs[ 5] * rhs[ 7]) + (lhs[ 6] * rhs[11]) + (lhs[ 7] * rhs[15]),
+      ///////
+      /*[ 8]*/ (lhs[ 8] * rhs[ 0]) + (lhs[ 9] * rhs[ 4]) + (lhs[10] * rhs[ 8]) + (lhs[11] * rhs[12]),
+      /*[ 9]*/ (lhs[ 8] * rhs[ 1]) + (lhs[ 9] * rhs[ 5]) + (lhs[10] * rhs[ 9]) + (lhs[11] * rhs[13]),
+      /*[10]*/ (lhs[ 8] * rhs[ 2]) + (lhs[ 9] * rhs[ 6]) + (lhs[10] * rhs[10]) + (lhs[11] * rhs[14]),
+      /*[11]*/ (lhs[ 8] * rhs[ 3]) + (lhs[ 9] * rhs[ 7]) + (lhs[10] * rhs[11]) + (lhs[11] * rhs[15]),
+      ///////
+      /*[12]*/ (lhs[12] * rhs[ 0]) + (lhs[13] * rhs[ 4]) + (lhs[14] * rhs[ 8]) + (lhs[15] * rhs[12]),
+      /*[13]*/ (lhs[12] * rhs[ 1]) + (lhs[13] * rhs[ 5]) + (lhs[14] * rhs[ 9]) + (lhs[15] * rhs[13]),
+      /*[14]*/ (lhs[12] * rhs[ 2]) + (lhs[13] * rhs[ 6]) + (lhs[14] * rhs[10]) + (lhs[15] * rhs[14]),
+      /*[15]*/ (lhs[12] * rhs[ 3]) + (lhs[13] * rhs[ 7]) + (lhs[14] * rhs[11]) + (lhs[15] * rhs[15]),
+      ///////
     }});
 }
 
@@ -87,10 +87,10 @@ operator * (Mat4<T> const & lhs, Mat4<T> const & rhs) {
 template<typename T> /* friend */ Vec4<T> 
 operator * (Mat4<T> const & lhs, Vec4<T> const & rhs) {
     return Vec4<T>(
-        (lhs[0] * rhs.x) + (lhs[4] * rhs.y) + (lhs[ 8] * rhs.z) + (lhs[12] * rhs.w),
-        (lhs[1] * rhs.x) + (lhs[5] * rhs.y) + (lhs[ 9] * rhs.z) + (lhs[13] * rhs.w),
-        (lhs[2] * rhs.x) + (lhs[6] * rhs.y) + (lhs[10] * rhs.z) + (lhs[14] * rhs.w),
-        (lhs[3] * rhs.x) + (lhs[7] * rhs.y) + (lhs[11] * rhs.z) + (lhs[15] * rhs.w)
+        /*[x]*/ (lhs[ 0] * rhs.x) + (lhs[ 1] * rhs.y) + (lhs[ 2] * rhs.z) + (lhs[ 3] * rhs.w),
+        /*[y]*/ (lhs[ 4] * rhs.x) + (lhs[ 5] * rhs.y) + (lhs[ 6] * rhs.z) + (lhs[ 7] * rhs.w),
+        /*[z]*/ (lhs[ 8] * rhs.x) + (lhs[ 9] * rhs.y) + (lhs[10] * rhs.z) + (lhs[11] * rhs.w),
+        /*[w]*/ (lhs[12] * rhs.x) + (lhs[13] * rhs.y) + (lhs[14] * rhs.z) + (lhs[15] * rhs.w)
     );
 }
 
@@ -119,6 +119,5 @@ template<typename T> float const &
 Mat4<T>::operator [] (std::size_t index) const {
     return m_matrix[index];
 }
-
-
 } /* namespace djc_math */
+
