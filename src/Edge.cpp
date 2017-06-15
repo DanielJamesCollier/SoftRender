@@ -8,9 +8,9 @@
 
 //------------------------------------------------------------
 Edge::Edge(Vertex const & minY, Vertex const & maxY) :
-    m_yStart(static_cast<int>(std::ceil(minY.getY())))
-,   m_yEnd(static_cast<int>(std::ceil(maxY.getY())))
-,   x(minY.getX())
+    m_yStart(static_cast<int>(std::ceil(minY.position.y)))
+,   m_yEnd(static_cast<int>(std::ceil(maxY.position.y)))
+,   x(minY.position.x)
 {   
     float yDist = maxY.position.y - minY.position.y;
 

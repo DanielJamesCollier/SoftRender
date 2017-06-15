@@ -17,15 +17,6 @@ public:
     Vertex transform(djc_math::Mat4f & matrix);
     ~Vertex() = default;
 
-    // fix : remove these garbage functions
-    float getX() const {
-        return position.x;
-    }
-
-    float getY() const {
-        return position.y;
-    }
-   
     djc_math::Vec4f position;
     djc_math::Vec2f texCoord;
     djc_math::Vec3f colour;
